@@ -118,7 +118,6 @@ const Cell = ({
     $(Box, { marginLeft: -1.5 },
       $(Checkbox)))
 
-
 const shifts = gql`
 query Shifts($from: date $to: date) {
   shifts(

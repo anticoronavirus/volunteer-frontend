@@ -1,9 +1,10 @@
 import { createElement as $, useMemo } from 'react'
 import VolunteerForm from 'VolunteerForm'
+import Main from 'Main'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom'
 
 const App = () => {
 
@@ -22,7 +23,9 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: '/volunteer', component: VolunteerForm })))
+      $(Route, { path: '/volunteer', component: VolunteerForm }),
+      $(Route, { path: '/', component: Main }),
+      $(Redirect, { to: '/' })))
 }
 
 export default App
