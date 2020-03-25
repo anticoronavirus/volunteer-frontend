@@ -100,7 +100,7 @@ const Header = date =>
   $(TableCell, { style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
 
 const Row = cells =>
-  map(Cell, cells)
+  $(TableRow, null, map(Cell, cells))
 
 const Cell = ({
   uid,
@@ -120,8 +120,10 @@ const Cell = ({
 
 
 const shifts = gql`
-{
-  shifts(order_by: { date: asc, start: asc }) {
+query Shifts($from: date $to: date) {
+  shifts(
+    order_by: { date: asc, start: asc }
+    where: { date: { _gt: $from  _lt: $to } }) {
     uid
     date
     start
