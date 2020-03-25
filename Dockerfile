@@ -1,7 +1,7 @@
 FROM node as BUILDER
 WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
-RUN yarn install --production
+RUN yarn install --ignore-engines --production
 COPY . ./
 RUN yarn build
 
