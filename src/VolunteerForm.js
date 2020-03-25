@@ -10,49 +10,50 @@ import ToggleButton from '@material-ui/lab/ToggleButton'
 // import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 const VolunteerForm = () =>
-  $(Box, { margin: '32px auto', maxWidth: '70ex' }, 
-    $(Paper, null,
-      $(Box, { padding: 3 },
-        $(Typography, { variant: 'h4', paragraph: true },
-          'Регистрация волонтёров'),
-          $(Typography, { variant: 'subtitle1', paragraph: true },
-            'Anticorona'),
-        $(TextField, {
-          margin: 'normal',
-          label: 'Фамилия',
-          variant: 'outlined',
-          fullWidth: true
-        }),
-        $(TextField, {
-          margin: 'normal',
-          label: 'Имя',
-          variant: 'outlined',
-          fullWidth: true
-        }),
-        $(TextField, {
-          margin: 'normal',
-          label: 'Отчество',
-          variant: 'outlined',
-          fullWidth: true
-        }),
-        $(TextField, {
-          margin: 'normal',
-          label: 'Телефон',
-          variant: 'outlined',
-          fullWidth: true
-        }),
-        $(TextField, {
-          margin: 'normal',
-          label: 'Электропочта',
-          variant: 'outlined',
-          fullWidth: true
-        }),
-        $(Box, { height: 16 }),
-        $(ToggleButtonGroup, { size: 'large', exclusive: true,  },
-          $(ToggleButton, null, 'Врач'),
-          $(ToggleButton, null, 'Водитель'),
-          $(ToggleButton, null, 'Программист')))),
-    $(Box, { height: 16 }),
+  $(Box, { display: 'flex', padding: 3 },
+    $(Box, { maxWidth: '60ex' },
+      $(Paper, null,
+        $(Box, { padding: 3 },
+          $(Typography, { variant: 'h4', paragraph: true },
+            'Регистрация волонтёров'),
+            $(Typography, { variant: 'subtitle1', paragraph: true },
+              'Anticorona'),
+          $(TextField, {
+            margin: 'normal',
+            label: 'Фамилия',
+            variant: 'outlined',
+            fullWidth: true
+          }),
+          $(TextField, {
+            margin: 'normal',
+            label: 'Имя',
+            variant: 'outlined',
+            fullWidth: true
+          }),
+          $(TextField, {
+            margin: 'normal',
+            label: 'Отчество',
+            variant: 'outlined',
+            fullWidth: true
+          }),
+          $(TextField, {
+            margin: 'normal',
+            label: 'Телефон',
+            variant: 'outlined',
+            fullWidth: true
+          }),
+          $(TextField, {
+            margin: 'normal',
+            label: 'Электропочта',
+            variant: 'outlined',
+            fullWidth: true
+          }),
+          $(Box, { height: 16 }),
+          $(ToggleButtonGroup, { size: 'large', exclusive: true,  },
+            $(ToggleButton, { value: 1 }, 'Врач'),
+            $(ToggleButton, { value: 2 }, 'Водитель'),
+            $(ToggleButton, { value: 3 }, 'Программист'))))),
+    $(Box, { height: 16, minWidth: 16 }),
     $(Paper, null,
       // $(MuiPickersUtilsProvider, { utils: DateFnsUtils }, 
       //   $(DatePicker, {
@@ -66,7 +67,8 @@ const VolunteerForm = () =>
       //     orientation: 'portrait',
       //     onChange: console.log
       //   })),
-        $(Box, { padding: 3 })
+        $(Box, { padding: 3 },
+          'dates')
   ))
 
 export default VolunteerForm
