@@ -6,7 +6,7 @@ import ApolloClient, { InMemoryCache } from 'apollo-boost'
 import App from 'App.js'
 
 const client = new ApolloClient({
-  uri: '/graphql',
+  uri: '/v1/graphql',
   cache: new InMemoryCache({
     dataIdFromObject: ({ id }) => id
   })

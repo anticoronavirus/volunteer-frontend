@@ -5,16 +5,17 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
 import map from 'lodash/fp/map'
-import range from 'lodash/fp/range'
+import reduce from 'lodash/fp/reduce'
+import gql from 'graphql-tag'
+import { useQuery } from '@apollo/react-hooks'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import Checkbox from '@material-ui/core/Checkbox'
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 // import ToggleButton from '@material-ui/lab/ToggleButton'
 // import DateFnsUtils from '@date-io/date-fns'
-import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 // import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 
@@ -63,42 +64,65 @@ const VolunteerForm = () =>
           }),
           $(Box, { height: 16 }),))),
     $(Box, { height: 16, minWidth: 16 }),
-    $(Paper, null,
-      $(Table, null,
+    $(Paper, null, $(Shifts)))
+
+const Shifts = () => {
+
+  const { data, loading } = useQuery(shifts)
+
+  const generatedTable = data && reduce(generateTableReducer, {
+    columns: new Set(),
+    rows: []
+  }, data.shifts)
+
+  return loading
+    ? null
+    : $(Table, null,
         $(TableHead, null,
           $(TableRow, null,
-            map(day => 
-              $(TableCell, { style: { minWidth: '16ex' }}, day),
-              days))),
+            map(Header, Array.from(generatedTable.columns)))),
+            // map(day => 
+            //   $(TableCell, { style: { minWidth: '16ex' }}, day),
+            //   days))
         $(TableBody, null,
-          map(
-            shift => $(TableRow, null,
-              map(
-                day => $(TableCell, null,
-                  $(Box, null, shift),
-                  $(Box, null, '3 места')),
-                days)),
-            shifts)))
-        
-      // $(MuiPickersUtilsProvider, { utils: DateFnsUtils }, 
-      //   $(DatePicker, {
-      //     fullWidth: true,
-      //     autoOk: true,
-      //     variant: 'static',
-      //     openTo: 'date',
-      //     value: new Date(),
-      //     minDate: new Date(),
-      //     maxDate: addDays(new Date(), 14),
-      //     orientation: 'portrait',
-      //     onChange: console.log
-      //   })),
-  ))
+          map(generatedTable.rows, Row)))
+}
 
-const today = new Date()
-const days = map(
-  value => format(addDays(today, value), 'd LLLL'),
-  range(0, 13))
+const generateTableReducer = (result, { date, ...rest }) => {
+  result.columns.add(date)
+  return result
+}
 
-const shifts = ['8:00 - 14:00', '14:00 - 20:00', '20:00 - 8:00']
+const Header = date =>
+  $(TableCell, { style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
+
+const Row = cells =>
+  $(TableRow, 
+    map(cells, Cell))
+
+const Cell = ({ start, end, volunteers, professions }) =>
+  $(TableCell, { style: { minWidth: '16ex' }}, 'test')
+
+
+const shifts = gql`
+{
+  shifts {
+    date
+    start
+    end
+    professions {
+      name
+      number
+    }
+    volunteers {
+      uid
+      fname
+      mname
+      lname
+      phone
+    }
+  }
+}
+`
 
 export default VolunteerForm
