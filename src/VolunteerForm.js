@@ -6,6 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
 import map from 'lodash/fp/map'
 import reduce from 'lodash/fp/reduce'
+import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
 import TableBody from '@material-ui/core/TableBody'
@@ -13,6 +14,7 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Checkbox from '@material-ui/core/Checkbox'
+import { useParams } from 'react-router-dom'
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 // import ToggleButton from '@material-ui/lab/ToggleButton'
 // import DateFnsUtils from '@date-io/date-fns'
@@ -109,16 +111,28 @@ const Cell = ({
   end,
   volunteers,
   professions
-}) =>
-  $(TableCell, { style: { minWidth: '16ex' }},
-    $(Box, null, date),
+}) => {
+  let { profession } = useParams()
+
+  const required = find({ name: profession }, professions)
+  const available = required ? required.number : 0
+
+  return $(TableCell, { style: { minWidth: '16ex' }},
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, map(
-      ({ name, number }) => $(Box, null, `${number} ${name}`),
-      professions)),
+    $(Box, null, formatAvailable(available)),
     $(Box, { marginLeft: -1.5 },
-      $(Checkbox)))
+      $(Checkbox, { disabled: !available })))
+}
+
+const formatAvailable = available =>
+  available === 0
+    ? 'нет мест'
+    : available === 1
+      ? '1 место'
+      : available > 4
+        ? `${available} мест`
+        : `${available} места`
 
 const shifts = gql`
 query Shifts($from: date $to: date) {

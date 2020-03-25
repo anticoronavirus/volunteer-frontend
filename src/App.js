@@ -23,7 +23,7 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: '/volunteer', component: VolunteerForm }),
+      $(Route, { path: '/volunteer/:profession?', component: VolunteerForm }),
       $(Route, { path: '/', component: Main }),
       $(Redirect, { to: '/' })))
 }
