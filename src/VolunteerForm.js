@@ -5,6 +5,7 @@ import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
 import map from 'lodash/fp/map'
+import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
@@ -15,11 +16,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Checkbox from '@material-ui/core/Checkbox'
 import { useParams } from 'react-router-dom'
-// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-// import ToggleButton from '@material-ui/lab/ToggleButton'
-// import DateFnsUtils from '@date-io/date-fns'
 import format from 'date-fns/format'
-// import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 const VolunteerForm = () =>
   $(Box, { display: 'flex', padding: 3 },
@@ -30,10 +27,6 @@ const VolunteerForm = () =>
             'Регистрация волонтёров-врачей'),
             $(Typography, { variant: 'subtitle1', paragraph: true },
               'Anticorona'),
-          // $(ToggleButtonGroup, { size: 'small', exclusive: true,  },
-          //   $(ToggleButton, { value: 1 }, 'Врач'),
-          //   $(ToggleButton, { value: 2 }, 'Водитель'),
-          //   $(ToggleButton, { value: 3 }, 'Программист')),
           $(TextField, {
             margin: 'normal',
             label: 'Фамилия',
@@ -83,11 +76,8 @@ const Shifts = () => {
         $(TableHead, null,
           $(TableRow, null,
             map(Header, Array.from(generatedTable.columns)))),
-            // map(day => 
-            //   $(TableCell, { style: { minWidth: '16ex' }}, day),
-            //   days))
         $(TableBody, null,
-          map(Row, generatedTable.rows)))
+          map(Row, entries(generatedTable.rows))))
 }
 
 const generateTableReducer = (result, shift) => {
@@ -99,10 +89,12 @@ const generateTableReducer = (result, shift) => {
 }
 
 const Header = date =>
-  $(TableCell, { style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
+  $(TableCell, { key: date, style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
 
-const Row = cells =>
-  $(TableRow, null, map(Cell, cells))
+const Row = ([key, cells]) =>
+  $(TableRow, { key }, map(CellFunction, cells))
+
+const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
 
 const Cell = ({
   uid,
@@ -117,7 +109,7 @@ const Cell = ({
   const required = find({ name: profession }, professions)
   const available = required ? required.number : 0
 
-  return $(TableCell, { style: { minWidth: '16ex' }},
+  return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
     $(Box, null, formatAvailable(available)),
