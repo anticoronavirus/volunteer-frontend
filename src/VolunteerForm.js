@@ -72,7 +72,7 @@ const Shifts = () => {
 
   const generatedTable = data && reduce(generateTableReducer, {
     columns: new Set(),
-    rows: []
+    rows: {}
   }, data.shifts)
 
   return loading
@@ -85,11 +85,14 @@ const Shifts = () => {
             //   $(TableCell, { style: { minWidth: '16ex' }}, day),
             //   days))
         $(TableBody, null,
-          map(generatedTable.rows, Row)))
+          map(Row, generatedTable.rows)))
 }
 
-const generateTableReducer = (result, { date, ...rest }) => {
-  result.columns.add(date)
+const generateTableReducer = (result, shift) => {
+  result.columns.add(shift.date)
+  if (!result.rows[`${shift.start}-${shift.end}`])
+    result.rows[`${shift.start}-${shift.end}`] = []
+  result.rows[`${shift.start}-${shift.end}`].push(shift)
   return result
 }
 
@@ -97,16 +100,29 @@ const Header = date =>
   $(TableCell, { style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
 
 const Row = cells =>
-  $(TableRow, 
-    map(cells, Cell))
+  map(Cell, cells)
 
-const Cell = ({ start, end, volunteers, professions }) =>
-  $(TableCell, { style: { minWidth: '16ex' }}, 'test')
+const Cell = ({
+  uid,
+  date,
+  start,
+  end,
+  volunteers,
+  professions
+}) =>
+  $(TableCell, { style: { minWidth: '16ex' }},
+    $(Box, null, date),
+    $(Box, null, 
+      start.slice(0, 5), ' - ', end.slice(0, 5)),
+    $(Box, null, '3 места'),
+    $(Box, { marginLeft: -1.5 },
+      $(Checkbox)))
 
 
 const shifts = gql`
 {
-  shifts {
+  shifts(order_by: { date: asc, start: asc }) {
+    uid
     date
     start
     end
