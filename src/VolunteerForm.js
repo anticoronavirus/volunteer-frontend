@@ -3,9 +3,11 @@ import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
-import DateFnsUtils from '@date-io/date-fns'
-import addDays from 'date-fns/addDays'
-import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import ToggleButton from '@material-ui/lab/ToggleButton'
+// import DateFnsUtils from '@date-io/date-fns'
+// import addDays from 'date-fns/addDays'
+// import { DatePicker, MuiPickersUtilsProvider } from '@material-ui/pickers'
 
 const VolunteerForm = () =>
   $(Box, { margin: '32px auto', maxWidth: '70ex' }, 
@@ -44,20 +46,26 @@ const VolunteerForm = () =>
           label: 'Электропочта',
           variant: 'outlined',
           fullWidth: true
-        }))),
+        }),
+        $(Box, { height: 16 }),
+        $(ToggleButtonGroup, { size: 'large', exclusive: true,  },
+          $(ToggleButton, null, 'Врач'),
+          $(ToggleButton, null, 'Водитель'),
+          $(ToggleButton, null, 'Программист')))),
     $(Box, { height: 16 }),
     $(Paper, null,
-      $(MuiPickersUtilsProvider, { utils: DateFnsUtils }, 
-        $(DatePicker, {
-          autoOk: true,
-          variant: 'static',
-          openTo: 'date',
-          value: new Date(),
-          minDate: new Date(),
-          maxDate: addDays(new Date(), 14),
-          orientation: 'portrait',
-          onChange: console.log
-        })),
+      // $(MuiPickersUtilsProvider, { utils: DateFnsUtils }, 
+      //   $(DatePicker, {
+      //     fullWidth: true,
+      //     autoOk: true,
+      //     variant: 'static',
+      //     openTo: 'date',
+      //     value: new Date(),
+      //     minDate: new Date(),
+      //     maxDate: addDays(new Date(), 14),
+      //     orientation: 'portrait',
+      //     onChange: console.log
+      //   })),
         $(Box, { padding: 3 })
   ))
 
