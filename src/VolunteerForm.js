@@ -114,7 +114,9 @@ const Cell = ({
     $(Box, null, date),
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, '3 места'),
+    $(Box, null, map(
+      ({ name, number }) => $(Box, null, `${number} ${name}`),
+      professions)),
     $(Box, { marginLeft: -1.5 },
       $(Checkbox)))
 
