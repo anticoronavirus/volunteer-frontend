@@ -81,7 +81,7 @@ const VolunteerForm = ({ history }) => {
               }),
               $(Field, {
                 component: TextField,
-                validate: value => required(value) || (value.length < 10 && 'Введите корректный телефон'),
+                validate: value => required(value) || (value.length <= 10 && 'Введите корректный телефон'),
                 helperText: ' ',
                 variant: 'standard',
                 fullWidth: true,
