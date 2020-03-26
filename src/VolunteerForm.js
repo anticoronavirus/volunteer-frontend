@@ -81,7 +81,7 @@ const VolunteerForm = ({ history }) => {
               }),
               $(Field, {
                 component: TextField,
-                validate: value => required(value) || (value.length <= 10 && 'Введите корректный телефон'),
+                validate: value => value.length <= 10 && 'Введите корректный телефон',
                 helperText: ' ',
                 variant: 'standard',
                 fullWidth: true,
@@ -93,7 +93,7 @@ const VolunteerForm = ({ history }) => {
               $(Field, {
                 component: TextField,
                 variant: 'standard',
-                validate: required,
+                validate: value => value.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/) ? null : 'Введите корректную почту',
                 helperText: ' ',
                 fullWidth: true,
                 margin: 'dense',
