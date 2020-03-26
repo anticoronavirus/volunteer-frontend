@@ -11,6 +11,8 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Switch from '@material-ui/core/Switch'
+import IconButton from '@material-ui/core/IconButton'
+import DeleteIcon from '@material-ui/icons/Delete'
 import ru from 'date-fns/locale/ru'
 import {
   flipConfirm,
@@ -56,13 +58,15 @@ const Row = ({ confirmed, shift, volunteer }) =>
     $(TableCell, null, volunteer.email),
     $(Controls, { shift_id: shift.uid, volunteer_id: volunteer.uid, confirmed }))
 
-const Controls = variables => {
+const Controls = ({ confirmed, ...variables}) => {
 
-  const [flip] = useMutation(flipConfirm, { variables: { ...variables, confirmed: !variables.confirmed } })
-  const [remove] = useMutation(removeVolunteerFromShift, variables)
+  const [flip] = useMutation(flipConfirm, { variables: { ...variables, confirmed: !confirmed } })
+  const [remove] = useMutation(removeVolunteerFromShift, { variables })
 
-  return $(TableCell, null,
-    $(Switch, { checked: variables.confirmed, onChange: flip  }))
+  return $(TableCell, { style: { width: 160 }},
+    $(Switch, { checked: confirmed, onChange: flip  }),
+    $(IconButton, { onClick: remove },
+      $(DeleteIcon)))
 }
 
 export default Shifts
