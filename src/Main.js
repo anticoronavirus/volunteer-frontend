@@ -8,7 +8,7 @@ const Main = () => {
   let history = useHistory()
 
   return $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh' },
-    $(Button, { onClick: () => history.push('/volunteer') }, 'Форма для волонтёров'))
+    $(Button, { onClick: () => history.push('/volunteer/врач') }, 'Форма для волонтёров'))
 }
 
 export default Main

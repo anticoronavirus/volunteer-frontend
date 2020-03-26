@@ -25,7 +25,7 @@ import addDays from 'date-fns/addDays'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 
-const VolunteerForm = () => {
+const VolunteerForm = ({ history }) => {
 
   const theme = useTheme()
   let { profession } = useParams()
@@ -43,6 +43,7 @@ const VolunteerForm = () => {
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
+              .then(({ data }) => history.push(`/volunteer/${profession}/${data.insert_volunteer.returning[0].uid}`))
           }, ({ submitForm, isValid, dirty }) =>
             $(Form, null, 
               $(Field, {
@@ -208,17 +209,22 @@ const Cell = ({
   volunteers,
   professions
 }) => {
-  let { profession } = useParams()
+  let { profession, volunteer_id } = useParams()
 
   const required = find({ name: profession }, professions)
+  const me = find({ uid: volunteer_id }, volunteers)
+
   const available = required ? required.number : 0
+  const [mutate] = useMutation(
+    me ? removeVolunteerFromShift : addVolunteerToShift,
+    { variables: { shift_id: uid, volunteer_id }})
 
   return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
     $(Box, null, formatAvailable(available)),
     $(Box, { marginLeft: -1.5 },
-      $(Checkbox, { disabled: !available })))
+      $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
 }
 
 const formatAvailable = available =>
@@ -229,6 +235,49 @@ const formatAvailable = available =>
       : available > 4
         ? `${available} мест`
         : `${available} места`
+
+const addVolunteerToShift = gql`
+mutation AddVolunteerToShift(
+  $volunteer_id: uuid
+  $shift_id: uuid
+) {
+  insert_volunteer_shift(objects: [{
+    volunteer_id: $volunteer_id
+    shift_id: $shift_id
+  }]) {
+    returning {
+      shift {
+        uid
+        volunteers {
+          uid
+        }
+      }
+    }
+  }
+}
+`
+
+const removeVolunteerFromShift = gql`
+mutation AddVolunteerToShift(
+  $volunteer_id: uuid
+  $shift_id: uuid
+) {
+  delete_volunteer_shift(where: {
+    volunteer_id: { _eq: $volunteer_id }
+    shift_id: { _eq: $shift_id }
+  }) {
+    returning {
+      shift {
+        uid
+        volunteers {
+          uid
+        }
+      }
+    }
+  }
+}
+`
+
 
 const shifts = gql`
 subscription Shifts($from: date $to: date) {
