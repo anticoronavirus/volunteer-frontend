@@ -79,6 +79,27 @@ mutation AddVolunteerToShift(
 }
 `
 
+export const volunteerShifts = gql`
+subscription VolunteerShifts($from: date $to: date) {
+  volunteer_shift(
+    order_by: { shift: { date: asc } }
+    where: { shift: { date: { _gte: $from  _lt: $to }}}) {
+    shift {
+      date
+      start
+      end
+    }
+    volunteer {
+      fname
+      mname
+      lname
+      phone
+      email
+      profession
+    }
+  }
+}`
+
 export const shifts = gql`
 subscription Shifts($from: date $to: date $profession: String ) {
   shifts(
