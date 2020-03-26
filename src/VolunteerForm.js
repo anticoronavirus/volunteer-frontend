@@ -1,7 +1,7 @@
 import { createElement as $, useState, memo } from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
+// import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import Table from '@material-ui/core/Table'
 import map from 'lodash/fp/map'
@@ -10,6 +10,7 @@ import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/react-hooks'
+import Button from '@material-ui/core/Button'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
@@ -19,13 +20,13 @@ import { useTheme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
+import { Formik, Form, Field } from 'formik'
+import { TextField } from 'formik-material-ui'
 
 const VolunteerForm = () => {
 
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
-
-  const [form, setForm] = useState({})
 
   return $(Box, matches && { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
@@ -35,52 +36,82 @@ const VolunteerForm = () => {
             'Регистрация волонтёров-врачей'),
             $(Typography, { variant: 'subtitle1', paragraph: true },
               'Anticorona'),
-          $('form', { onChange: event => setForm(event.target.value, event.target.id) }, 
-            $(TextField, {
-              value: form.lname,
-              id: 'lname',
-              margin: 'normal',
-              label: 'Фамилия',
-              variant: 'outlined',
-              fullWidth: true
-            }),
-            $(TextField, {
-              value: form.fname,
-              id: 'fname',
-              margin: 'normal',
-              label: 'Имя',
-              variant: 'outlined',
-              fullWidth: true
-            }),
-            $(TextField, {
-              value: form.mname,
-              id: 'mname',
-              margin: 'normal',
-              label: 'Отчество',
-              variant: 'outlined',
-              fullWidth: true
-            }),
-            $(TextField, {
-              value: form.phone,
-              id: 'phone',
-              margin: 'normal',
-              label: 'Телефон',
-              variant: 'outlined',
-              fullWidth: true
-            }),
-            $(TextField, {
-              value: form.email,
-              id: 'email',
-              margin: 'normal',
-              label: 'Электропочта',
-              variant: 'outlined',
-              fullWidth: true
-            })),
-          $(Box, { height: 16 }),))),
+          $(Formik, {
+            initialValues,
+            onSubmit: console.log
+          }, ({ submitForm, isValid, initialErrors  }) =>
+            $(Form, null, 
+              $(Field, {
+                component: TextField,
+                validate: required,
+                helperText: ' ',
+                variant: 'standard',
+                fullWidth: true,
+                margin: 'dense',
+                name: 'lname',
+                type: 'text',
+                label: 'Фамилия'
+              }),
+              $(Field, {
+                component: TextField,
+                validate: required,
+                helperText: ' ',
+                variant: 'standard',
+                fullWidth: true,
+                margin: 'dense',
+                name: 'fname',
+                type: 'text',
+                label: 'Имя'
+              }),
+              $(Field, {
+                component: TextField,
+                validate: required,
+                helperText: ' ',
+                variant: 'standard',
+                fullWidth: true,
+                margin: 'dense',
+                name: 'mname',
+                type: 'text',
+                label: 'Отчество'
+              }),
+              $(Field, {
+                component: TextField,
+                validate: value => required(value) || (value.length < 10 && 'Введите корректный телефон'),
+                helperText: ' ',
+                variant: 'standard',
+                fullWidth: true,
+                margin: 'dense',
+                name: 'phone',
+                type: 'phone',
+                label: 'Телефон'
+              }),
+              $(Field, {
+                component: TextField,
+                variant: 'standard',
+                validate: required,
+                helperText: ' ',
+                fullWidth: true,
+                margin: 'dense',
+                name: 'email',
+                type: 'email',
+                label: 'Электропочта',
+              }),
+              isValid &&
+                $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
     $(Box, { height: 16, minWidth: 16 }),
     $(Paper, !matches && { style: { overflowX: 'scroll' }},
       $(Shifts)))
 }
+
+const initialValues = {
+  lname: '', 
+  mname: '', 
+  fname: '', 
+  phone: '', 
+  email: '', 
+}
+
+const required = value => !value && 'Обязательное поле'
 
 const Shifts = memo(() => {
 
