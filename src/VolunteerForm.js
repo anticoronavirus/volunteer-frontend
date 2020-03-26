@@ -107,8 +107,10 @@ const VolunteerForm = ({ history }) => {
                 type: 'email',
                 label: 'Электропочта',
               }),
-              dirty && isValid &&
-                $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
+              data && data.insert_volunteer.returning[0].uid
+                ? `Спасибо за то, что готовы помочь. Выберите смены ${matches ? 'справа' : 'внизу'} а мы позвоним накануне для подтверждения`
+                : dirty && isValid &&
+                    $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
     $(Box, { height: 16, minWidth: 16 }),
     data && data.insert_volunteer.returning[0].uid &&
       $(Paper, !matches && { style: { overflowX: 'scroll' }},
