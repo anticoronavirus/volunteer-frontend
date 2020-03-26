@@ -99,7 +99,7 @@ const VolunteerForm = ({ history }) => {
               $(Field, {
                 component: TextField,
                 variant: 'standard',
-                validate: value => value.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/) ? null : 'Введите корректную почту',
+                validate: value => value.match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/) ? null : 'Введите корректную почту',
                 helperText: ' ',
                 fullWidth: true,
                 margin: 'dense',
