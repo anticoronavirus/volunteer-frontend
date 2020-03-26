@@ -49,7 +49,6 @@ const Row = ({ shift, volunteer }) =>
     $(TableCell, null, volunteer.profession),
     $(TableCell, null, volunteer.lname, ' ', volunteer.fname, ' ', volunteer.mname, ),
     $(TableCell, null, volunteer.phone),
-    $(TableCell, null, volunteer.email),
-    )
+    $(TableCell, null, volunteer.email))
 
 export default Shifts
