@@ -15,14 +15,19 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Checkbox from '@material-ui/core/Checkbox'
+import { useTheme } from '@material-ui/core/styles'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 
 const VolunteerForm = () => {
 
+  const theme = useTheme()
+  const matches = useMediaQuery(theme.breakpoints.up('sm'))
+
   const [form, setForm] = useState({})
 
-  return $(Box, { display: 'flex', padding: 3 },
+  return $(Box, matches && { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
       $(Paper, null,
         $(Box, { padding: 3 },
@@ -73,7 +78,8 @@ const VolunteerForm = () => {
             })),
           $(Box, { height: 16 }),))),
     $(Box, { height: 16, minWidth: 16 }),
-    $(Paper, null, $(Shifts)))
+    $(Paper, !matches && { style: { overflowX: 'scroll' }},
+      $(Shifts)))
 }
 
 const Shifts = memo(() => {
