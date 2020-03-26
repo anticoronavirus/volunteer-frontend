@@ -1,0 +1,104 @@
+import gql from 'graphql-tag'
+
+export const addVolunteer = gql`
+mutation UpsertVolunteer(
+  $fname: String
+  $mname: String
+  $lname: String
+  $email: String
+  $profession: String
+  $phone: String
+) {
+  insert_volunteer(
+    objects: [{
+      fname: $fname
+      mname: $mname
+      lname: $lname
+      email: $email
+      phone: $phone
+      profession: $profession
+    }]
+    on_conflict: {
+      constraint: volunteer_phone_email_key
+      update_columns: [
+        fname
+        mname
+        lname
+        profession
+      ]
+    }) {
+    returning {
+      uid
+      shifts {
+        uid
+      }
+    }
+  }
+}
+`
+
+export const addVolunteerToShift = gql`
+mutation AddVolunteerToShift(
+  $volunteer_id: uuid
+  $shift_id: uuid
+) {
+  insert_volunteer_shift(objects: [{
+    volunteer_id: $volunteer_id
+    shift_id: $shift_id
+  }]) {
+    returning {
+      shift {
+        uid
+        volunteers {
+          uid
+        }
+      }
+    }
+  }
+}
+`
+
+export const removeVolunteerFromShift = gql`
+mutation AddVolunteerToShift(
+  $volunteer_id: uuid
+  $shift_id: uuid
+) {
+  delete_volunteer_shift(where: {
+    volunteer_id: { _eq: $volunteer_id }
+    shift_id: { _eq: $shift_id }
+  }) {
+    returning {
+      shift {
+        uid
+        volunteers {
+          uid
+        }
+      }
+    }
+  }
+}
+`
+
+export const shifts = gql`
+subscription Shifts($from: date $to: date $profession: String ) {
+  shifts(
+    order_by: { date: asc, start: asc }
+    where: { date: { _gte: $from  _lt: $to } }) {
+    uid
+    date
+    start
+    end
+    professions {
+      name
+      number
+    }
+    volunteers (where: { profession: { _eq: $profession }}) {
+      uid
+      fname
+      mname
+      lname
+      phone
+    }
+  }
+}
+`

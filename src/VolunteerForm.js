@@ -8,7 +8,6 @@ import map from 'lodash/fp/map'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
-import gql from 'graphql-tag'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -24,6 +23,12 @@ import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
+import {
+  addVolunteer,
+  shifts,
+  addVolunteerToShift,
+  removeVolunteerFromShift
+} from 'queries'
 
 const VolunteerForm = ({ history }) => {
 
@@ -125,43 +130,6 @@ const initialValues = {
 
 const required = value => !value && 'Обязательное поле'
 
-const addVolunteer = gql`
-mutation UpsertVolunteer(
-  $fname: String
-  $mname: String
-  $lname: String
-  $email: String
-  $profession: String
-  $phone: String
-) {
-  insert_volunteer(
-    objects: [{
-      fname: $fname
-      mname: $mname
-      lname: $lname
-      email: $email
-      phone: $phone
-      profession: $profession
-    }]
-    on_conflict: {
-      constraint: volunteer_phone_email_key
-      update_columns: [
-        fname
-        mname
-        lname
-        profession
-      ]
-    }) {
-    returning {
-      uid
-      shifts {
-        uid
-      }
-    }
-  }
-}
-`
-
 const now = new Date()
 
 const Shifts = memo(() => {
@@ -243,72 +211,5 @@ const formatAvailable = available =>
       : available > 4
         ? `${available} мест`
         : `${available} места`
-
-const addVolunteerToShift = gql`
-mutation AddVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
-) {
-  insert_volunteer_shift(objects: [{
-    volunteer_id: $volunteer_id
-    shift_id: $shift_id
-  }]) {
-    returning {
-      shift {
-        uid
-        volunteers {
-          uid
-        }
-      }
-    }
-  }
-}
-`
-
-const removeVolunteerFromShift = gql`
-mutation AddVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
-) {
-  delete_volunteer_shift(where: {
-    volunteer_id: { _eq: $volunteer_id }
-    shift_id: { _eq: $shift_id }
-  }) {
-    returning {
-      shift {
-        uid
-        volunteers {
-          uid
-        }
-      }
-    }
-  }
-}
-`
-
-
-const shifts = gql`
-subscription Shifts($from: date $to: date $profession: String ) {
-  shifts(
-    order_by: { date: asc, start: asc }
-    where: { date: { _gte: $from  _lt: $to } }) {
-    uid
-    date
-    start
-    end
-    professions {
-      name
-      number
-    }
-    volunteers (where: { profession: { _eq: $profession }}) {
-      uid
-      fname
-      mname
-      lname
-      phone
-    }
-  }
-}
-`
 
 export default VolunteerForm
