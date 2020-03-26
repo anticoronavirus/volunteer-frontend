@@ -85,11 +85,13 @@ subscription VolunteerShifts($from: date $to: date) {
     order_by: { shift: { date: asc } }
     where: { shift: { date: { _gte: $from  _lt: $to }}}) {
     shift {
+      uid
       date
       start
       end
     }
     volunteer {
+      uid
       fname
       mname
       lname

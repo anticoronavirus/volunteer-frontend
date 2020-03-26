@@ -4,6 +4,7 @@ import Main from 'Main'
 import Shifts from 'Shifts'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
+import format from 'date-fns/format'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
@@ -24,7 +25,7 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: '/shifts', component: Shifts }),
+      $(Route, { path: `/shifts-${format(new Date(), 'yyyy-MM-dd')}`, component: Shifts }),
       $(Route, { path: '/volunteer/:profession?/:volunteer_id?', component: VolunteerForm }),
       $(Route, { path: '/', component: Main }),
       $(Redirect, { to: '/' })))
