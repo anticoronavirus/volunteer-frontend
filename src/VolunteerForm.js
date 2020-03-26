@@ -9,7 +9,7 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -27,6 +27,9 @@ const VolunteerForm = () => {
 
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
+  const [mutate, { data }] = useMutation(addVolunteer)
+
+  console.log(data)
 
   return $(Box, matches && { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
@@ -38,8 +41,8 @@ const VolunteerForm = () => {
               'Anticorona'),
           $(Formik, {
             initialValues,
-            onSubmit: console.log
-          }, ({ submitForm, isValid, initialErrors  }) =>
+            onSubmit: variables => mutate({ variables })
+          }, ({ submitForm, isValid, dirty }) =>
             $(Form, null, 
               $(Field, {
                 component: TextField,
@@ -96,7 +99,7 @@ const VolunteerForm = () => {
                 type: 'email',
                 label: 'Электропочта',
               }),
-              isValid &&
+              dirty && isValid &&
                 $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
     $(Box, { height: 16, minWidth: 16 }),
     $(Paper, !matches && { style: { overflowX: 'scroll' }},
@@ -112,6 +115,40 @@ const initialValues = {
 }
 
 const required = value => !value && 'Обязательное поле'
+
+const addVolunteer = gql`
+mutation UpsertVolunteer(
+  $fname: String
+  $mname: String
+  $lname: String
+  $email: String
+  $phone: String
+) {
+  insert_volunteer(
+    objects: [{
+      fname: $fname
+      mname: $mname
+      lname: $lname
+      email: $email
+      phone: $phone
+    }]
+    on_conflict: {
+      constraint: volunteer_phone_email_key
+      update_columns: [
+        fname
+        mname
+        lname
+      ]
+    }) {
+    returning {
+      uid
+      shifts {
+        uid
+      }
+    }
+  }
+}
+`
 
 const Shifts = memo(() => {
 
