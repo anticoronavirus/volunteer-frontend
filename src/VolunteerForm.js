@@ -1,7 +1,6 @@
 import { createElement as $, memo } from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
-// import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import map from 'lodash/fp/map'
 import entries from 'lodash/fp/entries'
