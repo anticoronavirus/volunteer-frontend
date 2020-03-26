@@ -1,4 +1,4 @@
-import { createElement as $ } from 'react'
+import { createElement as $, useState, memo } from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
@@ -18,8 +18,11 @@ import Checkbox from '@material-ui/core/Checkbox'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 
-const VolunteerForm = () =>
-  $(Box, { display: 'flex', padding: 3 },
+const VolunteerForm = () => {
+
+  const [form, setForm] = useState({})
+
+  return $(Box, { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
       $(Paper, null,
         $(Box, { padding: 3 },
@@ -27,41 +30,53 @@ const VolunteerForm = () =>
             'Регистрация волонтёров-врачей'),
             $(Typography, { variant: 'subtitle1', paragraph: true },
               'Anticorona'),
-          $(TextField, {
-            margin: 'normal',
-            label: 'Фамилия',
-            variant: 'outlined',
-            fullWidth: true
-          }),
-          $(TextField, {
-            margin: 'normal',
-            label: 'Имя',
-            variant: 'outlined',
-            fullWidth: true
-          }),
-          $(TextField, {
-            margin: 'normal',
-            label: 'Отчество',
-            variant: 'outlined',
-            fullWidth: true
-          }),
-          $(TextField, {
-            margin: 'normal',
-            label: 'Телефон',
-            variant: 'outlined',
-            fullWidth: true
-          }),
-          $(TextField, {
-            margin: 'normal',
-            label: 'Электропочта',
-            variant: 'outlined',
-            fullWidth: true
-          }),
+          $('form', { onChange: event => setForm(event.target.value, event.target.id) }, 
+            $(TextField, {
+              value: form.lname,
+              id: 'lname',
+              margin: 'normal',
+              label: 'Фамилия',
+              variant: 'outlined',
+              fullWidth: true
+            }),
+            $(TextField, {
+              value: form.fname,
+              id: 'fname',
+              margin: 'normal',
+              label: 'Имя',
+              variant: 'outlined',
+              fullWidth: true
+            }),
+            $(TextField, {
+              value: form.mname,
+              id: 'mname',
+              margin: 'normal',
+              label: 'Отчество',
+              variant: 'outlined',
+              fullWidth: true
+            }),
+            $(TextField, {
+              value: form.phone,
+              id: 'phone',
+              margin: 'normal',
+              label: 'Телефон',
+              variant: 'outlined',
+              fullWidth: true
+            }),
+            $(TextField, {
+              value: form.email,
+              id: 'email',
+              margin: 'normal',
+              label: 'Электропочта',
+              variant: 'outlined',
+              fullWidth: true
+            })),
           $(Box, { height: 16 }),))),
     $(Box, { height: 16, minWidth: 16 }),
     $(Paper, null, $(Shifts)))
+}
 
-const Shifts = () => {
+const Shifts = memo(() => {
 
   const { data, loading } = useQuery(shifts)
 
@@ -78,7 +93,7 @@ const Shifts = () => {
             map(Header, Array.from(generatedTable.columns)))),
         $(TableBody, null,
           map(Row, entries(generatedTable.rows))))
-}
+})
 
 const generateTableReducer = (result, shift) => {
   result.columns.add(shift.date)
