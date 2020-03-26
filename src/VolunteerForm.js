@@ -21,6 +21,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import ru from 'date-fns/locale/ru'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import {
@@ -44,7 +45,7 @@ const VolunteerForm = ({ history }) => {
           $(Typography, { variant: 'h4', paragraph: true },
             `Регистрация волонтёров-${professions[profession]}`),
             $(Typography, { variant: 'subtitle1', paragraph: true },
-              'Anticorona'),
+              'Anticorona в ГКБ №40'),
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
@@ -168,7 +169,7 @@ const generateTableReducer = (result, shift) => {
 }
 
 const Header = date =>
-  $(TableCell, { key: date, style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM'))
+  $(TableCell, { key: date, style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM', { locale: ru }))
 
 const Row = ([key, cells]) =>
   $(TableRow, { key }, map(CellFunction, cells))

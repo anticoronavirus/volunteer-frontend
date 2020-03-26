@@ -10,6 +10,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import ru from 'date-fns/locale/ru'
 import {
   volunteerShifts,
 } from 'queries'
@@ -43,7 +44,7 @@ const Shifts = () => {
 
 const Row = ({ shift, volunteer }) =>
   $(TableRow, null,
-    $(TableCell, null, format(new Date(shift.date), 'd MMMM')),
+    $(TableCell, null, format(new Date(shift.date), 'd MMMM', { locale: ru })),
     $(TableCell, null, shift.start.slice(0, 5), ' - ', shift.end.slice(0, 5)),
     $(TableCell, null, volunteer.profession),
     $(TableCell, null, volunteer.lname, ' ', volunteer.fname, ' ', volunteer.mname, ),
