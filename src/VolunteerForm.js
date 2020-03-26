@@ -23,6 +23,7 @@ import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import ru from 'date-fns/locale/ru'
 import { Formik, Form, Field } from 'formik'
+import MaskedInput from 'react-input-mask'
 import { TextField } from 'formik-material-ui'
 import {
   addVolunteer,
@@ -87,25 +88,26 @@ const VolunteerForm = ({ history }) => {
               }),
               $(Field, {
                 component: TextField,
-                validate: value => value.match(/^(\+7|7|8)?[\s-]?\(?[489][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/) ? null : 'Введите корректный телефон',
+                // validate: value => value.match(/^(\+7|7|8)?[\s-]?\(?[489][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/) ? null : 'Введите корректный телефон',
                 helperText: ' ',
                 variant: 'standard',
                 fullWidth: true,
                 margin: 'dense',
                 name: 'phone',
                 type: 'phone',
-                label: 'Телефон'
+                label: 'Телефон',
+                InputProps: { inputComponent: PhoneField }
               }),
               $(Field, {
                 component: TextField,
                 variant: 'standard',
-                validate: value => value.match(/^([a-zA-Z0-9_\-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/) ? null : 'Введите корректную почту',
+                validate: value => value.match(/^([a-zA-Z0-9_\-.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/) ? null : 'Введите корректную почту',
                 helperText: ' ',
                 fullWidth: true,
                 margin: 'dense',
                 name: 'email',
                 type: 'email',
-                label: 'Электропочта',
+                label: 'Электропочта'
               }),
               data && data.insert_volunteer.returning[0].uid
                 ? `Спасибо за то, что готовы помочь. Выберите смены ${matches ? 'справа' : 'внизу'} а мы позвоним накануне для подтверждения`
@@ -116,6 +118,15 @@ const VolunteerForm = ({ history }) => {
       $(Paper, !matches && { style: { overflowX: 'scroll' }},
         $(Shifts)))
 }
+
+const PhoneField = ({
+  inputRef,
+  ...other
+}) =>
+  $(MaskedInput, {
+    ...other,
+    mask: '+7 (\\999) 999-9999',
+  })
 
 const professions = {
   'врач': 'врачей',
