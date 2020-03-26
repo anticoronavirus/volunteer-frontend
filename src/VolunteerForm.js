@@ -11,6 +11,7 @@ import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
@@ -27,6 +28,7 @@ import { TextField } from 'formik-material-ui'
 const VolunteerForm = () => {
 
   const theme = useTheme()
+  let { profession } = useParams()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
   const [mutate, { data }] = useMutation(addVolunteer)
 
@@ -35,7 +37,7 @@ const VolunteerForm = () => {
       $(Paper, null,
         $(Box, { padding: 3 },
           $(Typography, { variant: 'h4', paragraph: true },
-            'Регистрация волонтёров-врачей'),
+            `Регистрация волонтёров-${professions[profession]}`),
             $(Typography, { variant: 'subtitle1', paragraph: true },
               'Anticorona'),
           $(Formik, {
@@ -106,6 +108,12 @@ const VolunteerForm = () => {
         $(Shifts)))
 }
 
+const professions = {
+  'врач': 'врачей',
+  'медсестра': 'медсестёр',
+  'водитель': 'водителей',
+}
+
 const initialValues = {
   lname: '', 
   mname: '', 
@@ -167,7 +175,7 @@ const Shifts = memo(() => {
   }, data.shifts)
 
   return !data
-    ? null
+    ? $(Box, { padding: 2 }, $(CircularProgress))
     : $(Table, null,
         $(TableHead, null,
           $(TableRow, null,
