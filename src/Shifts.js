@@ -1,5 +1,5 @@
 import { createElement as $ } from 'react'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import map from 'lodash/fp/map'
 import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
@@ -13,7 +13,9 @@ import TableRow from '@material-ui/core/TableRow'
 import Switch from '@material-ui/core/Switch'
 import ru from 'date-fns/locale/ru'
 import {
+  flipConfirm,
   volunteerShifts,
+  removeVolunteerFromShift
 } from 'queries'
 
 const now = new Date()
@@ -44,7 +46,7 @@ const Shifts = () => {
           map(Row, data.volunteer_shift)))
 }
 
-const Row = ({ shift, volunteer }) =>
+const Row = ({ confirmed, shift, volunteer }) =>
   $(TableRow, { key: shift.uid + volunteer.uid },
     $(TableCell, null, format(new Date(shift.date), 'd MMMM', { locale: ru })),
     $(TableCell, null, shift.start.slice(0, 5), ' - ', shift.end.slice(0, 5)),
@@ -52,7 +54,15 @@ const Row = ({ shift, volunteer }) =>
     $(TableCell, null, volunteer.lname, ' ', volunteer.fname, ' ', volunteer.mname, ),
     $(TableCell, null, volunteer.phone),
     $(TableCell, null, volunteer.email),
-    $(TableCell, null,
-      $(Switch, { value: false })))
+    $(Controls, { shift_id: shift.uid, volunteer_id: volunteer.uid, confirmed }))
+
+const Controls = variables => {
+
+  const [flip] = useMutation(flipConfirm, { variables: { ...variables, confirmed: !variables.confirmed } })
+  const [remove] = useMutation(removeVolunteerFromShift, variables)
+
+  return $(TableCell, null,
+    $(Switch, { checked: variables.confirmed, onChange: flip  }))
+}
 
 export default Shifts

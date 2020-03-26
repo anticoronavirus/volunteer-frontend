@@ -82,8 +82,9 @@ mutation AddVolunteerToShift(
 export const volunteerShifts = gql`
 subscription VolunteerShifts($from: date $to: date) {
   volunteer_shift(
-    order_by: { shift: { date: asc } }
+    order_by: { shift: { date: asc } volunteer: { uid: asc } }
     where: { shift: { date: { _gte: $from  _lt: $to }}}) {
+    confirmed
     shift {
       uid
       date
@@ -125,3 +126,24 @@ subscription Shifts($from: date $to: date $profession: String ) {
   }
 }
 `
+
+export const flipConfirm = gql`
+mutation FlipConfirm(
+  $confirmed: Boolean
+  $volunteer_id: uuid
+  $shift_id: uuid
+) {
+  update_volunteer_shift(
+    _set: { confirmed: $confirmed }
+    where: {
+      volunteer_id: { _eq: $volunteer_id }
+      shift_id: { _eq: $shift_id }
+      }
+  ) {
+    returning {
+      shift_id
+      volunteer_id
+      confirmed
+    }
+  }
+}`
