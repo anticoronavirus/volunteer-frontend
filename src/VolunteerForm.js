@@ -215,7 +215,7 @@ const Cell = ({
   const me = find({ uid: volunteer_id }, volunteers)
 
   const available = required ? required.number : 0
-  const [mutate] = useMutation(
+  const [mutate, { loading }] = useMutation(
     me ? removeVolunteerFromShift : addVolunteerToShift,
     { variables: { shift_id: uid, volunteer_id }})
 
@@ -223,8 +223,10 @@ const Cell = ({
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
     $(Box, null, formatAvailable(available)),
-    $(Box, { marginLeft: -1.5 },
-      $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
+    loading
+      ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
+      : $(Box, { marginLeft: -1.5 },
+          $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
 }
 
 const formatAvailable = available =>
