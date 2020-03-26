@@ -1,4 +1,4 @@
-import { createElement as $, useState, memo } from 'react'
+import { createElement as $, memo } from 'react'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 // import TextField from '@material-ui/core/TextField'
@@ -20,6 +20,7 @@ import { useTheme } from '@material-ui/core/styles'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 
@@ -28,8 +29,6 @@ const VolunteerForm = () => {
   const theme = useTheme()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
   const [mutate, { data }] = useMutation(addVolunteer)
-
-  console.log(data)
 
   return $(Box, matches && { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
@@ -102,8 +101,9 @@ const VolunteerForm = () => {
               dirty && isValid &&
                 $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
     $(Box, { height: 16, minWidth: 16 }),
-    $(Paper, !matches && { style: { overflowX: 'scroll' }},
-      $(Shifts)))
+    data && data.insert_volunteer.returning[0].uid &&
+      $(Paper, !matches && { style: { overflowX: 'scroll' }},
+        $(Shifts)))
 }
 
 const initialValues = {
@@ -150,9 +150,16 @@ mutation UpsertVolunteer(
 }
 `
 
+const now = new Date()
+
 const Shifts = memo(() => {
 
-  const { data, loading } = useQuery(shifts)
+  const { data, loading } = useQuery(shifts, {
+    variables: {
+      from: now,
+      to: addDays(now, 14)
+    }
+  })
 
   const generatedTable = data && reduce(generateTableReducer, {
     columns: new Set(),
@@ -219,7 +226,7 @@ const shifts = gql`
 query Shifts($from: date $to: date) {
   shifts(
     order_by: { date: asc, start: asc }
-    where: { date: { _gt: $from  _lt: $to } }) {
+    where: { date: { _gte: $from  _lt: $to } }) {
     uid
     date
     start
