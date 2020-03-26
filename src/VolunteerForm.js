@@ -30,7 +30,7 @@ const VolunteerForm = ({ history }) => {
   const theme = useTheme()
   let { profession } = useParams()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
-  const [mutate, { data }] = useMutation(addVolunteer)
+  const [mutate, { data }] = useMutation(addVolunteer, { variables: { profession } })
 
   return $(Box, matches && { display: 'flex', padding: 3 },
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
@@ -131,6 +131,7 @@ mutation UpsertVolunteer(
   $mname: String
   $lname: String
   $email: String
+  $profession: String
   $phone: String
 ) {
   insert_volunteer(
@@ -140,6 +141,7 @@ mutation UpsertVolunteer(
       lname: $lname
       email: $email
       phone: $phone
+      profession: $profession
     }]
     on_conflict: {
       constraint: volunteer_phone_email_key
@@ -147,6 +149,7 @@ mutation UpsertVolunteer(
         fname
         mname
         lname
+        profession
       ]
     }) {
     returning {
@@ -163,8 +166,11 @@ const now = new Date()
 
 const Shifts = memo(() => {
 
+  let { profession } = useParams()
+
   const { data } = useSubscription(shifts, {
     variables: {
+      profession,
       from: now,
       to: addDays(now, 14)
     }
@@ -214,7 +220,7 @@ const Cell = ({
   const required = find({ name: profession }, professions)
   const me = find({ uid: volunteer_id }, volunteers)
 
-  const available = required ? required.number : 0
+  const available = required ? required.number - volunteers.length : 0
   const [mutate, { loading }] = useMutation(
     me ? removeVolunteerFromShift : addVolunteerToShift,
     { variables: { shift_id: uid, volunteer_id }})
@@ -282,7 +288,7 @@ mutation AddVolunteerToShift(
 
 
 const shifts = gql`
-subscription Shifts($from: date $to: date) {
+subscription Shifts($from: date $to: date $profession: String ) {
   shifts(
     order_by: { date: asc, start: asc }
     where: { date: { _gte: $from  _lt: $to } }) {
@@ -294,7 +300,7 @@ subscription Shifts($from: date $to: date) {
       name
       number
     }
-    volunteers {
+    volunteers (where: { profession: { _eq: $profession }}) {
       uid
       fname
       mname

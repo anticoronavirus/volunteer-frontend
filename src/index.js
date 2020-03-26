@@ -11,12 +11,8 @@ const httpLink = new HttpLink({
   uri: '/v1/graphql'
 })
 
-const hostname = process.env.NODE_ENV === 'development'
-  ? 'koltsov.family'
-  : window.location.hostname
-
 const wsLink = new WebSocketLink({
-  uri: `wss://${hostname}/v1/graphql`,
+  uri: `wss://anticorona.moscow/v1/graphql`,
   options: {
     reconnect: true
   }

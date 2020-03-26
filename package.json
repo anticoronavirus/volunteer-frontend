@@ -2,7 +2,7 @@
   "name": "volunteer-frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://koltsov.family/",
+  "proxy": "https://anticorona.moscow/",
   "dependencies": {
     "@apollo/client": "3.0.0-beta.41",
     "@apollo/link-ws": "2.0.0-beta.3",
