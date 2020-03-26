@@ -154,7 +154,7 @@ const now = new Date()
 
 const Shifts = memo(() => {
 
-  const { data, loading } = useSubscription(shifts, {
+  const { data } = useSubscription(shifts, {
     variables: {
       from: now,
       to: addDays(now, 14)
