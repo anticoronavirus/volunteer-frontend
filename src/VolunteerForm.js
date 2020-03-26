@@ -9,7 +9,7 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
 import gql from 'graphql-tag'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 import Button from '@material-ui/core/Button'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -154,7 +154,7 @@ const now = new Date()
 
 const Shifts = memo(() => {
 
-  const { data, loading } = useQuery(shifts, {
+  const { data, loading } = useSubscription(shifts, {
     variables: {
       from: now,
       to: addDays(now, 14)
@@ -166,7 +166,7 @@ const Shifts = memo(() => {
     rows: {}
   }, data.shifts)
 
-  return loading
+  return !data
     ? null
     : $(Table, null,
         $(TableHead, null,
@@ -223,7 +223,7 @@ const formatAvailable = available =>
         : `${available} места`
 
 const shifts = gql`
-query Shifts($from: date $to: date) {
+subscription Shifts($from: date $to: date) {
   shifts(
     order_by: { date: asc, start: asc }
     where: { date: { _gte: $from  _lt: $to } }) {
