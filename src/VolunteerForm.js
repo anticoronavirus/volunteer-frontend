@@ -45,7 +45,7 @@ const VolunteerForm = ({ history }) => {
           $(Typography, { variant: 'h4', paragraph: true },
             `Регистрация волонтёров-${professions[profession]}`),
             $(Typography, { variant: 'subtitle1', paragraph: true },
-              'Anticorona в ГКБ №40'),
+              'Anticorona в ГКБ №40 | Пожалуйста заполните данные чтобы получить доступ к расписанию'),
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
