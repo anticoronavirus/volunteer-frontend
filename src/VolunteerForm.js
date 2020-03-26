@@ -87,7 +87,7 @@ const VolunteerForm = ({ history }) => {
               }),
               $(Field, {
                 component: TextField,
-                validate: value => value.match(/^(\+7|7|8)?[\s\-]?\(?[489][0-9]{2}\)?[\s\-]?[0-9]{3}[\s\-]?[0-9]{2}[\s\-]?[0-9]{2}$/) ? null : 'Введите корректный телефон',
+                validate: value => value.match(/^(\+7|7|8)?[\s-]?\(?[489][0-9]{2}\)?[\s-]?[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/) ? null : 'Введите корректный телефон',
                 helperText: ' ',
                 variant: 'standard',
                 fullWidth: true,
