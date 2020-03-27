@@ -1,6 +1,7 @@
 import { createElement as $, useMemo } from 'react'
 import VolunteerForm from 'VolunteerForm'
 import Main from 'Main'
+import AvailableShifts from 'AvailableShifts'
 import Shifts from 'Shifts'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -25,6 +26,7 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
+      $(Route, { path: `/available-shifts-${format(new Date(), 'yyyy-MM-dd')}`, component: AvailableShifts }),
       $(Route, { path: `/shifts-${format(new Date(), 'yyyy-MM-dd')}`, component: Shifts }),
       $(Route, { path: '/volunteer/:profession?/:volunteer_id?', component: VolunteerForm }),
       $(Route, { path: '/', component: Main }),
