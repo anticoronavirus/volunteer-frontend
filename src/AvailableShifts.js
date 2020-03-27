@@ -1,4 +1,4 @@
-import { createElement as $, memo } from 'react'
+import { createElement as $, memo, Fragment } from 'react'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
@@ -69,31 +69,42 @@ const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
 
 const Cell = ({
   uid,
-  date,
   start,
   end,
   volunteers,
   professions
 }) => {
-  let { profession, volunteer_id } = useParams()
+  const { profession, volunteer_id } = useParams()
 
   const required = find({ name: profession }, professions)
-  const me = find({ uid: volunteer_id }, volunteers)
 
   const available = required ? required.number - volunteers.length : 0
+
+  return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
+    $(Box, null, start.slice(0, 5), ' - ', end.slice(0, 5)),
+    $(Box, null, formatAvailable(available)),
+    volunteer_id &&
+      $(AddSelf, { uid, volunteer_id, volunteers, available }))
+}
+
+const AddSelf = ({
+  uid,
+  volunteer_id,
+  volunteers,
+  available
+}) => {
+
+  const me = find({ uid: volunteer_id }, volunteers)
+
   const [mutate, { loading }] = useMutation(
     me ? removeVolunteerFromShift : addVolunteerToShift,
     { variables: { shift_id: uid, volunteer_id }})
 
-  return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
-    $(Box, null, 
-      start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, formatAvailable(available)),
-    volunteer_id && (
-      loading
-        ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
-        : $(Box, { marginLeft: -1.5 },
-            $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate }))))
+  return $(Fragment, null,
+    loading
+      ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
+      : $(Box, { marginLeft: -1.5 },
+          $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
 }
 
 const formatAvailable = available =>
