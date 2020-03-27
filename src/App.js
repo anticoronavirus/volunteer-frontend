@@ -26,11 +26,13 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: `/available-shifts-${format(new Date(), 'yyyy-MM-dd')}/:profession?`, component: AvailableShifts }),
-      $(Route, { path: `/shifts-${format(new Date(), 'yyyy-MM-dd')}`, component: Shifts }),
+      $(Route, { path: `/available-shifts-${veryDumbSecret}/:profession?`, component: AvailableShifts }),
+      $(Route, { path: `/shifts-${veryDumbSecret}`, component: Shifts }),
       $(Route, { path: '/volunteer/:profession?/:volunteer_id?', component: VolunteerForm }),
       $(Route, { path: '/', component: Main }),
       $(Redirect, { to: '/' })))
 }
+
+const veryDumbSecret = format(new Date(), 'yyyy-MM-dd')
 
 export default App
