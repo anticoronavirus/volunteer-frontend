@@ -89,10 +89,11 @@ const Cell = ({
     $(Box, null, 
       start.slice(0, 5), ' - ', end.slice(0, 5)),
     $(Box, null, formatAvailable(available)),
-    loading
-      ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
-      : $(Box, { marginLeft: -1.5 },
-          $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
+    volunteer_id && (
+      loading
+        ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
+        : $(Box, { marginLeft: -1.5 },
+            $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate }))))
 }
 
 const formatAvailable = available =>
