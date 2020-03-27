@@ -1,5 +1,12 @@
 import gql from 'graphql-tag'
 
+export const professions = gql`
+{
+  professions: profession {
+    name
+  }
+}`
+
 export const addVolunteer = gql`
 mutation UpsertVolunteer(
   $fname: String

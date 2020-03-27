@@ -26,10 +26,10 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: `/available-shifts-${veryDumbSecret}/:profession?`, component: AvailableShifts }),
+      $(Route, { path: '/', component: Main, exact: true }),
+      $(Route, { path: `/available-shifts-${veryDumbSecret}/:profession`, component: AvailableShifts }),
       $(Route, { path: `/shifts-${veryDumbSecret}`, component: Shifts }),
-      $(Route, { path: '/volunteer/:profession?/:volunteer_id?', component: VolunteerForm }),
-      $(Route, { path: '/', component: Main }),
+      $(Route, { path: '/volunteer/:profession/:volunteer_id?', component: VolunteerForm }),
       $(Redirect, { to: '/' })))
 }
 
