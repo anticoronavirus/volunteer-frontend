@@ -27,9 +27,9 @@ const App = () => {
     $(CssBaseline),
     $(Switch, null,
       $(Route, { path: '/', component: Main, exact: true }),
-      $(Route, { path: `/available-shifts-${veryDumbSecret}/:profession`, component: AvailableShifts }),
+      $(Route, { path: `/available-shifts-${veryDumbSecret}/врач`, component: AvailableShifts }),
       $(Route, { path: `/shifts-${veryDumbSecret}`, component: Shifts }),
-      $(Route, { path: '/volunteer/:profession/:volunteer_id?', component: VolunteerForm }),
+      $(Route, { path: '/volunteer/врач/:volunteer_id?', component: VolunteerForm }),
       $(Redirect, { to: '/' })))
 }
 

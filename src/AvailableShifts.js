@@ -74,7 +74,7 @@ const Cell = ({
   volunteers,
   professions
 }) => {
-  const { profession, volunteer_id } = useParams()
+  const { profession = 'врач', volunteer_id } = useParams()
 
   const required = find({ name: profession }, professions)
 

@@ -16,7 +16,7 @@ import AvailabeShifts from './AvailableShifts'
 const VolunteerForm = ({ history }) => {
 
   const theme = useTheme()
-  let { profession } = useParams()
+  let { profession = 'врач' } = useParams()
   const matches = useMediaQuery(theme.breakpoints.up('sm'))
   const [mutate, { data }] = useMutation(addVolunteer, { variables: { profession } })
 
