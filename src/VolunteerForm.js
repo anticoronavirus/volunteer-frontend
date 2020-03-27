@@ -42,10 +42,10 @@ const VolunteerForm = ({ history }) => {
     $(Box, { maxWidth: '60ex', flexShrink: 0 },
       $(Paper, null,
         $(Box, { padding: 3 },
-          $(Typography, { variant: 'h4', paragraph: true },
-            `Регистрация волонтёров-${professions[profession]}`),
-            $(Typography, { variant: 'subtitle1', paragraph: true },
-              'Anticorona в ГКБ №40 | Пожалуйста заполните данные чтобы получить доступ к расписанию'),
+          $(Typography, { variant: 'h5', paragraph: true },
+            `Запись волонтеров медиков и студентов медвузов`),
+            $(Typography, { variant: 'caption', paragraph: true },
+              '#АнтикоронаХелп в ГКБ №40 | Пожалуйста, заполните форму и получите доступ к расписанию'),
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
@@ -106,10 +106,10 @@ const VolunteerForm = ({ history }) => {
                 margin: 'dense',
                 name: 'email',
                 type: 'email',
-                label: 'Электропочта'
+                label: 'Email'
               }),
               data && data.insert_volunteer.returning[0].uid
-                ? `Спасибо за то, что готовы помочь. Выберите смены ${matches ? 'справа' : 'внизу'} а мы позвоним накануне для подтверждения`
+                ? $(Typography, { variant: 'caption'}, `Спасибо за то, что готовы помочь! Выберите смены ${matches ? 'справа' : 'внизу'}. Галочка означает, что вы записались, а мы позвоним накануне и напомним! Если вы не уверены, не ставьте галочку, потому что другие не смогут записаться на это время.`)
                 : dirty && isValid &&
                     $(Button, { onClick: submitForm, fullWidth: true, variant: 'outlined' }, 'Отправить' )))))),
     $(Box, { height: 16, minWidth: 16 }),
@@ -127,11 +127,11 @@ const PhoneField = ({
     mask: '+7 (\\999) 999-9999',
   })
 
-const professions = {
-  'врач': 'врачей',
-  'медсестра': 'медсестёр',
-  'водитель': 'водителей',
-}
+// const professions = {
+//   'врач': 'врачей',
+//   'медсестра': 'медсестёр',
+//   'водитель': 'водителей',
+// }
 
 const initialValues = {
   lname: '', 
