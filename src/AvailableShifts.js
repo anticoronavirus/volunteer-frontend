@@ -23,16 +23,21 @@ import {
 } from 'queries'
 
 const now = new Date()
+const range = {
+  from: format(now, 'yyyy-MM-dd'),
+  to: format(addDays(now, 14), 'yyyy-MM-dd')
+}
 
 const AvailableShifts = memo(() => {
 
   let { profession } = useParams()
 
+  console.log(now)
+
   const { data } = useSubscription(shifts, {
     variables: {
       profession,
-      from: now,
-      to: addDays(now, 14)
+      ...range
     }
   })
 

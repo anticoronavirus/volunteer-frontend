@@ -21,14 +21,15 @@ import {
 } from 'queries'
 
 const now = new Date()
+const range = {
+  from: format(now, 'yyyy-MM-dd'),
+  to: format(addDays(now, 14), 'yyyy-MM-dd')
+}
 
 const Shifts = () => {
 
   const { data } = useSubscription(volunteerShifts, {
-    variables: {
-      from: now,
-      to: addDays(now, 14)
-    }
+    variables: range
   })
 
   return !data 
