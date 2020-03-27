@@ -16,7 +16,7 @@ jobs:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         password: ${{ secrets.DEPLOY_PASSWORD }}
-        key: ${{ secrets.DEPLOY_KEY }}
+#         key: ${{ secrets.DEPLOY_KEY }}
         script: |
           cd volunteer-backend
           docker-compose pull
