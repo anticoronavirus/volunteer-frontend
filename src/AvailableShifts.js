@@ -30,9 +30,7 @@ const range = {
 
 const AvailableShifts = memo(() => {
 
-  let { profession } = useParams()
-
-  console.log(now)
+  let { profession = 'врач' } = useParams()
 
   const { data } = useSubscription(shifts, {
     variables: {

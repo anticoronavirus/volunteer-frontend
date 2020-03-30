@@ -25,13 +25,13 @@ const VolunteerForm = ({ history }) => {
       $(Paper, null,
         $(Box, { padding: 3 },
           $(Typography, { variant: 'h5', paragraph: true },
-            `Запись волонтеров медиков и студентов медвузов`),
+            `Запись волонтёров медиков и студентов медвузов`),
             $(Typography, { variant: 'caption', paragraph: true },
-              '#АнтикоронаХелп в ГКБ №40 | Пожалуйста, заполните форму и получите доступ к расписанию'),
+              'ГКБ №40 | Пожалуйста, заполните форму и получите доступ к расписанию'),
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
-              .then(({ data }) => history.push(`/volunteer/${profession}/${data.insert_volunteer.returning[0].uid}`))
+              .then(({ data }) => history.push(`/volunteer/${process.env.DUMB_SECRET}/${data.insert_volunteer.returning[0].uid}`))
           }, ({ submitForm, isValid, dirty }) =>
             $(Form, null, 
               $(Field, {

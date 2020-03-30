@@ -3,6 +3,7 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 RUN yarn install --ignore-engines --production
 COPY . ./
+ENV DUMB_SECRET=nV3R3VyVm5SY0Fcb
 RUN yarn build
 
 FROM nginx:alpine
