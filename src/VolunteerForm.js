@@ -31,7 +31,7 @@ const VolunteerForm = ({ history }) => {
           $(Formik, {
             initialValues,
             onSubmit: variables => mutate({ variables })
-              .then(({ data }) => history.push(`/volunteer/${process.env.DUMB_SECRET}/${data.insert_volunteer.returning[0].uid}`))
+              .then(({ data }) => history.push(`/volunteer/${"0L1lHdlBOdklHZU9"}/${data.insert_volunteer.returning[0].uid}`))
           }, ({ submitForm, isValid, dirty }) =>
             $(Form, null, 
               $(Field, {

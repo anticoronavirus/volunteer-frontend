@@ -12,11 +12,13 @@ const httpLink = new HttpLink({
 })
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${window.location.hostname}/v1/graphql`,
+  uri: `wss://${process.env.NODE_ENV === 'development' ? 'memedic.ru' : window.location.hostname}/v1/graphql`,
   options: {
     reconnect: true
   }
 })
+
+console.log(process.env.NODE_ENV === 'development' ? 'memedic.ru' : window.location.hostname)
 
 const splitLink = split(
   ({ query }) => {

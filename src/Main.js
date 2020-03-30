@@ -8,7 +8,7 @@ const Main = () => {
   let history = useHistory()
 
   return $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh' },
-    $(Button, { onClick: () => history.push(`/volunteer/${process.env.DUMB_SECRET}`) }, 'Форма для волонтёров'))
+    $(Button, { onClick: () => history.push(`/volunteer/${"0L1lHdlBOdklHZU9"}`) }, 'Форма для волонтёров'))
 }
 
 export default Main
