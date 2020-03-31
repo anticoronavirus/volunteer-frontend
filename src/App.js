@@ -25,10 +25,11 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: '/', component: Main, exact: true }),
-      $(Route, { path: `/available-shifts/${"0L1lHdlBOdklHZU9"}`, component: AvailableShifts }),
-      $(Route, { path: `/shifts/${"0L1lHdlBOdklHZU9"}`, component: Shifts }),
-      $(Route, { path: `/volunteer/${"0L1lHdlBOdklHZU9"}/:volunteer_id?`, component: VolunteerForm }),
+      $(Route, { path: '/', component: Main }),
+      // $(Route, { path: '/', component: Main, exact: true }),
+      // $(Route, { path: `/available-shifts/${"0L1lHdlBOdklHZU9"}`, component: AvailableShifts }),
+      // $(Route, { path: `/shifts/${"0L1lHdlBOdklHZU9"}`, component: Shifts }),
+      // $(Route, { path: `/volunteer/${"0L1lHdlBOdklHZU9"}/:volunteer_id?`, component: VolunteerForm }),
       $(Redirect, { to: '/' })))
 }
 

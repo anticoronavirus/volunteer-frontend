@@ -9,6 +9,8 @@ import reduce from 'lodash/fp/reduce'
 import find from 'lodash/fp/find'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
+import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -16,6 +18,7 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Checkbox from '@material-ui/core/Checkbox'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
+import HospitalSelector from 'components/HospitalSelector'
 import {
   shifts,
   addVolunteerToShift,
@@ -46,12 +49,16 @@ const AvailableShifts = memo(() => {
 
   return !data
     ? $(Box, { padding: 2 }, $(CircularProgress))
-    : $(Table, null,
-        $(TableHead, null,
-          $(TableRow, null,
-            map(Header, Array.from(generatedTable.columns)))),
-        $(TableBody, null,
-          map(Row, entries(generatedTable.rows))))
+    : $(Paper, null,
+        $(Box, { padding: 1, paddingBottom: 0, display: 'flex', },
+          $(HospitalSelector)),
+        $(TableContainer, null,
+          $(Table, null,
+            $(TableHead, null,
+              $(TableRow, null,
+                map(Header, Array.from(generatedTable.columns)))),
+            $(TableBody, null,
+              map(Row, entries(generatedTable.rows))))))
 })
 
 const generateTableReducer = (result, shift) => {
