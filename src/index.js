@@ -18,8 +18,6 @@ const wsLink = new WebSocketLink({
   }
 })
 
-console.log(process.env.NODE_ENV === 'development' ? 'memedic.ru' : window.location.hostname)
-
 const splitLink = split(
   ({ query }) => {
     const definition = getMainDefinition(query);
