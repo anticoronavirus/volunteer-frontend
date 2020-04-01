@@ -19,6 +19,8 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Checkbox from '@material-ui/core/Checkbox'
+import Check from '@material-ui/icons/Check'
+import green from '@material-ui/core/colors/green'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 import HospitalSelector from 'components/HospitalSelector'
 import {
@@ -84,13 +86,19 @@ const Cell = ({
   start,
   end,
   hospitalsCount = random(0, 25),
-  placesAvailable = random(0, 25),
-  myShift = { hospital: { shortName: 'ГКБ №40' } }
+  placesAvailable = random(0, 25) < 10 ? 0 : random(0, 25),
+  myShift = random(0, 25) < 10 && { hospital: { shortName: 'ГКБ №40' } }
 }) => {
+  const disabled = !myShift && !placesAvailable
   const user = true // FIXME
   const hospitalSelected = true // FIXME
+  const color = disabled
+    ? 'textSecondary'
+    : myShift
+      ? 'inherit'
+      : 'initial'
 
-  const onClick =
+  const onClick = () =>
     !user
       ? 'register'
       : !hospitalSelected
@@ -101,16 +109,32 @@ const Cell = ({
     key: uid,
     align: 'left',
     padding: 'none',
+    style: {
+      verticalAlign: 'top',
+      borderBottomColor: myShift && green[300],
+      backgroundColor: myShift && green[500]
+    }
   },
-    $(ButtonBase, { onClick },
+    $(ButtonBase, { onClick, disabled },
       $(Box, {
         padding: 2,
-        minWidth: 120,
-        textAlign: 'left'
+        width: 148,
+        textAlign: 'left',
       },
-        $(Typography, { variant: 'overline' }, start.slice(0, 5), '—', end.slice(0, 5)),
-        $(Typography, { variant: 'body2' }, formatLabel('hospital', hospitalsCount)),
-        $(Typography, { variant: 'body2' }, formatLabel('place', placesAvailable)))))
+        $(Typography, { variant: 'overline', color },
+          start.slice(0, 5), '—', end.slice(0, 5)),
+        $(Typography, { variant: 'body2', color },
+          formatLabel('hospital', hospitalsCount)),
+        $(Typography, { variant: 'body2', color },
+          placesAvailable === 0
+            ? 'укомплектовано'
+            : formatLabel('place', placesAvailable)),
+      !myShift
+        ? $(Box, { padding: '14px' })
+        : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
+            $(Check, { fontSize: 'small', htmlColor: green[100] }),
+            $(Box, { width: '8px', }),
+            $(Typography, { variant: 'body2' }, myShift.hospital.shortName.slice(0, 10))))))
     // user &&
     //   $(AddSelf, { date, start, end, placesAvailable, myShift }))
 }
@@ -140,23 +164,21 @@ const AddSelf = ({
 const formatLabel = (type, count) =>
   count + ' ' +
   labels[type].get(
-    count < 20 && count > 5
-      ? 0
-      : count%10 === 0
-        ? 0
-        : count%10 < 4
+    count === 1
+      ? 1
+      : count < 20 && count > 5
+        ? 5
+        : count%10 < 5
           ? 4
           : 5)
 
 const labels = {
   hospital: new Map([
-    [0, 'больниц'],
     [1, 'больница'],
     [4, 'больницы'],
     [5, 'больниц']
   ]),
   place: new Map([
-    [0, 'мест'],
     [1, 'место'],
     [4, 'места'],
     [5, 'мест'],
