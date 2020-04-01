@@ -18,7 +18,7 @@ const HospitalSelector = () => {
       open: Boolean(anchorEl),
       anchorEl: anchorEl,
       onClose: () => setAnchorEl(null) },
-      $(MenuItem, null, 'ГКБ №40'),
+      $(MenuItem, null, 'ГКБ №40'), // FIXME get actual data
       $(MenuItem, null, 'ГКБ №52')))
 }
 

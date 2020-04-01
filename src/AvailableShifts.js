@@ -79,42 +79,43 @@ const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
 
 const Cell = ({
   uid,
+  date,
   start,
   end,
-  volunteers,
-  professions
+  hospitalsCount = 2,
+  placesAvailable = 3,
+  myShift = { hospital: { shortName: 'ГКБ №40' } }
 }) => {
-  const { profession = 'врач', volunteer_id } = useParams()
-
-  const required = find({ name: profession }, professions)
-
-  const available = required ? required.number - volunteers.length : 0
+  const user = true // FIXME
 
   return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
-    $(Box, null, start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, formatAvailable(available)),
-    volunteer_id &&
-      $(AddSelf, { uid, volunteer_id, volunteers, available }))
+    $(Box, { fontSize: 10 }, start.slice(0, 5), ' - ', end.slice(0, 5)),
+    $(Box, null, hospitalsCount),
+    $(Box, null, formatAvailable(placesAvailable)),
+    user &&
+      $(AddSelf, { date, start, end, placesAvailable, myShift }))
 }
 
 const AddSelf = ({
-  uid,
-  volunteer_id,
-  volunteers,
-  available
+  date,
+  start,
+  end,
+  placesAvailable,
+  myShift
 }) => {
 
-  const me = find({ uid: volunteer_id }, volunteers)
-
-  const [mutate, { loading }] = useMutation(
-    me ? removeVolunteerFromShift : addVolunteerToShift,
-    { variables: { shift_id: uid, volunteer_id }})
+  const [mutate, { loading }] = useMutation(addVolunteerToShift, { // FIXME  should use custom toggleShift
+    variables: { date, start, end, volunteer_id: localStorage.me } }) // FIXME get from token
 
   return $(Fragment, null,
     loading
       ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
       : $(Box, { marginLeft: -1.5 },
-          $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
+          $(Checkbox, {
+            checked: !!myShift,
+            disabled: !myShift && !placesAvailable,
+            onClick: mutate }),
+          `в ${myShift.hospital.shortName}`)) // FIXME get actual data
 }
 
 const formatAvailable = available =>
