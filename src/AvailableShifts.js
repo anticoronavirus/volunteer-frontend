@@ -4,10 +4,12 @@ import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import ru from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
+import random from 'lodash/fp/random'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
-import find from 'lodash/fp/find'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import TableContainer from '@material-ui/core/TableContainer'
@@ -22,7 +24,6 @@ import HospitalSelector from 'components/HospitalSelector'
 import {
   shifts,
   addVolunteerToShift,
-  removeVolunteerFromShift
 } from 'queries'
 
 const now = new Date()
@@ -82,18 +83,36 @@ const Cell = ({
   date,
   start,
   end,
-  hospitalsCount = 2,
-  placesAvailable = 3,
+  hospitalsCount = random(0, 25),
+  placesAvailable = random(0, 25),
   myShift = { hospital: { shortName: 'ГКБ №40' } }
 }) => {
   const user = true // FIXME
+  const hospitalSelected = true // FIXME
 
-  return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
-    $(Box, { fontSize: 10 }, start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, hospitalsCount),
-    $(Box, null, formatAvailable(placesAvailable)),
-    user &&
-      $(AddSelf, { date, start, end, placesAvailable, myShift }))
+  const onClick =
+    !user
+      ? 'register'
+      : !hospitalSelected
+        ? 'open hospitals'
+        : 'send'
+
+  return $(TableCell, {
+    key: uid,
+    align: 'left',
+    padding: 'none',
+  },
+    $(ButtonBase, { onClick },
+      $(Box, {
+        padding: 2,
+        minWidth: 120,
+        textAlign: 'left'
+      },
+        $(Typography, { variant: 'overline' }, start.slice(0, 5), '—', end.slice(0, 5)),
+        $(Typography, { variant: 'body2' }, formatLabel('hospital', hospitalsCount)),
+        $(Typography, { variant: 'body2' }, formatLabel('place', placesAvailable)))))
+    // user &&
+    //   $(AddSelf, { date, start, end, placesAvailable, myShift }))
 }
 
 const AddSelf = ({
@@ -118,13 +137,30 @@ const AddSelf = ({
           `в ${myShift.hospital.shortName}`)) // FIXME get actual data
 }
 
-const formatAvailable = available =>
-  available === 0
-    ? 'нет мест'
-    : available === 1
-      ? '1 место'
-      : available > 4
-        ? `${available} мест`
-        : `${available} места`
+const formatLabel = (type, count) =>
+  count + ' ' +
+  labels[type].get(
+    count < 20 && count > 5
+      ? 0
+      : count%10 === 0
+        ? 0
+        : count%10 < 4
+          ? 4
+          : 5)
+
+const labels = {
+  hospital: new Map([
+    [0, 'больниц'],
+    [1, 'больница'],
+    [4, 'больницы'],
+    [5, 'больниц']
+  ]),
+  place: new Map([
+    [0, 'мест'],
+    [1, 'место'],
+    [4, 'места'],
+    [5, 'мест'],
+  ])
+} 
 
 export default AvailableShifts
