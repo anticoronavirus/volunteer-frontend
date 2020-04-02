@@ -9,6 +9,8 @@ import { formatDate } from 'utils'
 import { shifts } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import List from '@material-ui/core/List'

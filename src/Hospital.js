@@ -5,6 +5,8 @@ import Shifts from 'ShiftsList'
 import { formatLabel } from 'utils'
 
 import Box from '@material-ui/core/Box'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import List from '@material-ui/core/List'
@@ -31,6 +33,10 @@ const Hospital = ({
         $(Box, { padding: 2, maxWidth: notMobile ? 400 : 'auto' },
           $(Typography, { variant: 'h4' }, 'ГКБ №40'),
           $(Typography, { variant: 'subtitle2' }, 'Нажмите на аватарку волонтёра чтобы подтвердить присутствие')),
+        $(Box, { padding: '0 16px' }, 
+          $(ButtonGroup, { size: 'small' },
+            $(Button, { onClick: console.log }, 'Выгрузить смены'),
+            $(Button, { onClick: console.log }, 'Черный список'))),
         $(List, null,
           $(ListSubheader, { disableSticky: true }, 'Настройки смен'),
           map(HospitalShift, sortBy('start', hospitalShifts))),
