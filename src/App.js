@@ -1,7 +1,7 @@
 import { createElement as $, useMemo } from 'react'
-import VolunteerForm from 'VolunteerForm'
+// import VolunteerForm from 'VolunteerForm'
 import Main from 'Main'
-import AvailableShifts from 'AvailableShifts'
+// import AvailableShifts from 'AvailableShifts'
 import Hospital from 'Hospital'
 import { Switch, Route, Redirect } from 'react-router-dom'
 

@@ -1,8 +1,7 @@
-import { createElement as $, memo, Fragment } from 'react'
+import { createElement as $, memo } from 'react'
 import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
-import ru from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
 import random from 'lodash/fp/random'
 import entries from 'lodash/fp/entries'
@@ -18,14 +17,12 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Checkbox from '@material-ui/core/Checkbox'
 import Check from '@material-ui/icons/Check'
 import green from '@material-ui/core/colors/green'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription } from '@apollo/react-hooks'
 import HospitalSelector from 'components/HospitalSelector'
 import {
   shifts,
-  addVolunteerToShift,
 } from 'queries'
 import { formatLabel, formatDate } from 'utils'
 
@@ -136,30 +133,6 @@ const Cell = ({
             $(Check, { fontSize: 'small', htmlColor: green[100] }),
             $(Box, { width: '8px', }),
             $(Typography, { variant: 'body2' }, myShift.hospital.shortName.slice(0, 10))))))
-    // user &&
-    //   $(AddSelf, { date, start, end, placesAvailable, myShift }))
-}
-
-const AddSelf = ({
-  date,
-  start,
-  end,
-  placesAvailable,
-  myShift
-}) => {
-
-  const [mutate, { loading }] = useMutation(addVolunteerToShift, { // FIXME  should use custom toggleShift
-    variables: { date, start, end, volunteer_id: localStorage.me } }) // FIXME get from token
-
-  return $(Fragment, null,
-    loading
-      ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
-      : $(Box, { marginLeft: -1.5 },
-          $(Checkbox, {
-            checked: !!myShift,
-            disabled: !myShift && !placesAvailable,
-            onClick: mutate }),
-          `в ${myShift.hospital.shortName}`)) // FIXME get actual data
 }
 
 export default AvailableShifts
