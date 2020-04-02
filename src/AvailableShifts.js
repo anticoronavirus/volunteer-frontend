@@ -85,7 +85,7 @@ const Cell = ({
   date,
   start,
   end,
-  hospitalsCount = random(0, 25),
+  hospitalsCount = random(0, 25) || random(0, 25),
   placesAvailable = random(0, 25) < 10 ? 0 : random(0, 25),
   myShift = random(0, 25) < 10 && { hospital: { shortName: 'ГКБ №40' } }
 }) => {
