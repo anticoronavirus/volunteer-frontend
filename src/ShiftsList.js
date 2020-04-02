@@ -1,5 +1,6 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import range from 'lodash/fp/range'
 import random from 'lodash/fp/random'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
@@ -51,12 +52,12 @@ import Skeleton from '@material-ui/lab/Skeleton'
 
 const Shifts = () =>
   $(Subscription, {
+    variables,
     subscription: shifts,
-    variables: range
   }, ShiftsPure)
 
 const now = new Date()
-const range = {
+const variables = {
   from: format(now, 'yyyy-MM-dd'),
   to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
@@ -72,7 +73,14 @@ const ShiftsPure = ({ data }) =>
       $(List, null,
         map(Section, data ? data.shifts : emptyShifts))))
 
-const emptyShifts = new Array(14).fill({ volunteers: new Array(10).fill({ }) })
+const emptyShifts = map(() => ({
+  uid: random(0, 1000),
+  loading: true,
+  volunteers: map(() => ({
+    uid: random(0, 1000),
+    loading: true,
+  }), range(0, 5))
+}), range(0, 14))
 
 const Section = ({
   uid,
@@ -81,15 +89,16 @@ const Section = ({
   end,
   required = 10,
   volunteers,
+  loading
 }) =>
   $(SectionLI, { key: uid },
     $(SectionUL, null,
       $(ZIndexedListSubheader, null,
         $(Box, { display: 'flex', justifyContent: 'space-between' },
-          !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 42 }) : 
+          loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 42 }) : 
           `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
-          !uid ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
+          loading ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
           `${volunteers.length}/${required}`)),
       map(VolunteerShift, volunteers),
       $(Divider)))
@@ -117,10 +126,11 @@ const VolunteerShift = ({
   profession = 'врач',
   email,
   confirmed = random(0, 25) > 10,
+  loading
  }) =>
   $(ListItem, { key: uid },
     $(ListItemAvatar, null,
-      !uid ? $(Skeleton, { variant: 'circle', width: 40, height: 40 }) :
+      loading ? $(Skeleton, { variant: 'circle', width: 40, height: 40 }) :
       $(Badge, {
         overlap: 'circle',
         badgeContent: confirmed &&
@@ -131,14 +141,14 @@ const VolunteerShift = ({
         $(Avatar))),
     $(ListItemText, { 
       primary:
-        !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 }) :
+        loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 }) :
         fullName || `${lname} ${fname}`,
       secondary:
-        !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
+        loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
         profession,
     }),
     $(ListItemSecondaryAction, null,
-      !uid ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
+      loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
       $(AdditionalControls, { uid, phone })))
 
 const CheckHolder = styled('div')(({ theme }) => ({
