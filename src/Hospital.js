@@ -47,7 +47,7 @@ const Hospital = ({
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
-    $(Box, { marginRight: 2, marginTop: 1.5 },
+    $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
       $(IconButton, { onClick: () => history.push('/')},
         $(NavigateBefore))),
     $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },

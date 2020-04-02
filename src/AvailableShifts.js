@@ -17,11 +17,9 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Button from '@material-ui/core/Button'
 import Check from '@material-ui/icons/Check'
 import green from '@material-ui/core/colors/green'
 import { useSubscription } from '@apollo/react-hooks'
-import HospitalSelector from 'components/HospitalSelector'
 import {
   shifts,
 } from 'queries'
@@ -34,8 +32,6 @@ const range = {
 }
 
 const AvailableShifts = memo(() => {
-
-  const history = useHistory()
 
   const { data } = useSubscription(shifts, {
     variables: {
@@ -52,10 +48,6 @@ const AvailableShifts = memo(() => {
   return !data
     ? $(Box, { padding: 2 }, $(CircularProgress))
     : $(Paper, null,
-        $(Box, { padding: 1, paddingBottom: 0, display: 'flex', justifyContent: 'space-between' },
-          $(HospitalSelector),
-          $(Box),
-          $(Button, { onClick: () => history.push('/hospital') }, 'Мой Профиль')),
         $(TableContainer, null,
           $(Table, null,
             $(TableHead, null,
