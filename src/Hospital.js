@@ -9,10 +9,12 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
+import Add from '@material-ui/icons/Add'
 import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
@@ -31,7 +33,8 @@ const Hospital = ({
           $(Typography, { variant: 'subtitle2' }, 'Нажмите на аватарку волонтёра чтобы подтвердить присутствие')),
         $(List, null,
           $(ListSubheader, { disableSticky: true }, 'Настройки смен'),
-          map(HospitalShift, sortBy('start', hospitalShifts))))),
+          map(HospitalShift, sortBy('start', hospitalShifts))),
+          $(AddHospitalShift))),
     $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
       $(Shifts)))
 }
@@ -45,10 +48,18 @@ const HospitalShift = ({
   $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${start} до ${end}`,
-      secondary: `Надо ${formatLabel('volunteer', demand)}`}),
+      secondary: formatLabel('volunteer', demand)}),
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: console.log },
         $(Delete, { fontSize: 'small'}))))
+
+const AddHospitalShift = () =>
+  $(ListItem, { button: true },
+    $(ListItemIcon, null,
+      $(Add)),
+    $(ListItemText, {
+      primary: 'Добавить смену'
+    }))
 
 export default () => Hospital({
   hospitalShifts: [{

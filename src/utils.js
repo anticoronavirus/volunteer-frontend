@@ -6,13 +6,13 @@ export const formatDate = date => format(new Date(date), 'd MMMM', { locale: ru 
 export const formatLabel = (type, count) =>
   count + ' ' +
   labels[type].get(
-    count === 1
-      ? 1
-      : count < 20 && count > 5
-        ? 5
-        : count%10 < 5
-          ? 4
-          : 5)
+    count < 21 && count > 5
+      ? 5
+      : count%10 === 1
+          ? 1
+          : count%10 < 5
+            ? 4
+            : 5)
 
 const labels = {
   hospital: new Map([
