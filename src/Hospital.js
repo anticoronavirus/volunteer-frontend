@@ -18,16 +18,35 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
 import Add from '@material-ui/icons/Add'
 import Delete from '@material-ui/icons/Delete'
+import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
+const mockHospitalShifts = [{
+  start: '08:00',
+  end: '14:00',
+  demand: 20
+}, {
+  start: '20:00',
+  end: '08:00',
+  demand: 3
+}, {
+  start: '14:00',
+  end: '20:00',
+  demand: 20
+}]
+
 const Hospital = ({
-  hospitalShifts
+  history
 }) => {
 
+  const hospitalShifts = mockHospitalShifts
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
+    $(Box, { marginRight: 2, marginTop: 1.5 },
+      $(IconButton, { onClick: () => history.push('/')},
+        $(NavigateBefore))),
     $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },
       $(Paper, null,
         $(Box, { padding: 2, maxWidth: notMobile ? 400 : 'auto' },
@@ -67,18 +86,4 @@ const AddHospitalShift = () =>
       primary: 'Добавить смену'
     }))
 
-export default () => Hospital({
-  hospitalShifts: [{
-    start: '08:00',
-    end: '14:00',
-    demand: 20
-  }, {
-    start: '20:00',
-    end: '08:00',
-    demand: 3
-  }, {
-    start: '14:00',
-    end: '20:00',
-    demand: 20
-  }]
-})
+export default Hospital
