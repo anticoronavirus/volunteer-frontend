@@ -30,6 +30,7 @@ import Delete from '@material-ui/icons/Delete'
 import RemoveCircle from '@material-ui/icons/RemoveCircle'
 import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
+import Skeleton from '@material-ui/lab/Skeleton'
 
 // const mockData = {
 //   shifts: [{
@@ -60,10 +61,7 @@ const range = {
   to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
 
-const ShiftsPure = ({
-  data,
-  loading
-}) =>
+const ShiftsPure = ({ data }) =>
   $(Box, {
     maxWidth: 400,
     margin: 'auto',
@@ -72,10 +70,9 @@ const ShiftsPure = ({
   },
     $(Paper, null,
       $(List, null,
-        data &&
-          map(Section, data.shifts))))
+        map(Section, data ? data.shifts : emptyShifts))))
 
-const emptyShifts = new Array(20).fill({ empty: true })
+const emptyShifts = new Array(14).fill({ volunteers: new Array(10).fill({ }) })
 
 const Section = ({
   uid,
@@ -86,11 +83,13 @@ const Section = ({
   volunteers,
 }) =>
   $(SectionLI, { key: uid },
-    $(SectionUL, null, 
+    $(SectionUL, null,
       $(ZIndexedListSubheader, null,
         $(Box, { display: 'flex', justifyContent: 'space-between' },
-          formatDate(date), `, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+          !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 42 }) : 
+          `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
+          !uid ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
           `${volunteers.length}/${required}`)),
       map(VolunteerShift, volunteers),
       $(Divider)))
@@ -121,6 +120,7 @@ const VolunteerShift = ({
  }) =>
   $(ListItem, { key: uid },
     $(ListItemAvatar, null,
+      !uid ? $(Skeleton, { variant: 'circle', width: 40, height: 40 }) :
       $(Badge, {
         overlap: 'circle',
         badgeContent: confirmed &&
@@ -130,10 +130,15 @@ const VolunteerShift = ({
           horizontal: 'right' }},
         $(Avatar))),
     $(ListItemText, { 
-      primary: fullName || `${lname} ${fname}`,
-      secondary: profession,
+      primary:
+        !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 }) :
+        fullName || `${lname} ${fname}`,
+      secondary:
+        !uid ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
+        profession,
     }),
     $(ListItemSecondaryAction, null,
+      !uid ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
       $(AdditionalControls, { uid, phone })))
 
 const CheckHolder = styled('div')(({ theme }) => ({
