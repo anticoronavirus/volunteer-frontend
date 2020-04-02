@@ -1,6 +1,8 @@
-import { createElement as $ } from 'react'
+import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import Paper from '@material-ui/core/Paper'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -9,8 +11,12 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Divider from '@material-ui/core/Divider'
 import Avatar from '@material-ui/core/Avatar'
-import Checkbox from '@material-ui/core/Checkbox'
+import Badge from '@material-ui/core/Badge'
+import IconButton from '@material-ui/core/IconButton'
 import Box from '@material-ui/core/Box'
+import MoreVert from '@material-ui/icons/MoreVert'
+import CheckCircle from '@material-ui/icons/CheckCircle'
+import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import { formatDate } from 'utils'
 
@@ -19,7 +25,8 @@ const mockData = {
     date: '2020-04-20',
     start: '08:00',
     end: '14:00',
-    volunteers: new Array(20).fill({
+    required: 20,
+    volunteers: new Array(15).fill({
       uid: 'test',
       fullName: 'Васильев Петр Андреевич',
       phone: '+7 (915) 051-5025',
@@ -31,7 +38,8 @@ const mockData = {
     date: '2020-04-20',
     start: '14:00',
     end: '20:00',
-    volunteers: new Array(20).fill({
+    required: 10,
+    volunteers: new Array(10).fill({
       uid: 'test',
       fullName: 'Васильев Петр Андреевич',
       phone: '+7 (915) 051-5025',
@@ -61,13 +69,22 @@ const Section = ({
   date,
   start,
   end,
+  required,
   volunteers,
 }) =>
   $(SectionLI, null,
     $(SectionUL, null, 
-      $(ListSubheader, null, formatDate(date), `, c ${start} до ${end}`),
+      $(ZIndexedListSubheader, null,
+        $(Box, { display: 'flex', justifyContent: 'space-between' },
+          formatDate(date), `, c ${start} до ${end}`,
+          $(Box),
+          `${volunteers.length}/${required}`)),
       map(VolunteerShift, volunteers),
       $(Divider)))
+
+const ZIndexedListSubheader = styled(ListSubheader)({
+  zIndex: 2
+})
 
 const SectionLI = styled('li')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
@@ -80,21 +97,49 @@ const SectionUL = styled('ul')({
 })
 
 const VolunteerShift = ({
+  uid,
   fullName,
   phone,
+  profession,
   email,
   confirmed
  }) =>
   $(ListItem, null,
     $(ListItemAvatar, null,
-      $(Avatar)),
+      $(Badge, {
+        overlap: 'circle',
+        badgeContent: $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
+        anchorOrigin: {
+          vertical: 'bottom',
+          horizontal: 'right' }},
+        $(Avatar))),
     $(ListItemText, { 
       primary: fullName,
-      secondary: phone
+      secondary: profession,
     }),
     $(ListItemSecondaryAction, null,
-      $(Checkbox, {
-        checked: confirmed,
-        edge: 'end' })))
+      $(AdditionalControls, { uid, phone })))
+
+const CheckHolder = styled('div')(({ theme }) => ({
+  padding: '.5px',
+  borderRadius: '50%',
+  backgroundColor: theme.palette.background.paper
+}))
+
+const AdditionalControls = ({ uid }) => {
+
+  const [anchorEl, setAnchorEl] = useState(null)
+
+  return $(Fragment, null,
+    $(IconButton, { edge: 'end', onClick: event => setAnchorEl(event.currentTarget) },
+      $(MoreVert)),
+    $(Menu, {
+      anchorEl,
+      onClose: () => setAnchorEl(null),
+      open: Boolean(anchorEl) },
+      $(MenuItem, null, 'Позвонить'),
+      $(MenuItem, null, 'Удалить из смены'),
+      $(MenuItem, null, 'В чёрный список')))
+}
 
 export default Shifts
