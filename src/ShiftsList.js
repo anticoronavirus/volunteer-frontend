@@ -5,6 +5,7 @@ import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
@@ -14,8 +15,12 @@ import Avatar from '@material-ui/core/Avatar'
 import Badge from '@material-ui/core/Badge'
 import IconButton from '@material-ui/core/IconButton'
 import Box from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
 import MoreVert from '@material-ui/icons/MoreVert'
 import CheckCircle from '@material-ui/icons/CheckCircle'
+import Phone from '@material-ui/icons/Phone'
+import Delete from '@material-ui/icons/Delete'
+import RemoveCircle from '@material-ui/icons/RemoveCircle'
 import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import { formatDate } from 'utils'
@@ -72,7 +77,7 @@ const Section = ({
   required,
   volunteers,
 }) =>
-  $(SectionLI, null,
+  $(SectionLI, { key: date + start + end },
     $(SectionUL, null, 
       $(ZIndexedListSubheader, null,
         $(Box, { display: 'flex', justifyContent: 'space-between' },
@@ -104,7 +109,7 @@ const VolunteerShift = ({
   email,
   confirmed
  }) =>
-  $(ListItem, null,
+  $(ListItem, { uid },
     $(ListItemAvatar, null,
       $(Badge, {
         overlap: 'circle',
@@ -137,9 +142,15 @@ const AdditionalControls = ({ uid }) => {
       anchorEl,
       onClose: () => setAnchorEl(null),
       open: Boolean(anchorEl) },
-      $(MenuItem, null, 'Позвонить'),
-      $(MenuItem, null, 'Удалить из смены'),
-      $(MenuItem, null, 'В чёрный список')))
+      $(MenuItem, null,
+        $(ListItemIcon, null, $(Phone, { fontSize: 'small' })),
+        $(Typography, { variant: 'inherit' }, 'Позвонить')),
+      $(MenuItem, null,
+        $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
+        $(Typography, { variant: 'inherit' }, 'Удалить из смены')),
+      $(MenuItem, null,
+        $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
+        $(Typography, { variant: 'inherit' }, 'В черный список'))))
 }
 
 export default Shifts
