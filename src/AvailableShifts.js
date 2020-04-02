@@ -1,5 +1,5 @@
 import { createElement as $, memo } from 'react'
-import { useParams } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import map from 'lodash/fp/map'
@@ -17,6 +17,7 @@ import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
+import Button from '@material-ui/core/Button'
 import Check from '@material-ui/icons/Check'
 import green from '@material-ui/core/colors/green'
 import { useSubscription } from '@apollo/react-hooks'
@@ -34,11 +35,11 @@ const range = {
 
 const AvailableShifts = memo(() => {
 
-  let { profession = 'врач' } = useParams()
+  const history = useHistory()
 
   const { data } = useSubscription(shifts, {
     variables: {
-      profession,
+      profession: 'врач',
       ...range
     }
   })
@@ -51,8 +52,10 @@ const AvailableShifts = memo(() => {
   return !data
     ? $(Box, { padding: 2 }, $(CircularProgress))
     : $(Paper, null,
-        $(Box, { padding: 1, paddingBottom: 0, display: 'flex', },
-          $(HospitalSelector)),
+        $(Box, { padding: 1, paddingBottom: 0, display: 'flex', justifyContent: 'space-between' },
+          $(HospitalSelector),
+          $(Box),
+          $(Button, { onClick: () => history.push('/hospital') }, 'Мой Профиль')),
         $(TableContainer, null,
           $(Table, null,
             $(TableHead, null,

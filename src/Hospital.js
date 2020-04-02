@@ -22,14 +22,17 @@ import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const mockHospitalShifts = [{
+  uid: 1,
   start: '08:00',
   end: '14:00',
   demand: 20
 }, {
+  uid: 2,
   start: '20:00',
   end: '08:00',
   demand: 3
 }, {
+  uid: 3,
   start: '14:00',
   end: '20:00',
   demand: 20

@@ -9,8 +9,6 @@ import { formatDate } from 'utils'
 import { shifts } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
 import List from '@material-ui/core/List'
@@ -69,11 +67,14 @@ const ShiftsPure = ({ data }) =>
     $(List, null,
       map(Section, data ? data.shifts : emptyShifts)))
 
-const emptyShifts = map(() => ({
-  uid: random(0, 1000),
+
+// this is so geh
+const uncappedMap = map.convert({ 'cap': false })
+const emptyShifts = uncappedMap((value, index) => ({
+  uid: index,
   loading: true,
-  volunteers: map(() => ({
-    uid: random(0, 1000),
+  volunteers: uncappedMap((value, index) => ({
+    uid: index,
     loading: true,
   }), range(0, 5))
 }), range(0, 14))
