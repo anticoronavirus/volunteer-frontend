@@ -1,6 +1,7 @@
 import { createElement as $, useMemo } from 'react'
 // import VolunteerForm from 'VolunteerForm'
 import Main from 'Main'
+import Login from 'Login'
 // import AvailableShifts from 'AvailableShifts'
 import Hospital from 'Hospital'
 import { Switch, Route, Redirect } from 'react-router-dom'
@@ -26,9 +27,9 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     $(Switch, null,
+      $(Route, { path: '/', exact: true, component: Main }),
       $(Route, { path: '/hospital', component: Hospital }),
-      $(Route, { path: '/', component: Main }),
-      // $(Route, { path: '/', component: Main, exact: true }),
+      $(Route, { path: '/login', component: Login }),
       // $(Route, { path: `/available-shifts/${"0L1lHdlBOdklHZU9"}`, component: AvailableShifts }),
       // $(Route, { path: `/shifts/${"0L1lHdlBOdklHZU9"}`, component: Shifts }),
       // $(Route, { path: `/volunteer/${"0L1lHdlBOdklHZU9"}/:volunteer_id?`, component: VolunteerForm }),
