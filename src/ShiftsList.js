@@ -1,5 +1,12 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import random from 'lodash/fp/random'
+import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
+import { Subscription } from '@apollo/react-components'
+import { formatDate } from 'utils'
+import { shifts } from 'queries'
+
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -23,40 +30,39 @@ import Delete from '@material-ui/icons/Delete'
 import RemoveCircle from '@material-ui/icons/RemoveCircle'
 import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
-import { formatDate } from 'utils'
 
-const mockData = {
-  shifts: [{
-    date: '2020-04-20',
-    start: '08:00',
-    end: '14:00',
-    required: 20,
-    volunteers: new Array(15).fill({
-      uid: 'test',
-      fullName: 'Васильев Петр Андреевич',
-      phone: '+7 (915) 051-5025',
-      email: 'edelweiss.paramedic@gmail.com',
-      profession: 'врач-онколог',
-      confirmed: true
-    })
-  }, {
-    date: '2020-04-20',
-    start: '14:00',
-    end: '20:00',
-    required: 10,
-    volunteers: new Array(10).fill({
-      uid: 'test',
-      fullName: 'Васильев Петр Андреевич',
-      phone: '+7 (915) 051-5025',
-      email: 'edelweiss.paramedic@gmail.com',
-      profession: 'врач-онколог',
-      confirmed: true
-    })
-  }]
+// const mockData = {
+//   shifts: [{
+//     date: '2020-04-20',
+//     start: '08:00',
+//     end: '14:00',
+//     required: 20,
+//     volunteers: new Array(15).fill({
+//       uid: 'test',
+//       fullName: 'Васильев Петр Андреевич',
+//       phone: '+7 (915) 051-5025',
+//       email: 'edelweiss.paramedic@gmail.com',
+//       profession: 'врач-онколог',
+//       confirmed: true
+//     })
+//   }]
+// }
+
+const Shifts = () =>
+  $(Subscription, {
+    subscription: shifts,
+    variables: range
+  }, ShiftsPure)
+
+const now = new Date()
+const range = {
+  from: format(now, 'yyyy-MM-dd'),
+  to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
 
-const Shifts = ({
-  data = mockData
+const ShiftsPure = ({
+  data,
+  loading
 }) =>
   $(Box, {
     maxWidth: 400,
@@ -66,22 +72,24 @@ const Shifts = ({
   },
     $(Paper, null,
       $(List, null,
-        map(Section, data.shifts))))
+        data &&
+          map(Section, data.shifts))))
 
 const emptyShifts = new Array(20).fill({ empty: true })
 
 const Section = ({
+  uid,
   date,
   start,
   end,
-  required,
+  required = 10,
   volunteers,
 }) =>
-  $(SectionLI, { key: date + start + end },
+  $(SectionLI, { key: uid },
     $(SectionUL, null, 
       $(ZIndexedListSubheader, null,
         $(Box, { display: 'flex', justifyContent: 'space-between' },
-          formatDate(date), `, c ${start} до ${end}`,
+          formatDate(date), `, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
           `${volunteers.length}/${required}`)),
       map(VolunteerShift, volunteers),
@@ -104,22 +112,25 @@ const SectionUL = styled('ul')({
 const VolunteerShift = ({
   uid,
   fullName,
+  lname,
+  fname,
   phone,
-  profession,
+  profession = 'врач',
   email,
-  confirmed
+  confirmed = random(0, 25) > 10,
  }) =>
-  $(ListItem, { uid },
+  $(ListItem, { key: uid },
     $(ListItemAvatar, null,
       $(Badge, {
         overlap: 'circle',
-        badgeContent: $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
+        badgeContent: confirmed &&
+          $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
         anchorOrigin: {
           vertical: 'bottom',
           horizontal: 'right' }},
         $(Avatar))),
     $(ListItemText, { 
-      primary: fullName,
+      primary: fullName || `${lname} ${fname}`,
       secondary: profession,
     }),
     $(ListItemSecondaryAction, null,
