@@ -2,7 +2,7 @@ import { createElement as $, useMemo } from 'react'
 import VolunteerForm from 'VolunteerForm'
 import Main from 'Main'
 import AvailableShifts from 'AvailableShifts'
-import Shifts from 'ShiftsList'
+import Hospital from 'Hospital'
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles'
@@ -25,7 +25,7 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CssBaseline),
     $(Switch, null,
-      $(Route, { path: '/shifts', component: Shifts }),
+      $(Route, { path: '/hospital', component: Hospital }),
       $(Route, { path: '/', component: Main }),
       // $(Route, { path: '/', component: Main, exact: true }),
       // $(Route, { path: `/available-shifts/${"0L1lHdlBOdklHZU9"}`, component: AvailableShifts }),

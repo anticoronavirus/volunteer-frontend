@@ -63,15 +63,9 @@ const variables = {
 }
 
 const ShiftsPure = ({ data }) =>
-  $(Box, {
-    maxWidth: 400,
-    margin: 'auto',
-    paddingTop: 10,
-    paddingBottom: 10
-  },
-    $(Paper, null,
-      $(List, null,
-        map(Section, data ? data.shifts : emptyShifts))))
+  $(Paper, null,
+    $(List, null,
+      map(Section, data ? data.shifts : emptyShifts)))
 
 const emptyShifts = map(() => ({
   uid: random(0, 1000),
