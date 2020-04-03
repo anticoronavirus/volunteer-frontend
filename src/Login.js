@@ -92,6 +92,7 @@ const Login = ({ history }) => {
             value: password,
             type: 'password',
             margin: 'normal',
+            onKeyPress: ({ charCode }) => password.length > 3 && charCode && handleSubmit(),
             error: loginStatus && loginStatus !== 'loading',
             helperText: loginStatus !== 'loading' && loginStatus
           }),
