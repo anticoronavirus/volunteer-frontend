@@ -20,7 +20,6 @@ const Login = ({ history }) => {
   const [phone, setPhone] = useState('')
   const [phoneStatus, setPhoneStatus] = useState(null)
   const [password, setPassword] = useState('')
-  const [token, setToken] = useState('')
   const [loginStatus, setLoginStatus] = useState(null)
   const [submitPhone] = useMutation(submitPhoneMutation, { variables: { phone } })
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
@@ -100,7 +99,6 @@ const Login = ({ history }) => {
               loginStatus === 'loading'
                 ? $(CircularProgress, { size: 24 })
                 : 'Войти')),
-        token,
         $(Typography, { variant: 'caption' }, 'При проблемах со входом или для восстановления доступа, пишите на '),
         $(Link, { color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
 }
