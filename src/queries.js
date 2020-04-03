@@ -182,8 +182,7 @@ export const submitPhone = gql`
 export const login = gql`
   mutation login($phone: String $password: String) {
     getToken(phone: $phone password: $password) {
-      accessToken
-      tokenType
+      authenticated
     }
   }
 `
