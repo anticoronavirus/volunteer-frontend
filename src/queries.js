@@ -6,10 +6,6 @@ export const me = gql`{
     fname
     lname
     phone
-    hospital {
-      uid
-      shortName
-    }
   }
 }`
 
