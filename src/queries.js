@@ -158,6 +158,6 @@ mutation FlipConfirm(
 export const hospitals = gql`{
   hospitals: hospital {
     uid
-    shortName
+    shortname
   }
 }`
