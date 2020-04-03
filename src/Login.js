@@ -27,6 +27,7 @@ const Login = () => {
         body: JSON.stringify({ phone })})
         .then(response => response.json())
         .then(({ status }) => setStatus(status))
+        .catch(() => setStatus('failed'))
     }
     else
       setStatus(null)
