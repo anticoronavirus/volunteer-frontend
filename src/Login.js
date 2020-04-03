@@ -21,16 +21,17 @@ const Login = ({ history }) => {
   const [phoneStatus, setPhoneStatus] = useState(null)
   const [password, setPassword] = useState('')
   const [loginStatus, setLoginStatus] = useState(null)
-  const [submitPhone] = useMutation(submitPhoneMutation, { variables: { phone } })
+
+  const [submitPhone] = useMutation(submitPhoneMutation)
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
 
   const handlePhone = event => {
-    const nextPhone = event.target.value.replace(/[^\d]/g, '')
-    setPhone(nextPhone)
-    if (nextPhone.length === 11) {
+    const phone = event.target.value.replace(/[^\d]/g, '')
+    setPhone(phone)
+    if (phone.length === 11) {
       setPhoneStatus('loading')
-      submitPhone()
-        .then(({ submitPhone }) => setPhoneStatus(submitPhone))
+      submitPhone({ variables: { phone } })
+        .then(({ data }) => setPhoneStatus(data.signUp.status))
         .catch(() => setPhoneStatus('failed'))
     }
     else
@@ -39,13 +40,10 @@ const Login = ({ history }) => {
 
   const handleSubmit = () => {
     setLoginStatus('loading')
-    login().then(({ login }) => {
-      if (login.status !== 'ok')
-        setLoginStatus(login.status)
-      else
-        localStorage.token = login.token
-        history.push('/')
-    }).catch(() => setLoginStatus('Произошла ошибка'))
+    login().then(({ getToken }) => {
+      localStorage.token = getToken.token
+      history.push('/')
+    }).catch(({ message }) => setLoginStatus(message))
   }
 
   return $(Box, {
@@ -76,20 +74,22 @@ const Login = ({ history }) => {
               && $(InputAdornment, { position: 'end'}, $(CircularProgress, { size: 24 }))
           }
         }),
-        phoneStatus === 'ok' &&
+        (phoneStatus === 'ok' || phoneStatus === 'exists') &&
           $(TextField, {
             autoFocus: true,
-            label: 'Ранее полученный пароль из SMS',
+            label: phoneStatus === 'exists'
+              ? 'Ранее полученный пароль из SMS'
+              : 'Пароль из SMS',
             variant: 'outlined',
             fullWidth: true,
-            onChange: event => setPassword(event.target.value.replace(/[^\d]/, '')),
+            onChange: event => setPassword(event.target.value),
             value: password,
             type: 'password',
             margin: 'normal',
             error: loginStatus && loginStatus !== 'loading',
             helperText: loginStatus !== 'loading' && loginStatus
           }),
-        password.length > 4 &&
+        password.length > 3 &&
           $(Box, { padding: '16px 0' },
             $(Button, {
               variant: 'outlined',

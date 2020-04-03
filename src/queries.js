@@ -164,12 +164,17 @@ export const hospitals = gql`{
 
 export const submitPhone = gql`
   mutation submitPhone($phone: String) {
-    submitPhone(phone: $phone)
+    signUp(phone: $phone) {
+      status
+    }
   }
 `
 
 export const login = gql`
   mutation login($phone: String $password: String) {
-    login(phone: $phone password: $password)
+    getToken(phone: $phone password: $password) {
+      accessToken
+      tokenType
+    }
   }
 `
