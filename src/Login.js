@@ -48,7 +48,11 @@ const Login = ({ history }) => {
   const handleSubmit = () => {
     setLoginStatus('loading')
     login()
-      .then(({ getToken }) => history.push('/'))
+      .then(({ data }) => {
+        data.getToken.accessToken &&
+          localStorage.setItem('authorization', `Bearer ${data.getToken.accessToken}`)
+        history.push('/')
+      })
       .catch(({ message, graphQLErrors }) => // FIXME check for network errors
         setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
   }
