@@ -154,3 +154,10 @@ mutation FlipConfirm(
     }
   }
 }`
+
+export const hospitals = gql`{
+  hospitals {
+    uid
+    shortName
+  }
+}`
