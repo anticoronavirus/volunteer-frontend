@@ -23,7 +23,7 @@ const Main = ({ history }) => {
     loading
       ? $(Skeleton, { width: '10ex', height: 48 })
       : data && data.me.length
-        ? $(Button, { onClick: () => history.push('/hospital') }, data.me.fname)
+        ? $(Button, { onClick: () => history.push('/hospital') }, data.me[0].fname)
         : $(Button, { onClick: () => history.push('/login') }, 'Войти')),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Typography, { variant: 'body2' },
