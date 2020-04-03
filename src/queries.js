@@ -156,7 +156,7 @@ mutation FlipConfirm(
 }`
 
 export const hospitals = gql`{
-  hospitals {
+  hospitals: hospital {
     uid
     shortName
   }

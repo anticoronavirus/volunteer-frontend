@@ -12,7 +12,7 @@ const httpLink = new HttpLink({
 })
 
 const wsLink = new WebSocketLink({
-  uri: `wss://${process.env.NODE_ENV === 'development' ? 'memedic.ru' : window.location.hostname}/v1/graphql`,
+  uri: `wss://${process.env.NODE_ENV === 'development' ? 'ec2-3-15-0-177.us-east-2.compute.amazonaws.com:8080/v1/graphql' : window.location.hostname}/v1/graphql`,
   options: {
     reconnect: true
   }
