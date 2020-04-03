@@ -27,15 +27,16 @@ const Login = ({ history }) => {
 
   const handlePhone = event => {
     const phone = event.target.value.replace(/[^\d]/g, '')
-    setPhone(phone)
     if (phone.length === 11) {
       setPhoneStatus('loading')
       submitPhone({ variables: { phone } })
         .then(({ data }) => setPhoneStatus(data.signUp.status))
         .catch(() => setPhoneStatus('failed'))
     }
-    else
+    else {
+      setPhone(phone)
       setPhoneStatus(null)
+    }
   }
 
   const handlePassword = event => {
@@ -92,7 +93,7 @@ const Login = ({ history }) => {
             value: password,
             type: 'password',
             margin: 'normal',
-            onKeyPress: ({ charCode }) => password.length > 3 && charCode && handleSubmit(),
+            onKeyPress: ({ charCode }) => password.length > 3 && charCode === 13 && handleSubmit(),
             error: loginStatus && loginStatus !== 'loading',
             helperText: loginStatus !== 'loading' && loginStatus
           }),
