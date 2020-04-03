@@ -15,12 +15,13 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import Button from '@material-ui/core/Button'
 
-const Login = () => {
+const Login = ({ history }) => {
 
   const [phone, setPhone] = useState('')
-  const [status, setStatus] = useState(null)
+  const [phoneStatus, setPhoneStatus] = useState(null)
   const [password, setPassword] = useState('')
   const [token, setToken] = useState('')
+  const [loginStatus, setLoginStatus] = useState(null)
   const [submitPhone] = useMutation(submitPhoneMutation, { variables: { phone } })
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
 
@@ -28,17 +29,25 @@ const Login = () => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
     setPhone(nextPhone)
     if (nextPhone.length === 11) {
-      setStatus('loading')
+      setPhoneStatus('loading')
       submitPhone()
-        .then(({ submitPhone }) => setStatus(submitPhone))
-        .catch(() => setStatus('failed'))
+        .then(({ submitPhone }) => setPhoneStatus(submitPhone))
+        .catch(() => setPhoneStatus('failed'))
     }
     else
-      setStatus(null)
+      setPhoneStatus(null)
   }
 
-  const handleSubmit = () =>
-    login().then(({ login }) => setToken(login))
+  const handleSubmit = () => {
+    setLoginStatus('loading')
+    login().then(({ login }) => {
+      if (login.status !== 'ok')
+        setLoginStatus(login.status)
+      else
+        localStorage.token = login.token
+        history.push('/')
+    }).catch(() => setLoginStatus('Произошла ошибка'))
+  }
 
   return $(Box, {
     margin: 'auto',
@@ -58,17 +67,17 @@ const Login = () => {
           value: phone,
           margin: 'normal',
           type: 'phone',
-          disabled: status === 'loading',
-          error: status === 'failed',
-          helperText: status === 'failed' &&
+          disabled: phoneStatus === 'loading',
+          error: phoneStatus === 'failed',
+          helperText: phoneStatus === 'failed' &&
             'Произошла ошибка',
           InputProps: {
             inputComponent: PhoneInput,
-            endAdornment: status === 'loading'
+            endAdornment: phoneStatus === 'loading'
               && $(InputAdornment, { position: 'end'}, $(CircularProgress, { size: 24 }))
           }
         }),
-        status === 'ok' &&
+        phoneStatus === 'ok' &&
           $(TextField, {
             autoFocus: true,
             label: 'Ранее полученный пароль из SMS',
@@ -78,9 +87,19 @@ const Login = () => {
             value: password,
             type: 'password',
             margin: 'normal',
+            error: loginStatus && loginStatus !== 'loading',
+            helperText: loginStatus !== 'loading' && loginStatus
           }),
         password.length > 4 &&
-          $(Button, { onClick: handleSubmit }, 'Войти'),
+          $(Box, { padding: '16px 0' },
+            $(Button, {
+              variant: 'outlined',
+              fullWidth: true ,
+              disabled: loginStatus === 'loading',
+              onClick: handleSubmit },
+              loginStatus === 'loading'
+                ? $(CircularProgress, { size: 24 })
+                : 'Войти')),
         token,
         $(Typography, { variant: 'caption' }, 'При проблемах со входом или для восстановления доступа, пишите на '),
         $(Link, { color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
