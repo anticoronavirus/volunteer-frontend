@@ -1,5 +1,4 @@
 import { createElement as $, memo } from 'react'
-import { useHistory } from 'react-router-dom'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import map from 'lodash/fp/map'
