@@ -161,3 +161,15 @@ export const hospitals = gql`{
     shortname
   }
 }`
+
+export const submitPhone = gql`
+  mutation submitPhone($phone: String) {
+    submitPhone(phone: $phone)
+  }
+`
+
+export const login = gql`
+  mutation login($phone: String $password: String) {
+    login(phone: $phone password: $password)
+  }
+`

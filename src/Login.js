@@ -1,5 +1,10 @@
 import { createElement as $, useState, Fragment } from 'react'
 import MaskedInput from 'react-input-mask'
+import { useMutation } from '@apollo/react-hooks'
+import {
+  submitPhone as submitPhoneMutation,
+  login as loginMutation
+} from 'queries'
 
 import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
@@ -16,17 +21,16 @@ const Login = () => {
   const [status, setStatus] = useState(null)
   const [password, setPassword] = useState('')
   const [token, setToken] = useState('')
+  const [submitPhone] = useMutation(submitPhoneMutation, { variables: { phone } })
+  const [login] = useMutation(loginMutation, { variables: { phone, password } })
 
   const handlePhone = event => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
     setPhone(nextPhone)
     if (nextPhone.length === 11) {
       setStatus('loading')
-      fetch('/send-code', {
-        method: 'POST',
-        body: JSON.stringify({ phone })})
-        .then(response => response.json())
-        .then(({ status }) => setStatus(status))
+      submitPhone()
+        .then(({ submitPhone }) => setStatus(submitPhone))
         .catch(() => setStatus('failed'))
     }
     else
@@ -34,12 +38,7 @@ const Login = () => {
   }
 
   const handleSubmit = () =>
-    fetch('/token', {
-      method: 'POST',
-      body: JSON.stringify({ phone, password })  
-    })
-    .then(response => response.json())
-    .then(({ access_token }) => setToken(access_token))
+    login().then(({ login }) => setToken(login))
 
   return $(Box, {
     margin: 'auto',
@@ -91,12 +90,6 @@ const PhoneInput = other =>
   $(MaskedInput, {
     ...other,
     mask: '+7 (\\999) 999-9999',
-  })
-
-const CodeInput = other =>
-  $(MaskedInput, {
-    ...other,
-    mask: '9999',
   })
 
 export default Login
