@@ -38,12 +38,18 @@ const Login = ({ history }) => {
       setPhoneStatus(null)
   }
 
+  const handlePassword = event => {
+    setLoginStatus(null)
+    setPassword(event.target.value)
+  }
+
   const handleSubmit = () => {
     setLoginStatus('loading')
     login().then(({ getToken }) => {
       localStorage.token = getToken.token
       history.push('/')
-    }).catch(({ message }) => setLoginStatus(message))
+    }).catch(({ message, graphQLErrors }) => // FIXME check for network errors
+      setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
   }
 
   return $(Box, {
@@ -82,7 +88,7 @@ const Login = ({ history }) => {
               : 'Пароль из SMS',
             variant: 'outlined',
             fullWidth: true,
-            onChange: event => setPassword(event.target.value),
+            onChange: handlePassword,
             value: password,
             type: 'password',
             margin: 'normal',
