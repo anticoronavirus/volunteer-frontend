@@ -26,16 +26,17 @@ const Login = ({ history }) => {
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
 
   const handlePhone = event => {
-    const phone = event.target.value.replace(/[^\d]/g, '')
-    if (phone.length === 11) {
-      setPhoneStatus('loading')
-      submitPhone({ variables: { phone } })
-        .then(({ data }) => setPhoneStatus(data.signUp.status))
-        .catch(() => setPhoneStatus('failed'))
-    }
-    else {
-      setPhone(phone)
-      setPhoneStatus(null)
+    const nextPhone = event.target.value.replace(/[^\d]/g, '')
+    if (nextPhone !== phone) {
+      setPhone(nextPhone)
+      if (nextPhone.length === 11) {
+        setPhoneStatus('loading')
+        submitPhone({ variables: { phone: nextPhone } })
+          .then(({ data }) => setPhoneStatus(data.signUp.status))
+          .catch(() => setPhoneStatus('failed'))
+      }
+      else
+        setPhoneStatus(null)
     }
   }
 
