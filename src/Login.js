@@ -1,6 +1,6 @@
 import { createElement as $, useState } from 'react'
 import MaskedInput from 'react-input-mask'
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useApolloClient } from '@apollo/react-hooks'
 import {
   submitPhone as submitPhoneMutation,
   login as loginMutation
@@ -24,6 +24,7 @@ const Login = ({ history }) => {
 
   const [submitPhone] = useMutation(submitPhoneMutation)
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
+  const client = useApolloClient()
 
   const handlePhone = event => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
@@ -51,6 +52,7 @@ const Login = ({ history }) => {
       .then(({ data }) => {
         data.getToken.accessToken &&
           localStorage.setItem('authorization', `Bearer ${data.getToken.accessToken}`)
+        client.resetStore()
         history.push('/')
       })
       .catch(({ message, graphQLErrors }) => // FIXME check for network errors
