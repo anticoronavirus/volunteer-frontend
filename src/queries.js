@@ -1,5 +1,18 @@
 import gql from 'graphql-tag'
 
+export const me = gql`{
+  me {
+    uid
+    fname
+    lname
+    phone
+    hospital {
+      uid
+      shortName
+    }
+  }
+}`
+
 export const professions = gql`
 {
   professions: profession {

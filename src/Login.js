@@ -47,11 +47,10 @@ const Login = ({ history }) => {
 
   const handleSubmit = () => {
     setLoginStatus('loading')
-    login().then(({ getToken }) => {
-      localStorage.token = getToken.token
-      history.push('/')
-    }).catch(({ message, graphQLErrors }) => // FIXME check for network errors
-      setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
+    login()
+      .then(({ getToken }) => history.push('/'))
+      .catch(({ message, graphQLErrors }) => // FIXME check for network errors
+        setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
   }
 
   return $(Box, {
