@@ -32,7 +32,7 @@ const App = () => {
     $(CustomCssBaseline),
     $(Switch, null,
       $(Route, { path: '/', exact: true, component: Main }),
-      !data || !data.me.length
+      ...!data || !data.me.length
         ? [$(Route, { path: '/login', component: Login })]
         : [$(Route, { path: '/hospital', component: Hospital })],
       $(Redirect, { to: '/' })))

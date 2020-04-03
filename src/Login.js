@@ -63,50 +63,54 @@ const Login = ({ history }) => {
         $(Typography, { variant: 'h5', align: 'center' },
           'Вход/регистрация волонтёров и координаторов'),
         $(Box, { textAlign: 'center', padding: 2 }, '❤️'),
-        $(TextField, {
-          label: 'Телефон',
-          variant: 'outlined',
-          fullWidth: true,
-          onChange: handlePhone,
-          value: phone,
-          margin: 'normal',
-          type: 'phone',
-          disabled: phoneStatus === 'loading',
-          error: phoneStatus === 'failed',
-          helperText: phoneStatus === 'failed' &&
-            'Произошла ошибка',
-          InputProps: {
-            inputComponent: PhoneInput,
-            endAdornment: phoneStatus === 'loading'
-              && $(InputAdornment, { position: 'end'}, $(CircularProgress, { size: 24 }))
-          }
-        }),
-        (phoneStatus === 'ok' || phoneStatus === 'exists') &&
+        $('form', null, 
           $(TextField, {
-            autoFocus: true,
-            label: phoneStatus === 'exists'
-              ? 'Ранее полученный пароль из SMS'
-              : 'Пароль из SMS',
+            label: 'Телефон',
             variant: 'outlined',
             fullWidth: true,
-            onChange: handlePassword,
-            value: password,
-            type: 'password',
+            onChange: handlePhone,
+            value: phone,
             margin: 'normal',
-            onKeyPress: ({ charCode }) => password.length > 3 && charCode === 13 && handleSubmit(),
-            error: loginStatus && loginStatus !== 'loading',
-            helperText: loginStatus !== 'loading' && loginStatus
+            type: 'phone',
+            disabled: phoneStatus === 'loading',
+            error: phoneStatus === 'failed',
+            helperText: phoneStatus === 'failed' &&
+              'Произошла ошибка',
+            InputProps: {
+              inputComponent: PhoneInput,
+              endAdornment: phoneStatus === 'loading'
+                && $(InputAdornment, { position: 'end'}, $(CircularProgress, { size: 24 }))
+            }
           }),
-        password.length > 3 &&
-          $(Box, { padding: '16px 0' },
-            $(Button, {
+          (phoneStatus === 'ok' || phoneStatus === 'exists') &&
+            $(TextField, {
+              autoFocus: true,
+              label: phoneStatus === 'exists'
+                ? 'Ранее полученный пароль из SMS'
+                : 'Пароль из SMS',
               variant: 'outlined',
-              fullWidth: true ,
-              disabled: loginStatus === 'loading',
-              onClick: handleSubmit },
-              loginStatus === 'loading'
-                ? $(CircularProgress, { size: 24 })
-                : 'Войти')),
+              fullWidth: true,
+              onChange: handlePassword,
+              value: password,
+              type: 'password',
+              margin: 'normal',
+              onKeyPress: ({ charCode }) => password.length > 3 && charCode === 13 && handleSubmit(),
+              error: loginStatus && loginStatus !== 'loading',
+              helperText: loginStatus !== 'loading' && loginStatus,
+              inputProps: {
+                autoComplete: 'current-password'
+              }
+            }),
+          password.length > 3 &&
+            $(Box, { padding: '16px 0' },
+              $(Button, {
+                variant: 'outlined',
+                fullWidth: true ,
+                disabled: loginStatus === 'loading',
+                onClick: handleSubmit },
+                loginStatus === 'loading'
+                  ? $(CircularProgress, { size: 24 })
+                  : 'Войти'))),
         $(Typography, { variant: 'caption' }, 'При проблемах со входом или для восстановления доступа, пишите на '),
         $(Link, { color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
 }
