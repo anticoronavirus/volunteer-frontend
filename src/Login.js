@@ -22,7 +22,7 @@ const Login = () => {
     setPhone(nextPhone)
     if (nextPhone.length === 11) {
       setStatus('loading')
-      fetch('http://ec2-3-15-0-177.us-east-2.compute.amazonaws.com:8841/send-code', {
+      fetch('/send-code', {
         method: 'POST',
         body: JSON.stringify({ phone })})
         .then(response => response.json())
@@ -34,7 +34,7 @@ const Login = () => {
   }
 
   const handleSubmit = () =>
-    fetch('http://ec2-3-15-0-177.us-east-2.compute.amazonaws.com:8841/token', {
+    fetch('/token', {
       method: 'POST',
       body: JSON.stringify({ phone, password })  
     })
@@ -47,7 +47,7 @@ const Login = () => {
     maxWidth: 360,
   },
     $(Paper, null,
-      $(Box, { padding: 2 },
+      $(Box, { padding: 2, paddingTop: 4 },
         $(Typography, { variant: 'h5', align: 'center' },
           'Вход/регистрация волонтёров и координаторов'),
         $(Box, { textAlign: 'center', padding: 2 }, '❤️'),
