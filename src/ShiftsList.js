@@ -5,7 +5,7 @@ import random from 'lodash/fp/random'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import { Subscription } from '@apollo/react-components'
-import { formatDate } from 'utils'
+import { formatDate, uncappedMap } from 'utils'
 import { shifts } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
@@ -69,7 +69,6 @@ const ShiftsPure = ({ data }) =>
 
 
 // this is so geh
-const uncappedMap = map.convert({ 'cap': false })
 const emptyShifts = uncappedMap((value, index) => ({
   uid: index,
   loading: true,

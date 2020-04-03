@@ -1,5 +1,6 @@
 import format from 'date-fns/format'
 import ru from 'date-fns/locale/ru'
+import map from 'lodash/fp/map'
 
 export const formatDate = date => format(new Date(date), 'd MMMM', { locale: ru })
 
@@ -30,4 +31,6 @@ const labels = {
     [4, 'волонтёра'],
     [5, 'волонтёров'],
   ]),
-} 
+}
+
+export const uncappedMap =  map.convert({ 'cap': false })
