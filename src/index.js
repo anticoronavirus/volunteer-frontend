@@ -13,6 +13,8 @@ const httpLink = new HttpLink({
   uri: '/v1/graphql',
 })
 
+let refreshTokenPromise
+
 const authLink = setContext((operation, { headers }) => {
 
   let authorization = localStorage.getItem('authorization')
@@ -21,14 +23,16 @@ const authLink = setContext((operation, { headers }) => {
   if (!expires || !authorization)
     return { headers }
   else if (expires - new Date().valueOf() < 0)
-    return fetch('/v1/graphql', {
-      method: 'POST',
-      body: JSON.stringify({ query })})
+    return refreshTokenPromise ||
+      (refreshTokenPromise = fetch('/v1/graphql', {
+        method: 'POST',
+        body: JSON.stringify({ query })}))
       .then(response => response.json())
       .then(response => response.errors
         ? handleError(headers)
         : response.data)
       .then(data => {
+        refreshTokenPromise = null
         localStorage.setItem('authorization', `Bearer ${data.refreshToken.accessToken}`)
         localStorage.setItem('expires', data.refreshToken.expires * 1000)
         return {
@@ -49,6 +53,7 @@ const authLink = setContext((operation, { headers }) => {
 })
 
 const handleError = headers => () => {
+  refreshTokenPromise = null
   localStorage.removeItem('authorization')
   localStorage.removeItem('expires')
   return headers
