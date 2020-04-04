@@ -222,6 +222,7 @@ mutation addShift($uid: uuid! $start: timetz! $end: timetz! $demand: Int ) {
       hospital {
         uid
         periods {
+          uid
           start
           end
           demand
