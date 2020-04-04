@@ -6,7 +6,7 @@ import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { shifts, confirm, removeVolunteerShift } from 'queries'
+import { shifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -179,9 +179,10 @@ const AdditionalControls = ({ uid }) => {
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
-      $(MenuItem, null,
-        $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
-        $(Typography, { variant: 'inherit' }, 'В черный список'))))
+      $(Mutation, { mutation: addToBlackList, variables: { uid } }, mutate =>  
+        $(MenuItem, { onClick: mutate },
+          $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
+          $(Typography, { variant: 'inherit' }, 'В черный список')))))
 }
 
 export default Shifts

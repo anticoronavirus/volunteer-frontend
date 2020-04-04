@@ -281,6 +281,16 @@ mutation removeVolunteerShift($uid: uuid!) {
   }
 }`
 
+export const addToBlackList = gql`
+mutation addToBlackList($uid: uuid!) {
+  update_volunteer(_set: { blacklisted: true } where: { uid: { _eq: $uid }}) {
+    returning {
+      uid
+      blacklisted    
+    }
+  }
+}`
+
 export const refreshToken = `
  mutation {
    refreshToken {
