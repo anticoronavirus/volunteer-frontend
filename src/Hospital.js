@@ -67,7 +67,11 @@ const Hospital = ({
                     data.hospital.periods.length
                       ? 'Доступные смены'
                       : 'Нет доступных смен'),
-                  map(HospitalShift, sortBy('start', data.hospital.periods)),
+                  map(
+                    isManagedByMe
+                      ? HospitalShiftDeletable
+                      : HospitalShift,
+                    sortBy('start', data.hospital.periods)),
                   data && isManagedByMe &&
                     $(AddHospitalShift, { uid: data.hospital.uid })))),
         $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
@@ -75,6 +79,17 @@ const Hospital = ({
 }
 
 const HospitalShift = ({
+  uid,
+  start,
+  end,
+  demand
+}) =>
+  $(ListItem, null,
+    $(ListItemText, {
+      primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+      secondary: formatLabel('volunteer', demand)}))
+
+const HospitalShiftDeletable = ({
   uid,
   start,
   end,
