@@ -13,7 +13,7 @@ const Back = () => {
   const history = useHistory()
 
   return $(Box, notMobile && { marginRight: 2, marginTop: 1.5, width: 48 },
-    $(Box, { position: 'fixed' },
+    $(Box, notMobile && { position: 'fixed' },
       $(IconButton, { onClick: history.goBack },
       $(NavigateBefore))))
 }
