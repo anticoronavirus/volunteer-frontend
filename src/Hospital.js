@@ -37,9 +37,9 @@ const Hospital = ({
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   const { data, loading } = useQuery(hospital, { variables: { uid: match.params.uid }})
-  const isManagedByMe =
-    get(['me', 'hospital', 'uid'], NaN, data) ===
-    get(['me', 0, 'managedHospital', 'uid'], NaN, data) // NaN === NaN -> false
+  const isManagedByMe = data &&
+    get(['hospital', 'uid'], data) ===
+    get(['me', 0, 'managedHospital', 'uid'], data)
 
   return !loading && !data.hospital
     ? $(Redirect, { to: '/hospitals'})
