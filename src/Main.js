@@ -28,7 +28,7 @@ const Main = ({ history }) => {
     $(Box, { 
       padding: 2,
       alignItems: 'center',
-      display: notMobile && 'flex',
+      display: notMobile ? 'flex' : 'block',
       justifyContent: 'space-between' },
     $(HospitalSelector, { hospital }),
     $(Box),
