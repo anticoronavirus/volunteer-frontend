@@ -4,6 +4,7 @@ import Main from 'Main'
 import Login from 'Login'
 // import AvailableShifts from 'AvailableShifts'
 import Hospital from 'Hospital'
+import Hospitals from 'Hospitals'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
@@ -30,7 +31,7 @@ const App = () => {
       $(Route, { path: '/', exact: true, component: Main }),
       $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
-      // $(Route, { path: '/hospitals/', component: Hospital }),
+      $(Route, { path: '/hospitals/', component: Hospitals }),
       $(Redirect, { to: '/' })))
 }
 

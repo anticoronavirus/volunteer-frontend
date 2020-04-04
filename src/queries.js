@@ -186,6 +186,8 @@ export const hospitals = gql`{
   hospitals: hospital {
     uid
     shortname
+    address
+    periods { demand }
   }
 }`
 

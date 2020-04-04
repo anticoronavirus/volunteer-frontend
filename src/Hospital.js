@@ -6,6 +6,7 @@ import { Redirect } from 'react-router-dom'
 import { hospital } from 'queries'
 import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
+import Back from 'components/Back'
 
 import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -24,7 +25,6 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
 import Delete from '@material-ui/icons/Delete'
-import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const Hospital = ({
@@ -40,9 +40,7 @@ const Hospital = ({
   return !loading && !data.hospital
     ? $(Redirect, { to: '/hospitals'})
     : $(Box, notMobile && { display: 'flex', padding: 2 },
-        $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
-          $(IconButton, { onClick: () => history.push('/')},
-            $(NavigateBefore))),
+        $(Back),
         $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },
           $(Paper, null,
             $(Box, { padding: 2, width: notMobile ? 360 : 'auto' },
