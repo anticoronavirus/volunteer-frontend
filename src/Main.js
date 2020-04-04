@@ -23,7 +23,7 @@ const Main = ({ history }) => {
   return $(Paper, null,
     $(Box, { 
       padding: 1,
-      paddingBottom: 0,
+      paddingRight: 1.5,
       alignItems: 'center',
       display: 'flex',
       justifyContent: 'space-between' },
@@ -32,7 +32,7 @@ const Main = ({ history }) => {
     loading
       ? $(Skeleton, { width: '15ex', height: 48 })
       : data && data.me.length
-        ? $(ButtonGroup, null,
+        ? $(ButtonGroup, { size: 'small' },
             $(Button, { onClick: () => history.push(
               data.me[0].managedHospital
                 ? `/hospitals/${data.me[0].managedHospital.uid}`
