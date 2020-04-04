@@ -188,6 +188,23 @@ mutation FlipConfirm(
   }
 }`
 
+export const hint = gql`
+query hint ($name: bpchar!) {
+  me { uid }
+  hint_by_pk(name: $name) {
+    uid
+    text
+  } 
+}
+`
+
+export const seenHint = gql`
+mutation seenHint($userId: uuid! $hintId: uuid!) {
+  insert_seen_hint(objects: [{ user_id: $userId hint_id: $hintId }]) {
+    affected_rows
+  }
+}`
+
 export const hospitals = gql`{
   hospitals: hospital {
     uid

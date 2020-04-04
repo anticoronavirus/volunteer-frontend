@@ -25,7 +25,7 @@ const authLink = setContext((operation, { headers }) => {
       method: 'POST',
       body: JSON.stringify({ query })})
       .then(response => response.json())
-      .then(response => response.errors 
+      .then(response => response.errors
         ? handleError(headers)
         : response.data)
       .then(data => {
@@ -48,7 +48,7 @@ const authLink = setContext((operation, { headers }) => {
     }
 })
 
-const handleError = headers => {
+const handleError = headers => () => {
   localStorage.removeItem('authorization')
   localStorage.removeItem('expires')
   return headers

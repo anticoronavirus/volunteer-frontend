@@ -1,5 +1,6 @@
 import { createElement as $, useState } from 'react'
 import AvialableShifts from 'AvailableShifts'
+import Hint from 'components/Hint'
 import HospitalSelector from 'components/HospitalSelector'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
@@ -10,7 +11,6 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Tooltip from '@material-ui/core/Tooltip'
-import Typography from '@material-ui/core/Typography'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Skeleton from '@material-ui/lab/Skeleton'
 
@@ -49,9 +49,7 @@ const Main = ({ history }) => {
               }}, $(ExitToApp, { fontSize: 'small' }))))
         : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
-      $(Typography, { variant: 'body2' },
-        `Спасибо за то, что готовы помочь! Нажмите на свободную смену ниже, чтобы записаться, а мы позвоним накануне и напомним.
-        Двойная галочка означет подтверждение смены. Если вы не уверены, не ставьте галочку, потому что другие не смогут записаться на это время.`)),
+      $(Hint, { name: 'welcome' })),
     $(AvialableShifts, { hospitalId, userId: data && data.me && data.me.uid }))
 }
 
