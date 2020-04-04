@@ -52,6 +52,8 @@ const Login = ({ history }) => {
       .then(({ data }) => {
         data.getToken.accessToken &&
           localStorage.setItem('authorization', `Bearer ${data.getToken.accessToken}`)
+        data.getToken.expires &&
+          localStorage.setItem('expires', data.getToken.expires * 1000)
         client.resetStore()
         history.push('/')
       })

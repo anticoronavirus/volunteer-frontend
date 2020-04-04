@@ -7,17 +7,34 @@ import App from 'App.js'
 import { split, HttpLink, ApolloLink, ApolloClient, InMemoryCache } from '@apollo/client'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/link-ws'
+import { refreshToken as query } from 'queries'
+
+const httpLink = new HttpLink({
+  uri: '/v1/graphql',
+})
 
 const authLink = new ApolloLink((operation, forward) => {
-  const authorization = localStorage.getItem('authorization')
+  let authorization = localStorage.getItem('authorization')
+  let expires = parseInt(localStorage.getItem('expires'))
+
+  if (expires && expires - new Date().valueOf() < 0)
+    fetch('/v1/graphql', {
+      method: 'POST',
+      body: JSON.stringify({ query })
+    }).then(response => response.json())
+      .then(({ data }) => {
+        authorization = localStorage.setItem('authorization', `Bearer ${data.refreshToken.accessToken}`)
+        expires = localStorage.setItem('expires', data.refreshToken.expires * 1000)
+      })
+      .catch(({ message }) => {
+        console.log(message)
+        localStorage.deleteItem('authorization')
+        localStorage.deleteItem('expires')
+      })
   if (authorization)
     operation.setContext(({ headers }) => 
       set(['headers', 'Authorization'],  authorization, headers))
   return forward(operation)
-})
-
-const httpLink = new HttpLink({
-  uri: '/v1/graphql',
 })
 
 const wsLink = new WebSocketLink({

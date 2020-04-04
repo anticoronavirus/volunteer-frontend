@@ -209,6 +209,15 @@ export const login = gql`
     getToken(phone: $phone password: $password) {
       authenticated
       accessToken
+      expires
     }
   }
 `
+
+export const refreshToken = `
+ mutation {
+   refreshToken {
+     accessToken
+     expires
+   }
+ }` 

@@ -8,6 +8,7 @@ import { hospital } from 'queries'
 import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
+import AddHospitalShift from 'components/AddHospitalShift'
 
 import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -16,12 +17,10 @@ import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
-import Add from '@material-ui/icons/Add'
 import Skeleton from '@material-ui/lab/Skeleton'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
@@ -29,7 +28,6 @@ import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const Hospital = ({
-  history,
   match
 }) => {
 
@@ -68,9 +66,9 @@ const Hospital = ({
                     data.hospital.periods.length
                       ? 'Доступные смены'
                       : 'Нет доступных смен'),
-                  map(HospitalShift, sortBy('start', data.hospital.periods))),
-                  isManagedByMe &&
-                    $(AddHospitalShift))),
+                  map(HospitalShift, sortBy('start', data.hospital.periods)),
+                  data && isManagedByMe &&
+                    $(AddHospitalShift, { uid: data.hospital.uid })))),
         $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
           $(Shifts)))
 }
@@ -104,13 +102,5 @@ const LoadingPeriods =
         primary: $(Skeleton, { variant: 'text', width: '13ex', height: 24 }),
         secondary: $(Skeleton, { variant: 'text', width: '13ex', height: 20 }),
       })))
-
-const AddHospitalShift = () =>
-  $(ListItem, { button: true },
-    $(ListItemIcon, null,
-      $(Add)),
-    $(ListItemText, {
-      primary: 'Добавить смену'
-    }))
 
 export default Hospital
