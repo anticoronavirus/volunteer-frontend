@@ -2,6 +2,7 @@ import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
 import sortBy from 'lodash/fp/sortBy'
 import Shifts from 'ShiftsList'
+import { useApolloClient } from '@apollo/react-hooks'
 import { formatLabel } from 'utils'
 
 import Box from '@material-ui/core/Box'
@@ -16,7 +17,11 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import Add from '@material-ui/icons/Add'
+import ExitToApp from '@material-ui/icons/ExitToApp'
+import CloudDownload from '@material-ui/icons/CloudDownload'
+import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
 import Delete from '@material-ui/icons/Delete'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import { useMediaQuery, useTheme } from '@material-ui/core'
@@ -44,6 +49,7 @@ const Hospital = ({
 
   const hospitalShifts = mockHospitalShifts
   const theme = useTheme()
+  const client = useApolloClient()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
@@ -56,9 +62,16 @@ const Hospital = ({
           $(Typography, { variant: 'h4' }, 'ГКБ №40'),
           $(Typography, { variant: 'subtitle2' }, 'Нажмите на аватарку волонтёра чтобы подтвердить присутствие')),
         $(Box, { padding: '0 16px' }, 
-          $(ButtonGroup, { size: 'small' },
-            $(Button, { onClick: console.log }, 'Выгрузить смены'),
-            $(Button, { onClick: console.log }, 'Черный список'))),
+          $(ButtonGroup, null,
+            $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
+            $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })),
+            $(Tooltip, { title: 'Выход' },
+            $(Button, { onClick: () => {
+              localStorage.removeItem('authorization')
+              client.resetStore()
+              history.push('/')
+            }}, $(ExitToApp, { fontSize: 'small' })),
+            ))),
         $(List, null,
           $(ListSubheader, { disableSticky: true }, 'Настройки смен'),
           map(HospitalShift, sortBy('start', hospitalShifts))),

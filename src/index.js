@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import { ApolloProvider } from '@apollo/react-components'
 import set from 'lodash/fp/set'
 import App from 'App.js'
-import { split, from, HttpLink, ApolloLink, ApolloClient, InMemoryCache } from '@apollo/client'
+import { split, HttpLink, ApolloLink, ApolloClient, InMemoryCache } from '@apollo/client'
 import { getMainDefinition } from '@apollo/client/utilities'
 import { WebSocketLink } from '@apollo/link-ws'
 
