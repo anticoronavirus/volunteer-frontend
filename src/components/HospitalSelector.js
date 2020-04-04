@@ -46,7 +46,8 @@ const HospitalSelector = ({ hospital: [value, onChange]}) => {
 
 const TitleButton = withStyles({
   root: {
-    padding: '3px 8px'
+    padding: 8,
+    marginLeft: -8
   },
   text: {
     fontSize: 24,

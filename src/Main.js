@@ -2,6 +2,7 @@ import { createElement as $, useState } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import HospitalSelector from 'components/HospitalSelector'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
@@ -20,12 +21,14 @@ const Main = ({ history }) => {
   const [hospitalId] = hospital
   const client = useApolloClient()
 
+  const theme = useTheme()
+  const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
+
   return $(Paper, null,
     $(Box, { 
-      padding: 1,
-      paddingRight: 1.5,
+      padding: 2,
       alignItems: 'center',
-      display: 'flex',
+      display: notMobile && 'flex',
       justifyContent: 'space-between' },
     $(HospitalSelector, { hospital }),
     $(Box),
