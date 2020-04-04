@@ -5,7 +5,20 @@ export const me = gql`{
     uid
     fname
     lname
-    phone
+    managedHospital {
+      uid
+      shortname
+    }
+  }
+}`
+
+export const hospital = gql`
+query hospital($uid: uuid!) {
+  hospital: hospital_by_pk(uid: $uid) {
+    uid
+    shortname
+    name
+    address
   }
 }`
 

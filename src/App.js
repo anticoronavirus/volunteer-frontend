@@ -29,7 +29,8 @@ const App = () => {
     $(Switch, null,
       $(Route, { path: '/', exact: true, component: Main }),
       $(Route, { path: '/login', component: Login }),
-      $(Route, { path: '/hospital', component: Hospital }),
+      $(Route, { path: '/hospitals/:uid', component: Hospital }),
+      // $(Route, { path: '/hospitals/', component: Hospital }),
       $(Redirect, { to: '/' })))
 }
 

@@ -1,9 +1,11 @@
 import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
 import sortBy from 'lodash/fp/sortBy'
-import Shifts from 'ShiftsList'
-import { useApolloClient } from '@apollo/react-hooks'
+import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { Redirect } from 'react-router-dom'
+import { hospital } from 'queries'
 import { formatLabel } from 'utils'
+import Shifts from 'ShiftsList'
 
 import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -19,6 +21,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import Add from '@material-ui/icons/Add'
+import Skeleton from '@material-ui/lab/Skeleton'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
@@ -44,7 +47,8 @@ const mockHospitalShifts = [{
 }]
 
 const Hospital = ({
-  history
+  history,
+  match
 }) => {
 
   const hospitalShifts = mockHospitalShifts
@@ -52,32 +56,42 @@ const Hospital = ({
   const client = useApolloClient()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
-  return $(Box, notMobile && { display: 'flex', padding: 2 },
-    $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
-      $(IconButton, { onClick: () => history.push('/')},
-        $(NavigateBefore))),
-    $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },
-      $(Paper, null,
-        $(Box, { padding: 2, maxWidth: notMobile ? 400 : 'auto' },
-          $(Typography, { variant: 'h4' }, 'ГКБ №40'),
-          $(Typography, { variant: 'subtitle2' }, 'Нажмите на аватарку волонтёра чтобы подтвердить присутствие')),
-        $(Box, { padding: '0 16px' }, 
-          $(ButtonGroup, null,
-            $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
-            $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })),
-            $(Tooltip, { title: 'Выход' },
-            $(Button, { onClick: () => {
-              localStorage.removeItem('authorization')
-              client.resetStore()
-              history.push('/')
-            }}, $(ExitToApp, { fontSize: 'small' })),
-            ))),
-        $(List, null,
-          $(ListSubheader, { disableSticky: true }, 'Настройки смен'),
-          map(HospitalShift, sortBy('start', hospitalShifts))),
-          $(AddHospitalShift))),
-    $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
-      $(Shifts)))
+  const { data, loading } = useQuery(hospital, { variables: { uid: match.params.uid }})
+
+  return !loading && !data.hospital
+    ? $(Redirect, { to: '/hospitals'})
+    : $(Box, notMobile && { display: 'flex', padding: 2 },
+        $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
+          $(IconButton, { onClick: () => history.push('/')},
+            $(NavigateBefore))),
+        $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },
+          $(Paper, null,
+            $(Box, { padding: 2, width: notMobile ? 360 : 'auto' },
+              loading
+                ? $(Skeleton, { variant: 'text', width: '61%', height: 45 }) // FIXME shouldbe more precise
+                : $(Typography, { variant: 'h4' }, data.hospital.shortname),
+              loading
+                ? $(Box, null,
+                    $(Skeleton, { variant: 'text', width: '80%', height: 20 }),
+                    $(Skeleton, { variant: 'text', width: '61.8%', height: 20 }))
+                : $(Typography, { variant: 'subtitle2' }, data.hospital.name)),
+            $(Box, { padding: '0 16px' },
+              $(ButtonGroup, null,
+                $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
+                $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })),
+                $(Tooltip, { title: 'Выход' },
+                $(Button, { onClick: () => {
+                  localStorage.removeItem('authorization')
+                  client.resetStore()
+                  history.push('/')
+                }}, $(ExitToApp, { fontSize: 'small' })),
+                ))),
+            $(List, null,
+              $(ListSubheader, { disableSticky: true }, 'Доступные смены'),
+              map(HospitalShift, sortBy('start', hospitalShifts))),
+              $(AddHospitalShift))),
+        $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
+          $(Shifts)))
 }
 
 const HospitalShift = ({
