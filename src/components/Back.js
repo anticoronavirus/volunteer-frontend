@@ -13,8 +13,8 @@ const Back = () => {
   const history = useHistory()
 
   return $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
-      $(IconButton, { onClick: history.goBack },
-      $(NavigateBefore)))
+    $(IconButton, { onClick: history.goBack },
+    $(NavigateBefore)))
 }
 
 export default Back
