@@ -1,7 +1,7 @@
 import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
 import sortBy from 'lodash/fp/sortBy'
-import { useApolloClient, useQuery } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { Redirect } from 'react-router-dom'
 import { hospital } from 'queries'
 import { formatLabel } from 'utils'
@@ -19,10 +19,8 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import IconButton from '@material-ui/core/IconButton'
-import Tooltip from '@material-ui/core/Tooltip'
 import Add from '@material-ui/icons/Add'
 import Skeleton from '@material-ui/lab/Skeleton'
-import ExitToApp from '@material-ui/icons/ExitToApp'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
 import Delete from '@material-ui/icons/Delete'
@@ -35,7 +33,6 @@ const Hospital = ({
 }) => {
 
   const theme = useTheme()
-  const client = useApolloClient()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   const { data, loading } = useQuery(hospital, { variables: { uid: match.params.uid }})
@@ -60,14 +57,7 @@ const Hospital = ({
             $(Box, { padding: '0 16px' },
               $(ButtonGroup, null,
                 $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
-                $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })),
-                $(Tooltip, { title: 'Выход' },
-                $(Button, { onClick: () => {
-                  localStorage.removeItem('authorization')
-                  client.resetStore()
-                  history.push('/')
-                }}, $(ExitToApp, { fontSize: 'small' })),
-                ))),
+                $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })))),
             loading
               ? LoadingPeriods
               : $(List, null,
@@ -104,8 +94,8 @@ const LoadingPeriods =
       })),
     $(ListItem, null,
       $(ListItemText, {
-        primary: $(Skeleton, { variant: 'text', width: '61.8%', height: 24 }),
-        secondary: $(Skeleton, { variant: 'text', width: '38.2%', height: 20 }),
+        primary: $(Skeleton, { variant: 'text', width: '13ex', height: 24 }),
+        secondary: $(Skeleton, { variant: 'text', width: '13ex', height: 20 }),
       })))
 
 const AddHospitalShift = () =>
