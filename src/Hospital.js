@@ -86,7 +86,7 @@ const HospitalShift = ({
 }) =>
   $(ListItem, { key: uid },
     $(ListItemText, {
-      primary: `${start} до ${end}`,
+      primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       secondary: formatLabel('volunteer', demand)}),
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: console.log },
@@ -99,8 +99,8 @@ const LoadingPeriods =
         $(Skeleton, { variant: 'text', width: '38.2%', height: 24 }))),
     $(ListItem, null,
       $(ListItemText, {
-        primary: $(Skeleton, { variant: 'text', width: '61.8%', height: 24 }),
-        secondary: $(Skeleton, { variant: 'text', width: '38.2%', height: 20 }),
+        primary: $(Skeleton, { variant: 'text', width: '13ex', height: 24 }),
+        secondary: $(Skeleton, { variant: 'text', width: '13ex', height: 20 }),
       })),
     $(ListItem, null,
       $(ListItemText, {
