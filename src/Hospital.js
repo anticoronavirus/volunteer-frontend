@@ -84,7 +84,7 @@ const HospitalShift = ({
   end,
   demand
 }) =>
-  $(ListItem, null,
+  $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       secondary: formatLabel('volunteer', demand)}))

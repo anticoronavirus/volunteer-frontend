@@ -29,7 +29,7 @@ const HospitalSelector = ({ hospital: [value, onChange]}) => {
       shortname)
 
   return !data
-    ? $(Box, { padding: '3px', paddingLeft: 1 }, 
+    ? $(Box, { padding: 1, paddingLeft: 0, }, 
         $(Skeleton, { variant: 'text', height: 42, width: 200 }))
     : $(Fragment, null,
         $(TitleButton, {

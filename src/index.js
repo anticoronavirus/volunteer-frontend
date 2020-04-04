@@ -18,14 +18,14 @@ const authLink = new ApolloLink((operation, forward) => {
   let expires = parseInt(localStorage.getItem('expires'))
 
   if (expires && expires - new Date().valueOf() < 0)
-    return fetch('/v1/graphql', {
+    fetch('/v1/graphql', {
       method: 'POST',
       body: JSON.stringify({ query })
     }).then(response => response.json())
       .then(({ data }) => {
         authorization = localStorage.setItem('authorization', `Bearer ${data.refreshToken.accessToken}`)
         expires = localStorage.setItem('expires', data.refreshToken.expires * 1000)
-
+        console.log(authorization, expires)
         operation.setContext(({ headers }) =>
           set(['headers', 'Authorization'],  authorization, headers))
         forward(operation)
@@ -35,11 +35,13 @@ const authLink = new ApolloLink((operation, forward) => {
         localStorage.removeItem('authorization')
         localStorage.removeItem('expires')
       })
-  else if (authorization) {
-    operation.setContext(({ headers }) =>
-      set(['headers', 'Authorization'],  authorization, headers))
-    }
-  return forward(operation)
+  else {
+    if (authorization) {
+      operation.setContext(({ headers }) =>
+        set(['headers', 'Authorization'],  authorization, headers))
+      }
+    return forward(operation)
+  }
 })
 
 const wsLink = new WebSocketLink({
