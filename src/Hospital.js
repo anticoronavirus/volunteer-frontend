@@ -29,29 +29,11 @@ import Delete from '@material-ui/icons/Delete'
 import NavigateBefore from '@material-ui/icons/NavigateBefore'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
-const mockHospitalShifts = [{
-  uid: 1,
-  start: '08:00',
-  end: '14:00',
-  demand: 20
-}, {
-  uid: 2,
-  start: '20:00',
-  end: '08:00',
-  demand: 3
-}, {
-  uid: 3,
-  start: '14:00',
-  end: '20:00',
-  demand: 20
-}]
-
 const Hospital = ({
   history,
   match
 }) => {
 
-  const hospitalShifts = mockHospitalShifts
   const theme = useTheme()
   const client = useApolloClient()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
@@ -86,10 +68,12 @@ const Hospital = ({
                   history.push('/')
                 }}, $(ExitToApp, { fontSize: 'small' })),
                 ))),
-            $(List, null,
-              $(ListSubheader, { disableSticky: true }, 'Доступные смены'),
-              map(HospitalShift, sortBy('start', hospitalShifts))),
-              $(AddHospitalShift))),
+            loading
+              ? LoadingPeriods
+              : $(List, null,
+                  $(ListSubheader, { disableSticky: true }, 'Доступные смены'),
+                  map(HospitalShift, sortBy('start', data.hospital.periods))),
+                  $(AddHospitalShift))),
         $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
           $(Shifts)))
 }
@@ -107,6 +91,22 @@ const HospitalShift = ({
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: console.log },
         $(Delete, { fontSize: 'small'}))))
+
+const LoadingPeriods =
+  $(List, null,
+    $(ListSubheader, { disableSticky: true },
+      $(Box, { padding: '12px 0' },
+        $(Skeleton, { variant: 'text', width: '38.2%', height: 24 }))),
+    $(ListItem, null,
+      $(ListItemText, {
+        primary: $(Skeleton, { variant: 'text', width: '61.8%', height: 24 }),
+        secondary: $(Skeleton, { variant: 'text', width: '38.2%', height: 20 }),
+      })),
+    $(ListItem, null,
+      $(ListItemText, {
+        primary: $(Skeleton, { variant: 'text', width: '61.8%', height: 24 }),
+        secondary: $(Skeleton, { variant: 'text', width: '38.2%', height: 20 }),
+      })))
 
 const AddHospitalShift = () =>
   $(ListItem, { button: true },

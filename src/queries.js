@@ -19,6 +19,11 @@ query hospital($uid: uuid!) {
     shortname
     name
     address
+    periods {
+      start
+      end
+      demand
+    }
   }
 }`
 
