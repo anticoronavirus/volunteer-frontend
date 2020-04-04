@@ -44,7 +44,7 @@ const Main = ({ history }) => {
                 client.resetStore()
                 history.push('/')
               }}, $(ExitToApp, { fontSize: 'small' }))))
-        : $(Button, { variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
+        : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Typography, { variant: 'body2' },
         `Спасибо за то, что готовы помочь! Нажмите на свободную смену ниже, чтобы записаться, а мы позвоним накануне и напомним.
