@@ -1,5 +1,6 @@
 import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
+import get from 'lodash/fp/get'
 import sortBy from 'lodash/fp/sortBy'
 import { useQuery } from '@apollo/react-hooks'
 import { Redirect } from 'react-router-dom'
@@ -36,6 +37,9 @@ const Hospital = ({
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   const { data, loading } = useQuery(hospital, { variables: { uid: match.params.uid }})
+  const isManagedByMe =
+    get(['me', 'hospital', 'uid'], NaN, data) ===
+    get(['me', 0, 'managedHospital', 'uid'], NaN, data) // NaN === NaN -> false
 
   return !loading && !data.hospital
     ? $(Redirect, { to: '/hospitals'})
@@ -53,15 +57,20 @@ const Hospital = ({
                     $(Skeleton, { variant: 'text', width: '61.8%', height: 20 }))
                 : $(Typography, { variant: 'subtitle2' }, data.hospital.name)),
             $(Box, { padding: '0 16px' },
-              $(ButtonGroup, null,
-                $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
-                $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })))),
+              isManagedByMe &&
+                $(ButtonGroup, null,
+                  $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
+                  $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })))),
             loading
               ? LoadingPeriods
               : $(List, null,
-                  $(ListSubheader, { disableSticky: true }, 'Доступные смены'),
+                  $(ListSubheader, { disableSticky: true },
+                    data.hospital.periods.length
+                      ? 'Доступные смены'
+                      : 'Нет доступных смен'),
                   map(HospitalShift, sortBy('start', data.hospital.periods))),
-                  $(AddHospitalShift))),
+                  isManagedByMe &&
+                    $(AddHospitalShift))),
         $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
           $(Shifts)))
 }

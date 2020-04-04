@@ -25,6 +25,11 @@ query hospital($uid: uuid!) {
       demand
     }
   }
+  me {
+    managedHospital {
+      uid
+    }
+  }
 }`
 
 export const professions = gql`

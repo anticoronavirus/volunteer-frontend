@@ -6,7 +6,6 @@ import Back from 'components/Back'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { Link } from 'react-router-dom'
 
-
 import Card from '@material-ui/core/Card'
 import Box from '@material-ui/core/Box'
 import CardActionArea from '@material-ui/core/CardActionArea'
