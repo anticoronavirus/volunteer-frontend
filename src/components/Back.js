@@ -12,9 +12,10 @@ const Back = () => {
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
   const history = useHistory()
 
-  return $(Box, notMobile && { marginRight: 2, marginTop: 1.5 },
-    $(IconButton, { onClick: history.goBack },
-    $(NavigateBefore)))
+  return $(Box, notMobile && { marginRight: 2, marginTop: 1.5, width: 48 },
+    $(Box, { position: 'fixed' },
+      $(IconButton, { onClick: history.goBack },
+      $(NavigateBefore))))
 }
 
 export default Back
