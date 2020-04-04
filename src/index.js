@@ -38,8 +38,8 @@ const authLink = new ApolloLink((operation, forward) => {
   else if (authorization) {
     operation.setContext(({ headers }) =>
       set(['headers', 'Authorization'],  authorization, headers))
-    return forward(operation)
-  }
+    }
+  return forward(operation)
 })
 
 const wsLink = new WebSocketLink({
