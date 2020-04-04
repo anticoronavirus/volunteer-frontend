@@ -150,6 +150,9 @@ subscription {
     start
     end
     demand
+    hospitalscount
+    placesavailable
+    demand
     shiftRequests {
       uid
       confirmed

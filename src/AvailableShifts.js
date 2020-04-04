@@ -35,7 +35,7 @@ const variables = {
 
 const AvailableShifts = memo(() => {
 
-  const { data } = useSubscription(shifts, { variables })
+  const { data } = useSubscription(shifts)
 
   const generatedTable = data && reduce(generateTableReducer, {
     columns: new Set(),
@@ -99,11 +99,11 @@ const Cell = ({
   date,
   start,
   end,
-  hospitalsCount = random(0, 25) || random(0, 25),
-  placesAvailable = random(0, 25) < 10 ? 0 : random(0, 25),
-  myShift = random(0, 25) < 10 && { hospital: { shortName: 'ГКБ №40' } }
+  hospitalscount,
+  placesavailable,
+  myShift
 }) => {
-  const disabled = !myShift && !placesAvailable
+  const disabled = !myShift && !placesavailable
   const user = true // FIXME
   const hospitalSelected = true // FIXME
   const color = disabled
@@ -138,11 +138,11 @@ const Cell = ({
         $(Typography, { variant: 'overline', color },
           start.slice(0, 5), '—', end.slice(0, 5)),
         $(Typography, { variant: 'body2', color },
-          formatLabel('hospital', hospitalsCount)),
+          formatLabel('hospital', hospitalscount)),
         $(Typography, { variant: 'body2', color },
-          placesAvailable === 0
+          placesavailable === 0
             ? 'укомплектовано'
-            : formatLabel('place', placesAvailable)),
+            : formatLabel('place', placesavailable)),
       !myShift
         ? $(Box, { padding: '14px' })
         : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
