@@ -4,9 +4,9 @@ import range from 'lodash/fp/range'
 import random from 'lodash/fp/random'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
-import { Subscription } from '@apollo/react-components'
+import { Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { shifts } from 'queries'
+import { shifts, confirm, removeVolunteerShift } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -22,6 +22,7 @@ import Divider from '@material-ui/core/Divider'
 import Avatar from '@material-ui/core/Avatar'
 import Badge from '@material-ui/core/Badge'
 import IconButton from '@material-ui/core/IconButton'
+import ButtonBase from '@material-ui/core/ButtonBase'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import MoreVert from '@material-ui/icons/MoreVert'
@@ -33,22 +34,22 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-// const mockData = {
-//   shifts: [{
-//     date: '2020-04-20',
-//     start: '08:00',
-//     end: '14:00',
-//     required: 20,
-//     volunteers: new Array(15).fill({
-//       uid: 'test',
-//       fullName: 'Васильев Петр Андреевич',
-//       phone: '+7 (915) 051-5025',
-//       email: 'edelweiss.paramedic@gmail.com',
-//       profession: 'врач-онколог',
-//       confirmed: true
-//     })
-//   }]
-// }
+const mockData = {
+  shifts: [{
+    date: '2020-04-20',
+    start: '08:00',
+    end: '14:00',
+    required: 20,
+    volunteers: new Array(15).fill({
+      uid: 'test',
+      fullName: 'Васильев Петр Андреевич',
+      phone: '+7 (915) 051-5025',
+      email: 'edelweiss.paramedic@gmail.com',
+      profession: 'врач-онколог',
+      confirmed: true
+    })
+  }]
+}
 
 const Shifts = () =>
   $(Subscription, {
@@ -62,7 +63,7 @@ const variables = {
   to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
 
-const ShiftsPure = ({ data }) =>
+const ShiftsPure = ({ data = mockData }) =>
   $(Paper, null,
     $(List, null,
       map(Section, data ? data.shifts : emptyShifts)))
@@ -126,26 +127,33 @@ const VolunteerShift = ({
  }) =>
   $(ListItem, { key: uid },
     $(ListItemAvatar, null,
-      loading ? $(Skeleton, { variant: 'circle', width: 40, height: 40 }) :
-      $(Badge, {
-        overlap: 'circle',
-        badgeContent: confirmed &&
-          $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
-        anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'right' }},
-        $(Avatar))),
-    $(ListItemText, { 
+      loading
+        ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
+        : $(Mutation, { mutation: confirm, variables: { uid } }, mutate =>
+            $(CustomButtonBase, { onClick: mutate }, 
+              $(Badge, {
+                overlap: 'circle',
+                badgeContent: confirmed &&
+                  $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
+                anchorOrigin: {
+                  vertical: 'bottom',
+                  horizontal: 'right' }},
+                $(Avatar))))),
+      $(ListItemText, { 
       primary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 }) :
         fullName || `${lname} ${fname}`,
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-        profession,
+        $(Box, { display: 'flex' }, phone, ' · ', profession),
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
       $(AdditionalControls, { uid, phone })))
+
+const CustomButtonBase = styled(ButtonBase)({
+  borderRadius: '50%',
+})
 
 const CheckHolder = styled('div')(({ theme }) => ({
   padding: '.5px',
@@ -167,9 +175,10 @@ const AdditionalControls = ({ uid }) => {
       $(MenuItem, null,
         $(ListItemIcon, null, $(Phone, { fontSize: 'small' })),
         $(Typography, { variant: 'inherit' }, 'Позвонить')),
-      $(MenuItem, null,
-        $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
-        $(Typography, { variant: 'inherit' }, 'Удалить из смены')),
+      $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
+        $(MenuItem, { onClick: mutate },
+          $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
+          $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
       $(MenuItem, null,
         $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
         $(Typography, { variant: 'inherit' }, 'В черный список'))))

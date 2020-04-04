@@ -266,6 +266,21 @@ mutation removeShift($uid: uuid!) {
   }
 }`
 
+export const confirm = gql`
+mutation confirmVolunteer($uid: uuid!) {
+  update_volunteer_shift(where: { uid: { _eq: $uid } }) {
+    uid
+    confirmed
+  }
+}`
+
+export const removeVolunteerShift = gql`
+mutation removeVolunteerShift($uid: uuid!) {
+  delete_volunteer_shift(where: { uid: { _eq: $uid }}) {
+    affected_rows
+  }
+}`
+
 export const refreshToken = `
  mutation {
    refreshToken {

@@ -27,7 +27,7 @@ const AddHospitalShift = ({ uid, hospital }) => {
   const [demand, setDemand] = useState(20)
 
   const [mutate] = useMutation(addShift, {
-    optimisticResponse: {
+    optimisticResponse: { // FIXME this seems not to be working
       insert_period: {
         returning: {
           __typename: 'period_mutation_response',
