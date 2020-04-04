@@ -32,8 +32,8 @@ const authLink = new ApolloLink((operation, forward) => {
       })
       .catch(({ message }) => {
         console.log(message)
-        localStorage.deleteItem('authorization')
-        localStorage.deleteItem('expires')
+        localStorage.removeItem('authorization')
+        localStorage.removeItem('expires')
       })
   else if (authorization) {
     operation.setContext(({ headers }) =>
