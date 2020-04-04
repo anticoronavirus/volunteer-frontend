@@ -1,6 +1,8 @@
 import { createElement as $, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
+import { useMutation } from '@apollo/react-hooks'
+import { addShift } from 'queries'
 
 import Box from '@material-ui/core/Box'
 import ListItem from '@material-ui/core/ListItem'
@@ -17,11 +19,21 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
 
-const AddHospitalShift = () => {
-  const [open, setOpen] = useState(true)
+const AddHospitalShift = ({ uid }) => {
+
+  const [open, setOpen] = useState(false)
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
   const [demand, setDemand] = useState(20)
+
+  const [mutate] = useMutation(addShift, {
+    variables: {
+      uid,
+      demand, 
+      start: `${start}:00+03:00`,
+      end: `${end}:00+03:00`,
+    }})
+
   return $(Fragment, null,
     $(Dialog, {
       open,
@@ -56,7 +68,8 @@ const AddHospitalShift = () => {
             type: 'number',
             label: 'Количество волонтёров' })),
       $(DialogActions, null,
-        $(Button, { onClick: console.log}, 'Добавить'))),
+        start && end && demand &&
+          $(Button, { onClick: () => mutate().then(() => setOpen(false))}, 'Добавить'))),
     $(ListItem, { button: true, onClick: () => setOpen(true) },
       $(ListItemIcon, null,
         $(Add)),

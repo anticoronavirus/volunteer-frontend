@@ -3,8 +3,9 @@ import map from 'lodash/fp/map'
 import get from 'lodash/fp/get'
 import sortBy from 'lodash/fp/sortBy'
 import { useQuery } from '@apollo/react-hooks'
+import { Mutation } from '@apollo/react-components'
 import { Redirect } from 'react-router-dom'
-import { hospital } from 'queries'
+import { hospital, removeShift } from 'queries'
 import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
@@ -79,13 +80,14 @@ const HospitalShift = ({
   end,
   demand
 }) =>
-  $(ListItem, { key: uid },
-    $(ListItemText, {
-      primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      secondary: formatLabel('volunteer', demand)}),
-    $(ListItemSecondaryAction, null,
-      $(IconButton, { onClick: console.log },
-        $(Delete, { fontSize: 'small'}))))
+  $(Mutation, { key: uid, mutation: removeShift }, mutate =>
+    $(ListItem, null,
+      $(ListItemText, {
+        primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+        secondary: formatLabel('volunteer', demand)}),
+      $(ListItemSecondaryAction, null,
+        $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
+          $(Delete, { fontSize: 'small'})))))
 
 const LoadingPeriods =
   $(List, null,
