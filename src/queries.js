@@ -79,19 +79,23 @@ mutation UpsertVolunteer(
 
 export const addVolunteerToShift = gql`
 mutation AddVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
+  $userId: uuid
+  $hospitalId: uuid
+  $date: date
+  $start: timetz
+  $end: timetz
 ) {
   insert_volunteer_shift(objects: [{
-    volunteer_id: $volunteer_id
-    shift_id: $shift_id
+    volunteer_id: $userId
+    hospital_id: $hospitalId
+    date: $date
+    start: $start
+    end: $end
   }]) {
     returning {
-      shift {
+      uid
+      volunteer {
         uid
-        volunteers {
-          uid
-        }
       }
     }
   }

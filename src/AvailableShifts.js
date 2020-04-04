@@ -2,14 +2,15 @@ import { createElement as $, memo } from 'react'
 import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
 import map from 'lodash/fp/map'
-import random from 'lodash/fp/random'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
+  addVolunteerToShift
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
+import { useHistory } from 'react-router-dom'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
@@ -24,7 +25,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Skeleton from '@material-ui/lab/Skeleton'
 import Check from '@material-ui/icons/Check'
 import green from '@material-ui/core/colors/green'
-import { useSubscription } from '@apollo/react-hooks'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 
 const now = new Date()
@@ -33,11 +34,12 @@ const variables = {
   to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
 
-const AvailableShifts = memo(() => {
+const AvailableShifts = memo(({ userId, hospitalId }) => {
 
   const { data } = useSubscription(shifts)
+  const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
 
-  const generatedTable = data && reduce(generateTableReducer, {
+  const generatedTable = data && reduce(generateTableReducer(userId && addToShift), {
     columns: new Set(),
     rows: {}
   }, data.shifts)
@@ -78,11 +80,11 @@ const LoadingTableBody = [
   $(TableRow, { key: 3 }, uncappedMap(LoadingBodyCell, loadingRange))
 ]
 
-const generateTableReducer = (result, shift) => {
+const generateTableReducer = addToShift => (result, shift) => {
   result.columns.add(shift.date)
   if (!result.rows[`${shift.start}-${shift.end}`])
     result.rows[`${shift.start}-${shift.end}`] = []
-  result.rows[`${shift.start}-${shift.end}`].push(shift)
+  result.rows[`${shift.start}-${shift.end}`].push({ addToShift, ...shift })
   return result
 }
 
@@ -101,10 +103,11 @@ const Cell = ({
   end,
   hospitalscount,
   placesavailable,
+  addToShift,
   myShift
 }) => {
   const disabled = !myShift && !placesavailable
-  const user = true // FIXME
+  const history =  useHistory()
   const hospitalSelected = true // FIXME
   const color = disabled
     ? 'textSecondary'
@@ -113,11 +116,20 @@ const Cell = ({
       : 'initial'
 
   const onClick = () =>
-    !user
-      ? 'register'
-      : !hospitalSelected
-        ? 'open hospitals'
-        : 'send'
+    !addToShift
+      ? history.push('/login')
+      : addToShift({
+        variables: {
+          date,
+          start,
+          end
+        }
+      })
+    // !user
+    //   ? 'register'
+    //   : !hospitalSelected
+    //     ? 'open hospitals'
+    //     : 'send'
 
   return $(TableCell, {
     key: uid,

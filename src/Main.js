@@ -50,7 +50,7 @@ const Main = ({ history }) => {
         : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Hint, { name: 'welcome' })),
-    $(AvialableShifts, { hospitalId, userId: data && data.me && data.me.uid }))
+    $(AvialableShifts, { hospitalId, userId: data && data.me.length && data.me[0].uid }))
 }
 
 export default Main
