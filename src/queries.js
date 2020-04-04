@@ -144,24 +144,20 @@ subscription VolunteerShifts($from: date $to: date) {
 }`
 
 export const shifts = gql`
-subscription Shifts($from: date $to: date $profession: String ) {
-  shifts(
-    order_by: { date: asc, start: asc }
-    where: { date: { _gte: $from  _lt: $to } }) {
-    uid
-    date
+subscription {
+  shifts(order_by: { meh: asc start: asc }) {
+    date: meh
     start
     end
-    professions {
-      name
-      number
-    }
-    volunteers (where: { profession: { _eq: $profession }}) {
+    demand
+    shiftRequests {
       uid
-      fname
-      mname
-      lname
-      phone
+      confirmed
+      volunteer {
+        uid
+        lname
+        fname
+      }
     }
   }
 }

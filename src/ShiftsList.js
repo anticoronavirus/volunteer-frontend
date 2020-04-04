@@ -54,7 +54,6 @@ const mockData = {
 
 const Shifts = () =>
   $(Subscription, {
-    variables,
     subscription: shifts,
   }, ShiftsPure)
 
@@ -64,7 +63,7 @@ const variables = {
   to: format(addDays(now, 14), 'yyyy-MM-dd')
 }
 
-const ShiftsPure = ({ data = mockData }) =>
+const ShiftsPure = ({ data }) =>
   $(Paper, null,
     $(List, null,
       map(Section, data ? data.shifts : emptyShifts)))
@@ -86,7 +85,7 @@ const Section = ({
   start,
   end,
   required = 10,
-  volunteers,
+  shiftRequests,
   loading
 }) =>
   $(SectionLI, { key: uid },
@@ -97,8 +96,8 @@ const Section = ({
           `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
           loading ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
-          `${volunteers.length}/${required}`)),
-      map(VolunteerShift, volunteers),
+          `${shiftRequests.length}/${required}`)),
+      map(VolunteerShift, shiftRequests),
       $(Divider)))
 
 const ZIndexedListSubheader = styled(ListSubheader)({
@@ -117,14 +116,15 @@ const SectionUL = styled('ul')({
 
 const VolunteerShift = ({
   uid,
-  fullName,
-  lname,
-  fname,
-  phone,
   volunteer_id,
-  profession = 'врач',
-  email,
-  confirmed = random(0, 25) > 10,
+  confirmed,
+  volunteer: { 
+    fullName,
+    lname,
+    fname,
+    phone,
+    email,
+  },
   loading
  }) =>
   $(ListItem, { key: uid },
@@ -147,7 +147,7 @@ const VolunteerShift = ({
         fullName || `${lname} ${fname}`,
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-        $(Box, { display: 'flex' }, phone, ' · ', profession),
+        $(Box, { display: 'flex' }, phone, ' · ', 'врач'),
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
