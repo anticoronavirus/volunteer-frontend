@@ -34,24 +34,6 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const mockData = {
-  shifts: [{
-    date: '2020-04-20',
-    start: '08:00',
-    end: '14:00',
-    required: 20,
-    volunteers: new Array(15).fill({
-      uid: 'test',
-      fullName: 'Васильев Петр Андреевич',
-      phone: '+7 (915) 051-5025',
-      email: 'edelweiss.paramedic@gmail.com',
-      profession: 'врач-онколог',
-      confirmed: true,
-      volunteer_id: 'test'
-    })
-  }]
-}
-
 const Shifts = () =>
   $(Subscription, {
     subscription: shifts,
