@@ -145,8 +145,8 @@ subscription VolunteerShifts($from: date $to: date) {
 
 export const shifts = gql`
 subscription {
-  shifts(order_by: { meh: asc start: asc }) {
-    date: meh
+  shifts(order_by: { date: asc start: asc }) {
+    date
     start
     end
     demand
