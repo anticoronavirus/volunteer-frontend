@@ -19,7 +19,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
 
-const AddHospitalShift = ({ uid }) => {
+const AddHospitalShift = ({ uid, hospital }) => {
 
   const [open, setOpen] = useState(false)
   const [start, setStart] = useState(null)
@@ -27,6 +27,26 @@ const AddHospitalShift = ({ uid }) => {
   const [demand, setDemand] = useState(20)
 
   const [mutate] = useMutation(addShift, {
+    optimisticResponse: {
+      insert_period: {
+        returning: {
+          __typename: 'period_mutation_response',
+          returning: {
+            hospital: {
+              ...hospital,
+              periods: [
+                ...hospital.periods, {
+                  uid: Math.random(),
+                  start: `${start}:00+03:00`,
+                  end: `${end}:00+03:00`,
+                  demand
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
     variables: {
       uid,
       demand, 
