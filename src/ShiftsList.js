@@ -46,7 +46,8 @@ const mockData = {
       phone: '+7 (915) 051-5025',
       email: 'edelweiss.paramedic@gmail.com',
       profession: 'врач-онколог',
-      confirmed: true
+      confirmed: true,
+      volunteer_id: 'test'
     })
   }]
 }
@@ -120,6 +121,7 @@ const VolunteerShift = ({
   lname,
   fname,
   phone,
+  volunteer_id,
   profession = 'врач',
   email,
   confirmed = random(0, 25) > 10,
@@ -149,7 +151,7 @@ const VolunteerShift = ({
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
-      $(AdditionalControls, { uid, phone })))
+      $(AdditionalControls, { uid, phone, volunteer_id })))
 
 const CustomButtonBase = styled(ButtonBase)({
   borderRadius: '50%',
@@ -161,7 +163,7 @@ const CheckHolder = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
-const AdditionalControls = ({ uid }) => {
+const AdditionalControls = ({ uid, volunteer_id }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -179,7 +181,7 @@ const AdditionalControls = ({ uid }) => {
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
-      $(Mutation, { mutation: addToBlackList, variables: { uid } }, mutate =>  
+      $(Mutation, { mutation: addToBlackList, variables: { uid: volunteer_id } }, mutate =>  
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'В черный список')))))
