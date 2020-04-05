@@ -265,10 +265,13 @@ mutation removeShift($uid: uuid!) {
 }`
 
 export const confirm = gql`
-mutation confirmVolunteer($uid: uuid!) {
-  update_volunteer_shift(where: { uid: { _eq: $uid } }) {
-    uid
-    confirmed
+mutation confirmVolunteer($uid: uuid! $confirmed: Boolean) {
+  update_volunteer_shift(_set: { confirmed: $confirmed } where: { uid: { _eq: $uid } }) {
+    affected_rows
+    returning {
+      uid
+      confirmed
+    }
   }
 }`
 

@@ -45,7 +45,9 @@ const ShiftsPure = ({ data }) =>
 
 // this is so geh
 const emptyShifts = uncappedMap((value, index) => ({
-  uid: index,
+  date: index + 1,
+  start: index + 2,
+  end: index + 3,
   loading: true,
   volunteers: uncappedMap((value, index) => ({
     uid: index,
@@ -54,7 +56,6 @@ const emptyShifts = uncappedMap((value, index) => ({
 }), range(0, 14))
 
 const Section = ({
-  uid,
   date,
   start,
   end,
@@ -62,7 +63,7 @@ const Section = ({
   shiftRequests,
   loading
 }) =>
-  $(SectionLI, { key: uid },
+  $(SectionLI, { key: `${date}-${start}-${end}` },
     $(SectionUL, null,
       $(ZIndexedListSubheader, null,
         $(Box, { display: 'flex', justifyContent: 'space-between' },
@@ -105,7 +106,7 @@ const VolunteerShift = ({
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
-        : $(Mutation, { mutation: confirm, variables: { uid } }, mutate =>
+        : $(Mutation, { mutation: confirm, variables: { uid, confirmed: !confirmed } }, mutate =>
             $(CustomButtonBase, { onClick: mutate }, 
               $(Badge, {
                 overlap: 'circle',
