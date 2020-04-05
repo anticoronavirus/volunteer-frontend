@@ -1,4 +1,4 @@
-import { createElement as $, memo } from 'react'
+import { createElement as $, memo, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
@@ -6,15 +6,20 @@ import reduce from 'lodash/fp/reduce'
 import {
   shifts,
   addVolunteerToShift,
-  removeVolunteerFromShift
+  removeVolunteerFromShift,
+  hospitals
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { Query } from '@apollo/react-components'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
 import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -26,7 +31,6 @@ import Check from '@material-ui/icons/Check'
 import DoubleCheck from '@material-ui/icons/DoneAll'
 import green from '@material-ui/core/colors/green'
 import orange from '@material-ui/core/colors/orange'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 const AvailableShifts = memo(({ userId, hospitalId }) => {
 
@@ -86,26 +90,45 @@ const Cell = ({
   const hospitalId = match && match.params && match.params.hospitalId
   const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
   const [removeFromShift] = useMutation(removeVolunteerFromShift)
+  const [anchorEl, setAnchorEl] = useState()
 
-  const toggleShift = () =>
+  const toggleShift = event =>
     !userId
       ? history.push('/login')
       : shiftRequests.length
         ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
         : !hospitalId
-          ? null
+          ? setAnchorEl(event.currentTarget)
           : addToShift({ variables: { date, start, end } })
 
-  return $(CellPure, { 
-    date,
-    start,
-    end,
-    placesavailable,
-    hospitalscount,
-    hospitalSelected: hospitalId,
-    myShift: shiftRequests[0],
-    toggleShift
-  })
+  return $(Fragment, null,
+    !hospitalId && anchorEl &&
+      $(Query, { query: hospitals }, ({ data }) =>
+        $(Menu, {
+          open: true,
+          onClose: () => setAnchorEl(null),
+          anchorEl
+        },
+          map(hospital =>
+            $(MenuItem, {
+              key: hospital.uid,
+              onClick: () => {
+                setAnchorEl(false)
+                addToShift({ variables: { date, start, end, hospitalId: hospital.uid }})
+              }
+            },
+              hospital.shortname),
+            data && data.hospitals))),
+    $(CellPure, { 
+      date,
+      start,
+      end,
+      placesavailable,
+      hospitalscount,
+      hospitalSelected: hospitalId,
+      myShift: shiftRequests[0],
+      toggleShift
+    }))
 }
 
 const CellPure = ({
