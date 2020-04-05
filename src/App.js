@@ -29,8 +29,8 @@ const App = () => {
     $(CustomCssBaseline),
     $(Switch, null,
       $(Route, { path: '/login', component: Login }),
-      $(Route, { path: '/hospitals/', component: Hospitals }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
+      $(Route, { path: '/hospitals/', component: Hospitals }),
       $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
       $(Redirect, { to: '/' })))
 }
