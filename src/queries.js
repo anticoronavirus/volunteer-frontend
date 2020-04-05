@@ -78,7 +78,7 @@ mutation UpsertVolunteer(
 `
 
 export const addVolunteerToShift = gql`
-mutation AddVolunteerToShift(
+mutation addVolunteerToShift(
   $userId: uuid
   $hospitalId: uuid
   $date: date
@@ -103,7 +103,7 @@ mutation AddVolunteerToShift(
 `
 
 export const removeVolunteerFromShift = gql`
-mutation AddVolunteerToShift(
+mutation removeVolunteerToShift(
   $volunteer_id: uuid
   $shift_id: uuid
 ) {
@@ -160,6 +160,10 @@ subscription {
     shiftRequests {
       uid
       confirmed
+      hospital {
+        uid
+        shortname
+      }
       volunteer {
         uid
         lname

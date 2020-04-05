@@ -104,14 +104,15 @@ const Cell = ({
   hospitalscount,
   placesavailable,
   addToShift,
-  myShift
+  shiftRequests
 }) => {
-  const disabled = !myShift && !placesavailable
+  console.log(shiftRequests)
+  const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
   const hospitalSelected = true // FIXME
   const color = disabled
     ? 'textSecondary'
-    : myShift
+    : shiftRequests.length
       ? 'inherit'
       : 'initial'
 
@@ -137,8 +138,8 @@ const Cell = ({
     padding: 'none',
     style: {
       verticalAlign: 'top',
-      borderBottomColor: myShift && green[300],
-      backgroundColor: myShift && green[500]
+      borderBottomColor: shiftRequests.length && green[300],
+      backgroundColor: shiftRequests.length && green[500]
     }
   },
     $(ButtonBase, { onClick, disabled },
@@ -155,12 +156,12 @@ const Cell = ({
           placesavailable === 0
             ? 'укомплектовано'
             : formatLabel('place', placesavailable)),
-      !myShift
+      !shiftRequests.length
         ? $(Box, { padding: '14px' })
         : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
             $(Check, { fontSize: 'small', htmlColor: green[100] }),
             $(Box, { width: '8px', }),
-            $(Typography, { variant: 'body2' }, myShift.hospital.shortName.slice(0, 10))))))
+            $(Typography, { variant: 'body2' }, shiftRequests[0].hospital.shortname.slice(0, 10))))))
 }
 
 export default AvailableShifts
