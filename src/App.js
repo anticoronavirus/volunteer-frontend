@@ -5,6 +5,7 @@ import Login from 'Login'
 // import AvailableShifts from 'AvailableShifts'
 import Hospital from 'Hospital'
 import Hospitals from 'Hospitals'
+import Profile from 'Profile'
 import { Switch, Route, Redirect } from 'react-router-dom'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
@@ -29,6 +30,7 @@ const App = () => {
     $(CustomCssBaseline),
     $(Switch, null,
       $(Route, { path: '/login', component: Login }),
+      $(Route, { path: '/profile', component: Profile }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
       $(Route, { path: '/hospitals/', component: Hospitals }),
       $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
