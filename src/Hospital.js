@@ -76,7 +76,7 @@ const Hospital = ({
                     $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital })))),
         data && data.hospital.periods.length > 0 &&
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
-            $(Shifts, { hospitalId: match.params.uid })))
+            $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))
 }
 
 const HospitalShift = ({

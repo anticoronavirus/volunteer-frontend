@@ -4,6 +4,7 @@ import range from 'lodash/fp/range'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
 import { hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
+import Hint from 'components/Hint'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -31,19 +32,20 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Shifts = ({ hospitalId }) =>
+const Shifts = ({ hospitalId, isManagedByMe }) =>
   $(Subscription, {
     subscription: hospitalShifts,
     variables: {
       hospitalIds: hospitalId ? `{${hospitalId}}` : null,
       hospitalId: hospitalId,
     }
-  }, ShiftsPure)
-
-const ShiftsPure = ({ data }) =>
+  }, ({ data }) =>
   $(Paper, null,
+    isManagedByMe &&
+      $(Box, { padding: 2 },
+        $(Hint, { name: 'how_confirm' })),
     $(List, null,
-      map(Section, data ? data.shifts : emptyShifts)))
+      map(Section, data ? data.shifts : emptyShifts))))
 
 
 // this is so geh
