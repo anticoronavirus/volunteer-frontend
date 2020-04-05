@@ -28,7 +28,7 @@ import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 const AvailableShifts = memo(({ userId, hospitalId }) => {
 
-  const { data } = useSubscription(shifts)
+  const { data } = useSubscription(shifts, { variables: { hospitalId: hospitalId ? `{${hospitalId}}` : null } })
   const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
   const [removeFromShift] = useMutation(removeVolunteerFromShift)
 
