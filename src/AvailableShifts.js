@@ -119,7 +119,14 @@ const CellPure = ({
   myShift,
   loading
 }) =>
-  $(TableCell, { padding: 'none' },
+  $(TableCell, {
+    padding: 'none',
+    style: myShift && {
+      borderBottomColor: myShift.confirmed
+        ? green[300]
+        : orange[300],
+    }
+  },
     $(ButtonBase, { onClick: toggleShift, disabled: !myShift && !placesavailable },
       $(Box, {
         width: 148,
