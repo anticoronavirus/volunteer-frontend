@@ -4,7 +4,11 @@ export const me = gql`{
   me {
     uid
     fname
+    mname
     lname
+    phone
+    email
+    comment
     managedHospital {
       uid
       shortname
@@ -40,32 +44,25 @@ export const professions = gql`
   }
 }`
 
-export const addVolunteer = gql`
+export const updateVolunteer = gql`
 mutation UpsertVolunteer(
+  $uid: uuid
   $fname: String
   $mname: String
   $lname: String
   $email: String
-  $profession: String
-  $phone: String
+  $comment: String
 ) {
-  insert_volunteer(
-    objects: [{
+  update_volunteer(
+    _set: {
       fname: $fname
       mname: $mname
       lname: $lname
       email: $email
-      phone: $phone
-      profession: $profession
-    }]
-    on_conflict: {
-      constraint: volunteer_phone_email_key
-      update_columns: [
-        fname
-        mname
-        lname
-        profession
-      ]
+      comment: $comment
+    }
+    where: {
+      uid: { _eq: $uid }
     }) {
     returning {
       uid
