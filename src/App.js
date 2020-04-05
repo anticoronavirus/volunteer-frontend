@@ -34,7 +34,7 @@ const App = () => {
     $(CustomCssBaseline),
     $(Switch, null,
       $(Route, { path: '/profile', component: Profile }),
-      !loading && data.me[0] && !every(isEmpty, values(data.me[0])) &&
+      !loading && data.me[0] && every(isEmpty, values(data.me[0])) &&
         $(Redirect, { to: '/profile' }),
       $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),

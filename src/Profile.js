@@ -1,32 +1,21 @@
-import { createElement as $, useState } from 'react'
-import map from 'lodash/fp/map'
-import get from 'lodash/fp/get'
-import sortBy from 'lodash/fp/sortBy'
+import { createElement as $ } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { Redirect, useHistory } from 'react-router-dom'
 import { me as meQuery, updateVolunteer } from 'queries'
-import Shifts from 'ShiftsList'
 import Back from 'components/Back'
-import AddHospitalShift from 'components/AddHospitalShift'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
+import pickBy from 'lodash/fp/pickBy'
+import includes from 'lodash/fp/includes'
 
+import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
 import Avatar from '@material-ui/core/Avatar'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListSubheader from '@material-ui/core/ListSubheader'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Tooltip from '@material-ui/core/Tooltip'
-import Skeleton from '@material-ui/lab/Skeleton'
-import CloudDownload from '@material-ui/icons/CloudDownload'
-import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
@@ -37,7 +26,7 @@ const Profile = () => {
   return !loading && !data.me[0]
     ? $(Redirect, { to: '/' })
     : loading
-      ? 'loading'
+      ? $(Box, { padding: 2 }, $(CircularProgress))
       : $(ProfilePure, data.me[0])
 }
 
@@ -45,7 +34,7 @@ const ProfilePure = data =>  {
 
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
-  const [mutate] = useMutation(updateVolunteer)
+  const [mutate] = useMutation(updateVolunteer, { variables: { uid: data.uid }})
   const history = useHistory()
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
@@ -66,7 +55,10 @@ const ProfilePure = data =>  {
                 $(ExitToApp, { fontSize: 'small' })))),
           $(Formik, {
             initialValues: data,
-            onSubmit: variables => mutate({ variables })},
+            validateOnMount: true,
+            onSubmit: variables =>
+              mutate({ variables: pickBy(isField, variables) })
+                .then(() => history.push('/'))},
             ({ submitForm, isValid, dirty }) =>
               $(Form, null, 
                 $(Field, {
@@ -111,14 +103,26 @@ const ProfilePure = data =>  {
                   fullWidth: true,
                   variant: 'outlined' }),
                 $(Box, { height: 16 }),
-                !(dirty && isValid)
-                  ? $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')
-                  : $(Button, {
+                isValid
+                  ? $(Button, {
                       onClick: submitForm,
                       variant: 'outlined',
                       fullWidth: true,
-                    }, 'Сохранить')))))))
+                    }, 'Сохранить')
+                  : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))))
 }
+
+const isField = (value, key) =>
+  includes(key, fields)
+
+const fields = [
+  'uid',
+  'fname',
+  'mname',
+  'lname',
+  'email',
+  'comment'
+]
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 

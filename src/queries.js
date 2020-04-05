@@ -66,9 +66,12 @@ mutation UpsertVolunteer(
     }) {
     returning {
       uid
-      shifts {
-        uid
-      }
+      fname
+      mname
+      lname
+      phone
+      email
+      comment
     }
   }
 }

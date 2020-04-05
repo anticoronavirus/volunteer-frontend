@@ -2,7 +2,7 @@ import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
 import HospitalSelector from 'components/HospitalSelector'
-import { useQuery, useApolloClient } from '@apollo/react-hooks'
+import { useQuery } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me } from 'queries'
 import { logoff } from 'Apollo'
@@ -19,7 +19,6 @@ const Main = ({ history, match }) => {
 
   const { data, loading } = useQuery(me)
   const hospital = [match.params.hospitalId, hospitalId => history.push(`/${hospitalId}`)]
-  const client = useApolloClient()
 
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
