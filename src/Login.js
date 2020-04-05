@@ -1,6 +1,7 @@
 import { createElement as $, useState } from 'react'
 import MaskedInput from 'react-input-mask'
 import { useMutation, useApolloClient } from '@apollo/react-hooks'
+import { wsLink } from 'Apollo'
 import {
   submitPhone as submitPhoneMutation,
   login as loginMutation
@@ -54,6 +55,7 @@ const Login = ({ history }) => {
           localStorage.setItem('authorization', `Bearer ${data.getToken.accessToken}`)
         data.getToken.expires &&
           localStorage.setItem('expires', data.getToken.expires * 1000)
+        wsLink.subscriptionClient.client.close()
         client.resetStore()
         history.push('/')
       })

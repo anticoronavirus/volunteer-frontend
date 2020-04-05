@@ -5,6 +5,7 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
+  anonhymousShifts,
   addVolunteerToShift,
   removeVolunteerFromShift
 } from 'queries'
@@ -28,11 +29,12 @@ import green from '@material-ui/core/colors/green'
 import orange from '@material-ui/core/colors/orange'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-const AvailableShifts = memo(({ userId = null, hospitalId }) => {
+const AvailableShifts = memo(({ userId, hospitalId }) => {
 
-  const { data } = useSubscription(shifts, { variables: {
-    userId,
-    hospitalId: hospitalId ? `{${hospitalId}}` : null }
+  hospitalId = hospitalId ? `{${hospitalId}}` : null
+
+  const { data } = useSubscription(shifts, {
+    variables: userId ? { userId, hospitalId } : { hospitalId }
   })
 
   const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
@@ -76,22 +78,15 @@ const Cell = ({
   end,
   hospitalscount,
   placesavailable,
-  shiftRequests,
+  shiftRequests = [],
   userId
 }) => {
 
-  const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
   const match = useRouteMatch('/:hospitalId')
   const hospitalId = match && match.params && match.params.hospitalId
   const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
   const [removeFromShift] = useMutation(removeVolunteerFromShift)
-
-  const color = disabled
-    ? 'textSecondary'
-    : shiftRequests.length
-      ? 'inherit'
-      : 'initial'
 
   const toggleShift = () =>
     !userId

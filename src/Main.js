@@ -5,6 +5,7 @@ import HospitalSelector from 'components/HospitalSelector'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me } from 'queries'
+import { wsLink } from 'Apollo'
 
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
@@ -43,13 +44,19 @@ const Main = ({ history, match }) => {
             $(Tooltip, { title: 'Выход' },
               $(Button, { onClick: () => {
                 localStorage.removeItem('authorization')
+                localStorage.removeItem('expires')
+                wsLink.subscriptionClient.client.close()
                 client.resetStore()
                 history.push('/')
               }}, $(ExitToApp, { fontSize: 'small' }))))
         : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
-    $(Box, { padding: '0 16px', maxWidth: '120ex'},
-      $(Hint, { name: 'welcome' })),
-    $(AvialableShifts, { hospitalId: match.params.hospitalId, userId: data && data.me.length && data.me[0].uid }))
+    // $(Box, { padding: '0 16px', maxWidth: '120ex'},
+    //   $(Hint, { name: 'welcome' })),
+    data &&
+      $(AvialableShifts, {
+        hospitalId: match.params.hospitalId,
+        userId: data && data.me.length && data.me[0].uid
+      }))
 }
 
 export default Main
