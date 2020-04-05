@@ -9,10 +9,10 @@ import Typography from '@material-ui/core/Typography'
 
 const Hint = ({ name }) => {
   const { data } = useQuery(hint, { variables: { name } })
-  return !data || !data.hint_by_pk
+  return !data || !data.hint.length
     ? null
     : $(Box, null,
-        $(Typography, { variant: 'body2' }, data.hint_by_pk.text),
+        $(Typography, { variant: 'body2' }, data.hint[0].text),
         $(Box, { marginLeft: -1.5  },
           $(Mutation, {
             mutation: seenHint,
@@ -27,10 +27,10 @@ const Hint = ({ name }) => {
               cache.writeQuery({
                 query: hint,
                 variables: { name },
-                data: { hint_by_pk: null, me },
+                data: { hint: null, me },
               })
             },
-            variables: { userId: data.me[0].uid, hintId: data.hint_by_pk.uid }
+            variables: { userId: data.me[0].uid, hintId: data.hint[0].uid }
           }, mutate => 
             $(Button, { onClick: mutate },
             'Окей'))))

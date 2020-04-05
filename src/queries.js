@@ -204,7 +204,7 @@ mutation FlipConfirm(
 export const hint = gql`
 query hint ($name: bpchar!) {
   me { uid }
-  hint (args: { name: $name }) {
+  hint (where: { name: { _eq: $name }}) {
     uid
     text
   } 
