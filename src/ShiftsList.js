@@ -3,7 +3,7 @@ import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { shifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
+import { hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -33,8 +33,11 @@ import Skeleton from '@material-ui/lab/Skeleton'
 
 const Shifts = ({ hospitalId }) =>
   $(Subscription, {
-    subscription: shifts,
-    variables: { hospitalId: hospitalId ? `{${hospitalId}}` : null }
+    subscription: hospitalShifts,
+    variables: {
+      hospitalIds: hospitalId ? `{${hospitalId}}` : null,
+      hospitalId: hospitalId,
+    }
   }, ShiftsPure)
 
 const ShiftsPure = ({ data }) =>

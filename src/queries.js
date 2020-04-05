@@ -151,6 +151,25 @@ subscription shifts($hospitalId: _uuid $userId: uuid) {
         uid
         shortname
       }
+    }
+  }
+}
+`
+
+export const hospitalShifts = gql`
+subscription shifts(
+  $hospitalIds: _uuid
+  $hospitalId: uuid
+) {
+  shifts: shift_selector(args: { hospital_ids: $hospitalIds }) {
+    date
+    start
+    end
+    placesavailable
+    demand
+    shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
+      uid
+      confirmed
       volunteer {
         uid
         lname

@@ -25,9 +25,10 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import Check from '@material-ui/icons/Check'
 import DoubleCheck from '@material-ui/icons/DoneAll'
 import green from '@material-ui/core/colors/green'
+import orange from '@material-ui/core/colors/orange'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
-const AvailableShifts = memo(({ userId, hospitalId }) => {
+const AvailableShifts = memo(({ userId = null, hospitalId }) => {
 
   const { data } = useSubscription(shifts, { variables: {
     userId,
@@ -81,8 +82,8 @@ const Cell = ({
 
   const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
-  const match = useRouteMatch('/:hospitalSelected')
-  const hospitalId = match && match.params.hospitalSelected
+  const match = useRouteMatch('/:hospitalId')
+  const hospitalId = match && match.params && match.params.hospitalId
   const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
   const [removeFromShift] = useMutation(removeVolunteerFromShift)
 
@@ -111,37 +112,6 @@ const Cell = ({
     myShift: shiftRequests[0],
     toggleShift
   })
-  // $(TableCell, {
-  //   key: date + start + end,
-  //   align: 'left',
-  //   padding: 'none',
-  //   style: {
-  //     verticalAlign: 'top',
-  //     borderBottomColor: shiftRequests.length ? green[300] : '',
-  //     backgroundColor: shiftRequests.length ? green[500] : ''
-  //   }
-  // },
-  //   $(ButtonBase, { onClick, disabled },
-  //     $(Box, {
-  //       padding: 2,
-  //       width: 148,
-  //       textAlign: 'left',
-  //     },
-  //       $(Typography, { variant: 'overline', color },
-  //         start.slice(0, 5), '—', end.slice(0, 5)),
-  //       !hospitalSelected &&
-  //         $(Typography, { variant: 'body2', color },
-  //           formatLabel('hospital', hospitalscount)),
-  //       $(Typography, { variant: 'body2', color },
-  //         placesavailable === 0
-  //           ? 'укомплектовано'
-  //           : formatLabel('place', placesavailable)),
-  //     !shiftRequests.length
-  //       ? $(Box, { padding: '14px' })
-  //       : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
-  //           $(Check, { fontSize: 'small', htmlColor: green[100] }),
-  //           $(Box, { width: '8px', }),
-  //           $(Typography, { variant: 'body2' }, shiftRequests[0].hospital.shortname.slice(0, 10))))))
 }
 
 const CellPure = ({
@@ -157,7 +127,19 @@ const CellPure = ({
 }) =>
   $(TableCell, { padding: 'none' },
     $(ButtonBase, { onClick: toggleShift, disabled: !myShift && !placesavailable },
-      $(Box, { width: 148, padding: 2, textAlign: 'left'},
+      $(Box, {
+        width: 148,
+        padding: 2,
+        textAlign: 'left',
+        style: {
+          opacity: !myShift && !placesavailable && .4,
+          backgroundColor: !myShift
+            ? 'inherit'
+            : myShift.confirmed
+              ? green[500]
+              : orange[500]
+        }
+      },
         $(Typography, { variant: 'overline' },
             loading
               ? $(Skeleton, { width: '13ex' })
@@ -172,7 +154,7 @@ const CellPure = ({
             ? $(Skeleton, { width: '8ex' })
             : placesavailable
               ? formatLabel('place', placesavailable)
-              : 'нет мест'),
+              : 'укомплектовано'),
         $(Box, {
           display: 'flex',
           alignItems: 'center',
