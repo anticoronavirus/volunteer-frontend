@@ -31,9 +31,10 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Shifts = () =>
+const Shifts = ({ hospitalId }) =>
   $(Subscription, {
     subscription: shifts,
+    variables: { hospitalId: hospitalId ? `{${hospitalId}}` : null }
   }, ShiftsPure)
 
 const ShiftsPure = ({ data }) =>

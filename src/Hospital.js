@@ -74,8 +74,9 @@ const Hospital = ({
                     sortBy('start', data.hospital.periods)),
                   data && isManagedByMe &&
                     $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital })))),
-        $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
-          $(Shifts)))
+        data && data.hospital.periods.length > 0 &&
+          $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
+            $(Shifts, { hospitalId: match.params.uid })))
 }
 
 const HospitalShift = ({
