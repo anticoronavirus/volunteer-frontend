@@ -114,10 +114,10 @@ const Cell = ({
   const onClick = () =>
     !addToShift
       ? history.push('/login')
-      : !hospitalSelected
-        ? null
-        : shiftRequests.length
-          ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
+      : shiftRequests.length
+        ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
+        : !hospitalSelected
+          ? null
           : addToShift({ variables: { date, start, end } })
 
   return $(TableCell, {
