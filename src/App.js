@@ -28,7 +28,7 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     $(Switch, null,
-      $(Route, { path: '/', exact: true, component: Main }),
+      $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
       $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
       $(Route, { path: '/hospitals/', component: Hospitals }),

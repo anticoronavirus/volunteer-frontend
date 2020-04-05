@@ -40,7 +40,7 @@ const HospitalSelector = ({ hospital: [value, onChange]}) => {
           open: Boolean(anchorEl),
           anchorEl: anchorEl,
           onClose: () => setAnchorEl(null) },
-          Hospital({shortname: 'Все больницы', uid: null }),
+          Hospital({shortname: 'Все больницы', uid: '' }),
           map(Hospital, data.hospitals)))
     }
 

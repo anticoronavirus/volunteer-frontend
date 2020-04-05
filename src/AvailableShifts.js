@@ -10,7 +10,7 @@ import {
   addVolunteerToShift
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
@@ -109,7 +109,8 @@ const Cell = ({
   console.log(shiftRequests)
   const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
-  const hospitalSelected = true // FIXME
+  const { hospitalSelected } = useParams('/:hospitalSelected')
+  console.log(shiftRequests)
   const color = disabled
     ? 'textSecondary'
     : shiftRequests.length
@@ -119,13 +120,15 @@ const Cell = ({
   const onClick = () =>
     !addToShift
       ? history.push('/login')
-      : addToShift({
-        variables: {
-          date,
-          start,
-          end
-        }
-      })
+      : !hospitalSelected
+        ? null
+        : addToShift({
+            variables: {
+              date,
+              start,
+              end
+            }
+          })
     // !user
     //   ? 'register'
     //   : !hospitalSelected

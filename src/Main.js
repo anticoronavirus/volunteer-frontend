@@ -14,11 +14,10 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Main = ({ history }) => {
+const Main = ({ history, match }) => {
 
   const { data, loading } = useQuery(me)
-  const hospital = useState()
-  const [hospitalId] = hospital
+  const hospital = [match.params.hospitalId, hospitalId => history.push(`/${hospitalId}`)]
   const client = useApolloClient()
 
   const theme = useTheme()
@@ -50,7 +49,7 @@ const Main = ({ history }) => {
         : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Hint, { name: 'welcome' })),
-    $(AvialableShifts, { hospitalId, userId: data && data.me.length && data.me[0].uid }))
+    $(AvialableShifts, { hospitalId: match.params.hospitalId, userId: data && data.me.length && data.me[0].uid }))
 }
 
 export default Main

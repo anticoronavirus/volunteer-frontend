@@ -10,7 +10,7 @@ import { WebSocketLink } from '@apollo/link-ws'
 import { refreshToken as query } from 'queries'
 
 const httpLink = new HttpLink({
-  uri: '/v1/graphql',
+  uri: '/v1/graphql'
 })
 
 let refreshTokenPromise
@@ -62,7 +62,12 @@ const handleError = headers => () => {
 const wsLink = new WebSocketLink({
   uri: `wss://${process.env.NODE_ENV === 'development' ? 'dev.memedic.ru' : window.location.hostname}/v1/graphql`,
   options: {
-    reconnect: true
+    reconnect: true,
+    connectionParams: { // FIXME should be dynamic
+      headers: {
+        Authorization: localStorage.getItem('authorization')
+      }
+    }
   }
 })
 
