@@ -42,12 +42,14 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
   }, ({ data }) =>
   $(Paper, null,
     isManagedByMe &&
-      $(Box, { padding: 2 },
-        $(Hint, { name: 'how_confirm' })),
+      $(PaddedHint, { name: 'how_confirm' }),
     $(List, null,
       map(Section, data ? data.shifts : emptyShifts))))
 
-
+const PaddedHint = styled(Hint)({
+  padding: 16
+})
+      
 // this is so geh
 const emptyShifts = uncappedMap((value, index) => ({
   date: index + 1,

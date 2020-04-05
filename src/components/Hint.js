@@ -7,11 +7,11 @@ import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
-const Hint = ({ name }) => {
+const Hint = ({ name, className }) => {
   const { data } = useQuery(hint, { variables: { name } })
-  return !data || !data.hint.length
+  return !data || !data.hint || !data.hint.length
     ? null
-    : $(Box, null,
+    : $(Box, { className },
         $(Typography, { variant: 'body2' }, data.hint[0].text),
         $(Box, { marginLeft: -1.5  },
           $(Mutation, {
