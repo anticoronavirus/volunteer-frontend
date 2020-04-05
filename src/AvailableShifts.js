@@ -7,10 +7,11 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
-  addVolunteerToShift
+  addVolunteerToShift,
+  removeVolunteerFromShift
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
-import { useHistory, useParams } from 'react-router-dom'
+import { useHistory, useRouteMatch } from 'react-router-dom'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
@@ -38,8 +39,9 @@ const AvailableShifts = memo(({ userId, hospitalId }) => {
 
   const { data } = useSubscription(shifts)
   const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
+  const [removeFromShift] = useMutation(removeVolunteerFromShift)
 
-  const generatedTable = data && reduce(generateTableReducer(userId && addToShift), {
+  const generatedTable = data && reduce(generateTableReducer(userId && { addToShift, removeFromShift }), {
     columns: new Set(),
     rows: {}
   }, data.shifts)
@@ -80,11 +82,11 @@ const LoadingTableBody = [
   $(TableRow, { key: 3 }, uncappedMap(LoadingBodyCell, loadingRange))
 ]
 
-const generateTableReducer = addToShift => (result, shift) => {
+const generateTableReducer = mutations => (result, shift) => {
   result.columns.add(shift.date)
   if (!result.rows[`${shift.start}-${shift.end}`])
     result.rows[`${shift.start}-${shift.end}`] = []
-  result.rows[`${shift.start}-${shift.end}`].push({ addToShift, ...shift })
+  result.rows[`${shift.start}-${shift.end}`].push({ ...mutations, ...shift })
   return result
 }
 
@@ -97,20 +99,20 @@ const Row = ([key, cells]) =>
 const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
 
 const Cell = ({
-  uid,
   date,
   start,
   end,
   hospitalscount,
   placesavailable,
   addToShift,
+  removeFromShift,
   shiftRequests
 }) => {
-  console.log(shiftRequests)
+
   const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
-  const { hospitalSelected } = useParams('/:hospitalSelected')
-  console.log(shiftRequests)
+  const { params: { hospitalSelected } } = useRouteMatch('/:hospitalSelected')
+
   const color = disabled
     ? 'textSecondary'
     : shiftRequests.length
@@ -122,27 +124,20 @@ const Cell = ({
       ? history.push('/login')
       : !hospitalSelected
         ? null
-        : addToShift({
-            variables: {
-              date,
-              start,
-              end
-            }
-          })
-    // !user
-    //   ? 'register'
-    //   : !hospitalSelected
-    //     ? 'open hospitals'
-    //     : 'send'
+        : shiftRequests.length
+          ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
+          : addToShift({ variables: { date, start, end } })
+
+  console.log(shiftRequests[0])
 
   return $(TableCell, {
-    key: uid,
+    key: date + start + end,
     align: 'left',
     padding: 'none',
     style: {
       verticalAlign: 'top',
-      borderBottomColor: shiftRequests.length && green[300],
-      backgroundColor: shiftRequests.length && green[500]
+      borderBottomColor: shiftRequests.length ? green[300] : '',
+      backgroundColor: shiftRequests.length ? green[500] : ''
     }
   },
     $(ButtonBase, { onClick, disabled },

@@ -104,21 +104,12 @@ mutation addVolunteerToShift(
 
 export const removeVolunteerFromShift = gql`
 mutation removeVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
+  $uid: uuid
 ) {
   delete_volunteer_shift(where: {
-    volunteer_id: { _eq: $volunteer_id }
-    shift_id: { _eq: $shift_id }
+    uid: { _eq: $uid }
   }) {
-    returning {
-      shift {
-        uid
-        volunteers {
-          uid
-        }
-      }
-    }
+    affected_rows
   }
 }
 `
