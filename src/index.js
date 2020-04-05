@@ -63,9 +63,11 @@ const wsLink = new WebSocketLink({
   uri: `wss://${process.env.NODE_ENV === 'development' ? 'dev.memedic.ru' : window.location.hostname}/v1/graphql`,
   options: {
     reconnect: true,
-    connectionParams: { // FIXME should be dynamic
-      headers: {
-        Authorization: localStorage.getItem('authorization')
+    ...localStorage.getItem('authorization') && {
+      connectionParams:  { // FIXME should be dynamic
+        headers: {
+          Authorization: localStorage.getItem('authorization')
+        }
       }
     }
   }

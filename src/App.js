@@ -28,10 +28,10 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     $(Switch, null,
-      $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
       $(Route, { path: '/login', component: Login }),
-      $(Route, { path: '/hospitals/:uid', component: Hospital }),
       $(Route, { path: '/hospitals/', component: Hospitals }),
+      $(Route, { path: '/hospitals/:uid', component: Hospital }),
+      $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
       $(Redirect, { to: '/' })))
 }
 

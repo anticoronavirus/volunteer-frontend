@@ -102,7 +102,8 @@ const Cell = ({
 
   const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
-  const { params: { hospitalSelected } } = useRouteMatch('/:hospitalSelected')
+  const match = useRouteMatch('/:hospitalSelected')
+  const hospitalSelected = match && match.params.hospitalSelected
 
   const color = disabled
     ? 'textSecondary'
