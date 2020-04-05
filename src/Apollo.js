@@ -84,3 +84,11 @@ export const client = new ApolloClient({
   }),
   link: splitLink
 })
+
+export const logoff =() => {
+  localStorage.removeItem('authorization')
+  localStorage.removeItem('expires')
+  wsLink.subscriptionClient.client.close()
+  client.resetStore()
+  return true // Important
+}

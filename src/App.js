@@ -1,12 +1,15 @@
 import { createElement as $, useMemo } from 'react'
-// import VolunteerForm from 'VolunteerForm'
 import Main from 'Main'
 import Login from 'Login'
-// import AvailableShifts from 'AvailableShifts'
 import Hospital from 'Hospital'
 import Hospitals from 'Hospitals'
 import Profile from 'Profile'
 import { Switch, Route, Redirect } from 'react-router-dom'
+import { useQuery } from '@apollo/react-hooks'
+import { me } from 'queries'
+import every from 'lodash/fp/every'
+import values from 'lodash/fp/values'
+import isEmpty from 'lodash/fp/isEmpty'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -15,6 +18,7 @@ import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/sty
 const App = () => {
 
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const { data, loading } = useQuery(me)
 
   const theme = useMemo(
     () =>
@@ -29,8 +33,10 @@ const App = () => {
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     $(Switch, null,
-      $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/profile', component: Profile }),
+      !loading && data.me[0] && !every(isEmpty, values(data.me[0])) &&
+        $(Redirect, { to: '/profile' }),
+      $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
       $(Route, { path: '/hospitals/', component: Hospitals }),
       $(Route, { path: '/:hospitalId?', exact: true, component: Main }),

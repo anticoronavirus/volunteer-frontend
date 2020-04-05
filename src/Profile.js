@@ -3,13 +3,14 @@ import map from 'lodash/fp/map'
 import get from 'lodash/fp/get'
 import sortBy from 'lodash/fp/sortBy'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { Redirect } from 'react-router-dom'
+import { Redirect, useHistory } from 'react-router-dom'
 import { me as meQuery, updateVolunteer } from 'queries'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
 import AddHospitalShift from 'components/AddHospitalShift'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
+import { logoff } from 'Apollo'
 
 import Box from '@material-ui/core/Box'
 import Avatar from '@material-ui/core/Avatar'
@@ -22,11 +23,11 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import Skeleton from '@material-ui/lab/Skeleton'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
-import Delete from '@material-ui/icons/Delete'
+import ExitToApp from '@material-ui/icons/ExitToApp'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const Profile = () => {
@@ -45,6 +46,7 @@ const ProfilePure = data =>  {
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
   const [mutate] = useMutation(updateVolunteer)
+  const history = useHistory()
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
     $(Back),
@@ -57,7 +59,11 @@ const ProfilePure = data =>  {
             justifyContent: 'center',
             height: 140 }, 
             $(Avatar, { style: { width: 84, height: 84 } })),
-            $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone),
+            $(Box, { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+              $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone),
+              $(Tooltip, { title: 'Выход' },
+                $(Button, { onClick: () => logoff() && history.push('/')},
+                $(ExitToApp, { fontSize: 'small' })))),
           $(Formik, {
             initialValues: data,
             onSubmit: variables => mutate({ variables })},
