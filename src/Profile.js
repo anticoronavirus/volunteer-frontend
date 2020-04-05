@@ -6,8 +6,7 @@ import Back from 'components/Back'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
-import pickBy from 'lodash/fp/pickBy'
-import includes from 'lodash/fp/includes'
+import { requiredProfileFields } from 'utils'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
@@ -57,7 +56,7 @@ const ProfilePure = data =>  {
             initialValues: data,
             validateOnMount: true,
             onSubmit: variables =>
-              mutate({ variables: pickBy(isField, variables) })
+              mutate({ variables: requiredProfileFields(variables) })
                 .then(() => history.push('/'))},
             ({ submitForm, isValid, dirty }) =>
               $(Form, null, 
@@ -111,18 +110,6 @@ const ProfilePure = data =>  {
                     }, 'Сохранить')
                   : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))))
 }
-
-const isField = (value, key) =>
-  includes(key, fields)
-
-const fields = [
-  'uid',
-  'fname',
-  'mname',
-  'lname',
-  'email',
-  'comment'
-]
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 

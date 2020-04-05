@@ -1,6 +1,8 @@
 import format from 'date-fns/format'
 import ru from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
+import pickBy from 'lodash/fp/pickBy'
+import includes from 'lodash/fp/includes'
 
 export const formatDate = date => format(new Date(date), 'd MMMM', { locale: ru })
 
@@ -34,3 +36,19 @@ const labels = {
 }
 
 export const uncappedMap =  map.convert({ 'cap': false })
+
+
+export const requiredProfileFields = variables =>
+  pickBy(isField, variables)
+
+const isField = (value, key) =>
+  includes(key, fields)
+
+const fields = [
+  'uid',
+  'fname',
+  'mname',
+  'lname',
+  'email',
+  'comment'
+]

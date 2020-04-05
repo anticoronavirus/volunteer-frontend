@@ -7,9 +7,10 @@ import Profile from 'Profile'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { me } from 'queries'
-import every from 'lodash/fp/every'
+import some from 'lodash/fp/some'
 import values from 'lodash/fp/values'
 import isEmpty from 'lodash/fp/isEmpty'
+import { requiredProfileFields } from 'utils'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -34,7 +35,7 @@ const App = () => {
     $(CustomCssBaseline),
     $(Switch, null,
       $(Route, { path: '/profile', component: Profile }),
-      !loading && data.me[0] && every(isEmpty, values(data.me[0])) &&
+      !loading && data.me[0] && some(isEmpty, values(requiredProfileFields(data.me[0]))) &&
         $(Redirect, { to: '/profile' }),
       $(Route, { path: '/login', component: Login }),
       $(Route, { path: '/hospitals/:uid', component: Hospital }),
