@@ -13,7 +13,6 @@
     "@material-ui/core": "4.9.8",
     "@material-ui/icons": "4.9.1",
     "@material-ui/lab": "4.0.0-alpha.47",
-    "@material-ui/pickers": "3.2.10",
     "apollo-client": "2.6.8",
     "apollo-link-context": "1.0.19",
     "date-fns": "2.11.1",

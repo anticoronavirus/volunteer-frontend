@@ -275,11 +275,10 @@ mutation removeVolunteerShift($uid: uuid!) {
 }`
 
 export const addToBlackList = gql`
-mutation addToBlackList($uid: uuid!) {
-  update_volunteer(_set: { blacklisted: true } where: { uid: { _eq: $uid }}) {
+mutation addToBlackList($uid: uuid! $comment: String) {
+  insert_blacklist(objects: [{ volunteer_id: $uid comment: $comment }]) {
     returning {
       uid
-      blacklisted    
     }
   }
 }`

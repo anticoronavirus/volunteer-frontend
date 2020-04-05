@@ -159,7 +159,7 @@ const AdditionalControls = ({ uid, volunteer_id }) => {
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
-      $(Mutation, { mutation: addToBlackList, variables: { uid: volunteer_id } }, mutate =>  
+      $(Mutation, { mutation: addToBlackList, variables: { uid: volunteer_id, comment: 'прст' } }, mutate =>  
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'В черный список')))))
