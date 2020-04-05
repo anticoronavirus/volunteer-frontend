@@ -50,8 +50,8 @@ const Main = ({ history, match }) => {
                 history.push('/')
               }}, $(ExitToApp, { fontSize: 'small' }))))
         : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')),
-    // $(Box, { padding: '0 16px', maxWidth: '120ex'},
-    //   $(Hint, { name: 'welcome' })),
+    $(Box, { padding: '0 16px', maxWidth: '120ex'},
+      $(Hint, { name: 'welcome' })),
     data &&
       $(AvialableShifts, {
         hospitalId: match.params.hospitalId,

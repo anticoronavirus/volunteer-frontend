@@ -5,7 +5,6 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
-  anonhymousShifts,
   addVolunteerToShift,
   removeVolunteerFromShift
 } from 'queries'
@@ -128,6 +127,7 @@ const CellPure = ({
         textAlign: 'left',
         style: {
           opacity: !myShift && !placesavailable && .4,
+          color: myShift && 'white',
           backgroundColor: !myShift
             ? 'inherit'
             : myShift.confirmed
@@ -135,16 +135,16 @@ const CellPure = ({
               : orange[500]
         }
       },
-        $(Typography, { variant: 'overline' },
+        $(Typography, { variant: 'overline', color: 'inherit' },
             loading
               ? $(Skeleton, { width: '13ex' })
               : `${start.slice(0, 5)}—${end.slice(0, 5)}`),
         !hospitalSelected &&
-          $(Typography, { variant: 'body2' },
+          $(Typography, { variant: 'body2', color: 'inherit' },
             loading
               ? $(Skeleton, { width: '11ex' })
               : formatLabel('hospital', hospitalscount)),
-        $(Typography, { variant: 'body2'},
+        $(Typography, { variant: 'body2', color: 'inherit' },
           loading
             ? $(Skeleton, { width: '8ex' })
             : placesavailable
@@ -162,11 +162,11 @@ const CellPure = ({
               : $(Check),
           $(Box, { width: '1ex'}),
           myShift &&
-            $(Typography, { variant: 'body2' },
+            $(Typography, { variant: 'body2', color: 'inherit' },
                 !hospitalSelected
                   ? myShift.hospital.shortname
                   : myShift.confirmed
-                    ? 'Подтверждено'
+                    ? 'Приходи'
                     : 'Отправлено')))))
 
 // Loading stuff
