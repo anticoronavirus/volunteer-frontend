@@ -1,9 +1,6 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import random from 'lodash/fp/random'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
 import { shifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
@@ -38,12 +35,6 @@ const Shifts = () =>
   $(Subscription, {
     subscription: shifts,
   }, ShiftsPure)
-
-const now = new Date()
-const variables = {
-  from: format(now, 'yyyy-MM-dd'),
-  to: format(addDays(now, 14), 'yyyy-MM-dd')
-}
 
 const ShiftsPure = ({ data }) =>
   $(Paper, null,

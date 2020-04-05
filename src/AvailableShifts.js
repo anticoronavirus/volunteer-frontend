@@ -1,6 +1,4 @@
 import { createElement as $, memo } from 'react'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
@@ -27,13 +25,6 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import Check from '@material-ui/icons/Check'
 import green from '@material-ui/core/colors/green'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
-
-
-const now = new Date()
-const variables = {
-  from: format(now, 'yyyy-MM-dd'),
-  to: format(addDays(now, 14), 'yyyy-MM-dd')
-}
 
 const AvailableShifts = memo(({ userId, hospitalId }) => {
 
@@ -127,8 +118,6 @@ const Cell = ({
         : shiftRequests.length
           ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
           : addToShift({ variables: { date, start, end } })
-
-  console.log(shiftRequests[0])
 
   return $(TableCell, {
     key: date + start + end,

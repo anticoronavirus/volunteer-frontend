@@ -1,4 +1,4 @@
-import { createElement as $, useState } from 'react'
+import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
 import HospitalSelector from 'components/HospitalSelector'
