@@ -94,9 +94,9 @@ const SectionUL = styled('ul')({
 
 const VolunteerShift = ({
   uid,
-  volunteer_id,
   confirmed,
   volunteer: { 
+    uid: volunteer_id,
     fullName,
     lname,
     fname,

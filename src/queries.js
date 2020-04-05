@@ -110,30 +110,6 @@ mutation removeVolunteerFromShift($uid: uuid) {
 }
 `
 
-export const volunteerShifts = gql`
-subscription VolunteerShifts($from: date $to: date) {
-  volunteer_shift(
-    order_by: { shift: { date: asc } volunteer: { uid: asc } }
-    where: { shift: { date: { _gte: $from  _lt: $to }}}) {
-    confirmed
-    shift {
-      uid
-      date
-      start
-      end
-    }
-    volunteer {
-      uid
-      fname
-      mname
-      lname
-      phone
-      email
-      profession
-    }
-  }
-}`
-
 export const shifts = gql`
 subscription shifts($hospitalId: _uuid $userId: uuid) {
   shifts: shift_selector(args: { hospital_ids: $hospitalId }) {
@@ -174,6 +150,7 @@ subscription shifts(
         uid
         lname
         fname
+        phone
       }
     }
   }
