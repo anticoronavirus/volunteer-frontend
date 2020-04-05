@@ -23,16 +23,18 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Skeleton from '@material-ui/lab/Skeleton'
 import Check from '@material-ui/icons/Check'
+import DoubleCheck from '@material-ui/icons/DoneAll'
 import green from '@material-ui/core/colors/green'
 import { useSubscription, useMutation } from '@apollo/react-hooks'
 
 const AvailableShifts = memo(({ userId, hospitalId }) => {
 
-  const { data } = useSubscription(shifts, { variables: { hospitalId: hospitalId ? `{${hospitalId}}` : null } })
-  const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
-  const [removeFromShift] = useMutation(removeVolunteerFromShift)
+  const { data } = useSubscription(shifts, { variables: {
+    userId,
+    hospitalId: hospitalId ? `{${hospitalId}}` : null }
+  })
 
-  const generatedTable = data && reduce(generateTableReducer(userId && { addToShift, removeFromShift }), {
+  const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
     columns: new Set(),
     rows: {}
   }, data.shifts)
@@ -51,33 +53,11 @@ const AvailableShifts = memo(({ userId, hospitalId }) => {
               : map(Row, entries(generatedTable.rows))))))
 })
 
-const loadingRange = range(1, 14)
-
-const LoadingHeaderCell = (value, key) => 
-  $(TableCell, { key },
-    $(Skeleton, { width: '10ex', variant: 'text', }))
-
-const LoadingTableHeader =
-  uncappedMap(LoadingHeaderCell, loadingRange)
-
-
-const LoadingBodyCell = (value, key) =>
-  $(TableCell, { key },
-    $(Skeleton, { width: '12ex', variant: 'text' }),
-    $(Skeleton, { width: '10ex', variant: 'text' }),
-    $(Skeleton, { width: '5ex', variant: 'text' }))
-
-const LoadingTableBody = [
-  $(TableRow, { key: 1 }, uncappedMap(LoadingBodyCell, loadingRange)),
-  $(TableRow, { key: 2 }, uncappedMap(LoadingBodyCell, loadingRange)),
-  $(TableRow, { key: 3 }, uncappedMap(LoadingBodyCell, loadingRange))
-]
-
-const generateTableReducer = mutations => (result, shift) => {
+const generateTableReducer = ids => (result, shift) => {
   result.columns.add(shift.date)
   if (!result.rows[`${shift.start}-${shift.end}`])
     result.rows[`${shift.start}-${shift.end}`] = []
-  result.rows[`${shift.start}-${shift.end}`].push({ ...mutations, ...shift })
+  result.rows[`${shift.start}-${shift.end}`].push({ ...ids, ...shift })
   return result
 }
 
@@ -87,7 +67,7 @@ const Header = date =>
 const Row = ([key, cells]) =>
   $(TableRow, { key }, map(CellFunction, cells))
 
-const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
+const CellFunction = cell => $(Cell, { key: cell.date + cell.start + cell.end, ...cell })
 
 const Cell = ({
   date,
@@ -95,15 +75,16 @@ const Cell = ({
   end,
   hospitalscount,
   placesavailable,
-  addToShift,
-  removeFromShift,
-  shiftRequests
+  shiftRequests,
+  userId
 }) => {
 
   const disabled = !shiftRequests.length && !placesavailable
   const history =  useHistory()
   const match = useRouteMatch('/:hospitalSelected')
-  const hospitalSelected = match && match.params.hospitalSelected
+  const hospitalId = match && match.params.hospitalSelected
+  const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
+  const [removeFromShift] = useMutation(removeVolunteerFromShift)
 
   const color = disabled
     ? 'textSecondary'
@@ -111,45 +92,124 @@ const Cell = ({
       ? 'inherit'
       : 'initial'
 
-  const onClick = () =>
-    !addToShift
+  const toggleShift = () =>
+    !userId
       ? history.push('/login')
       : shiftRequests.length
         ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
-        : !hospitalSelected
+        : !hospitalId
           ? null
           : addToShift({ variables: { date, start, end } })
 
-  return $(TableCell, {
-    key: date + start + end,
-    align: 'left',
-    padding: 'none',
-    style: {
-      verticalAlign: 'top',
-      borderBottomColor: shiftRequests.length ? green[300] : '',
-      backgroundColor: shiftRequests.length ? green[500] : ''
-    }
-  },
-    $(ButtonBase, { onClick, disabled },
-      $(Box, {
-        padding: 2,
-        width: 148,
-        textAlign: 'left',
-      },
-        $(Typography, { variant: 'overline', color },
-          start.slice(0, 5), '—', end.slice(0, 5)),
-        $(Typography, { variant: 'body2', color },
-          formatLabel('hospital', hospitalscount)),
-        $(Typography, { variant: 'body2', color },
-          placesavailable === 0
-            ? 'укомплектовано'
-            : formatLabel('place', placesavailable)),
-      !shiftRequests.length
-        ? $(Box, { padding: '14px' })
-        : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
-            $(Check, { fontSize: 'small', htmlColor: green[100] }),
-            $(Box, { width: '8px', }),
-            $(Typography, { variant: 'body2' }, shiftRequests[0].hospital.shortname.slice(0, 10))))))
+  return $(CellPure, { 
+    date,
+    start,
+    end,
+    placesavailable,
+    hospitalscount,
+    hospitalSelected: hospitalId,
+    myShift: shiftRequests[0],
+    toggleShift
+  })
+  // $(TableCell, {
+  //   key: date + start + end,
+  //   align: 'left',
+  //   padding: 'none',
+  //   style: {
+  //     verticalAlign: 'top',
+  //     borderBottomColor: shiftRequests.length ? green[300] : '',
+  //     backgroundColor: shiftRequests.length ? green[500] : ''
+  //   }
+  // },
+  //   $(ButtonBase, { onClick, disabled },
+  //     $(Box, {
+  //       padding: 2,
+  //       width: 148,
+  //       textAlign: 'left',
+  //     },
+  //       $(Typography, { variant: 'overline', color },
+  //         start.slice(0, 5), '—', end.slice(0, 5)),
+  //       !hospitalSelected &&
+  //         $(Typography, { variant: 'body2', color },
+  //           formatLabel('hospital', hospitalscount)),
+  //       $(Typography, { variant: 'body2', color },
+  //         placesavailable === 0
+  //           ? 'укомплектовано'
+  //           : formatLabel('place', placesavailable)),
+  //     !shiftRequests.length
+  //       ? $(Box, { padding: '14px' })
+  //       : $(Box, { display: 'flex', alignItems: 'center', paddingTop: 1 },
+  //           $(Check, { fontSize: 'small', htmlColor: green[100] }),
+  //           $(Box, { width: '8px', }),
+  //           $(Typography, { variant: 'body2' }, shiftRequests[0].hospital.shortname.slice(0, 10))))))
 }
+
+const CellPure = ({
+  date,
+  start,
+  end,
+  placesavailable,
+  hospitalscount,
+  hospitalSelected,
+  toggleShift,
+  myShift,
+  loading
+}) =>
+  $(TableCell, { padding: 'none' },
+    $(ButtonBase, { onClick: toggleShift, disabled: !myShift && !placesavailable },
+      $(Box, { width: 148, padding: 2, textAlign: 'left'},
+        $(Typography, { variant: 'overline' },
+            loading
+              ? $(Skeleton, { width: '13ex' })
+              : `${start.slice(0, 5)}—${end.slice(0, 5)}`),
+        !hospitalSelected &&
+          $(Typography, { variant: 'body2' },
+            loading
+              ? $(Skeleton, { width: '11ex' })
+              : formatLabel('hospital', hospitalscount)),
+        $(Typography, { variant: 'body2'},
+          loading
+            ? $(Skeleton, { width: '8ex' })
+            : placesavailable
+              ? formatLabel('place', placesavailable)
+              : 'нет мест'),
+        $(Box, {
+          display: 'flex',
+          alignItems: 'center',
+          paddingTop: 1,
+        },
+          !myShift
+            ? $(Box, { height: 24 }) // FIXME empty box for preserving height 
+            : myShift.confirmed
+              ? $(DoubleCheck)
+              : $(Check),
+          $(Box, { width: '1ex'}),
+          myShift &&
+            $(Typography, { variant: 'body2' },
+                !hospitalSelected
+                  ? myShift.hospital.shortname
+                  : myShift.confirmed
+                    ? 'Подтверждено'
+                    : 'Отправлено')))))
+
+// Loading stuff
+
+const loadingRange = range(1, 14)
+
+const LoadingHeaderCell = (value, key) => 
+  $(TableCell, { key },
+    $(Skeleton, { width: '10ex', variant: 'text', }))
+
+const LoadingTableHeader =
+  uncappedMap(LoadingHeaderCell, loadingRange)
+
+const LoadingBodyCell = (value, key) =>
+  $(CellPure, { key, loading: true })
+
+const LoadingTableBody = [
+  $(TableRow, { key: 1 }, uncappedMap(LoadingBodyCell, loadingRange)),
+  $(TableRow, { key: 2 }, uncappedMap(LoadingBodyCell, loadingRange)),
+  $(TableRow, { key: 3 }, uncappedMap(LoadingBodyCell, loadingRange))
+]
 
 export default AvailableShifts

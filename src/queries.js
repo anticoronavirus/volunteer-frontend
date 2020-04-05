@@ -103,12 +103,8 @@ mutation addVolunteerToShift(
 `
 
 export const removeVolunteerFromShift = gql`
-mutation removeVolunteerToShift(
-  $uid: uuid
-) {
-  delete_volunteer_shift(where: {
-    uid: { _eq: $uid }
-  }) {
+mutation removeVolunteerFromShift($uid: uuid) {
+  delete_volunteer_shift(where: { uid: { _eq: $uid }}) {
     affected_rows
   }
 }
@@ -139,7 +135,7 @@ subscription VolunteerShifts($from: date $to: date) {
 }`
 
 export const shifts = gql`
-subscription shifts($hospitalId: _uuid) {
+subscription shifts($hospitalId: _uuid $userId: uuid) {
   shifts: shift_selector(args: { hospital_ids: $hospitalId }) {
     date
     start
@@ -148,7 +144,7 @@ subscription shifts($hospitalId: _uuid) {
     hospitalscount
     placesavailable
     demand
-    shiftRequests {
+    shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
       uid
       confirmed
       hospital {
