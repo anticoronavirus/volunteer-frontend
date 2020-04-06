@@ -14,7 +14,7 @@ const Back = () => {
 
   return $(Box, notMobile && { marginRight: 2, marginTop: 1.5, width: 48 },
     $(Box, notMobile && { position: 'fixed' },
-      $(IconButton, { onClick: history.goBack },
+      $(IconButton, { onClick: () => history.push('/') },
       $(NavigateBefore))))
 }
 

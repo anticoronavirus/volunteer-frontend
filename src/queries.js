@@ -80,7 +80,23 @@ mutation UpsertVolunteer(
 }
 `
 
-export const addVolunteerToShift = gql`
+export const myShifts = gql`
+subscription {
+  volunteer_shift {
+    uid
+    date
+    start
+    end
+    confirmed
+    hospital {
+      uid
+      shortname
+    }
+  }
+}
+`
+
+export const addVolunteerToShift = gql`  
 mutation addVolunteerToShift(
   $userId: uuid
   $hospitalId: uuid

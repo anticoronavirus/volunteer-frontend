@@ -1,21 +1,29 @@
 import { createElement as $ } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { Subscription, Mutation } from '@apollo/react-components'
 import { Redirect, useHistory } from 'react-router-dom'
-import { me as meQuery, updateVolunteer } from 'queries'
+import { me as meQuery, updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
 import Back from 'components/Back'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
-import { requiredProfileFields } from 'utils'
+import { requiredProfileFields, formatDate } from 'utils'
+import map from 'lodash/fp/map'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Avatar from '@material-ui/core/Avatar'
+import IconButton from '@material-ui/core/IconButton'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
+import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
@@ -122,8 +130,31 @@ const ProfilePure = data =>  {
           1. Паспорт гражданина РФ
           2. Медицинская книжка 
           3. Диплом об окончании образовательного медицинского учреждения или студенческий билет
-          `)))))
+          `))),
+      $(Box, { height: 16 }),
+      $(Subscription, { subscription: myShifts }, ({ data }) =>
+      $(Paper, null, 
+        data &&
+          $(List, null, 
+            map(MyShift, data.volunteer_shift))))))
 }
+
+const MyShift = ({
+  uid,
+  confirmed,
+  hospital,
+  date,
+  start,
+  end
+}) =>
+  $(ListItem, { key: uid },
+    $(ListItemText, {
+      primary: `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+      secondary: `${hospital.shortname} · ${confirmed ? 'подтверждено' : 'ожидает подтверждения'}` }),
+    $(Mutation, { mutation: removeVolunteerFromShift, variables: { uid } }, mutate =>
+    $(ListItemSecondaryAction, null,
+      $(IconButton, { onClick: mutate },
+        $(Delete, { fontSize: 'small' })))))
 
 const FormikButtonGroup = ({
   form: { setFieldValue, values },
