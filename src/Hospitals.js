@@ -1,6 +1,6 @@
 import { createElement as $ } from 'react'
 import { Query } from '@apollo/react-components'
-// import { hospitals } from 'queries'
+import { hospitals } from 'queries'
 import map from 'lodash/fp/map'
 import Back from 'components/Back'
 import { useMediaQuery, useTheme } from '@material-ui/core'
@@ -10,7 +10,7 @@ import Card from '@material-ui/core/Card'
 import Box from '@material-ui/core/Box'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import CardContent from '@material-ui/core/CardContent'
-import CardMedia from '@material-ui/core/CardMedia'
+// import CardMedia from '@material-ui/core/CardMedia'
 import Typography from '@material-ui/core/Typography'
 import { styled } from '@material-ui/styles'
 
@@ -49,8 +49,8 @@ const HospitalLink = styled(Link)({
   color: 'inherit',
 })
 
-const HospitalImage = styled(CardMedia)({
-  height: 140
-})
+// const HospitalImage = styled(CardMedia)({
+//   height: 140
+// })
 
 export default Hospitals
