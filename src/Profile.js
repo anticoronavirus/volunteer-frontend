@@ -102,7 +102,7 @@ const ProfilePure = data =>  {
                   component: TextField,
                   name: 'comment',
                   validate: required,
-                  label: 'Профессиональный статус',
+                  label: 'Специализация',
                   margin: 'normal',
                   fullWidth: true,
                   placeholder: 'Например студент-онколог',
