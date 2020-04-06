@@ -113,7 +113,16 @@ const ProfilePure = data =>  {
                       variant: 'outlined',
                       fullWidth: true,
                     }, 'Сохранить')
-                  : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))))
+                  : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))),
+    $(Box, { maxWidth: '60ex' },
+      $(Paper, null,
+        $(Box, { padding: 2, style: { whiteSpace: 'pre-line'} },
+          $(Typography, { variant: 'body2'},
+          `При первом посещении больницы необходимо предоставить следующие документы: 
+          1. Паспорт гражданина РФ
+          2. Медицинская книжка 
+          3. Диплом об окончании образовательного медицинского учреждения или студенческий билет
+          `)))))
 }
 
 const FormikButtonGroup = ({

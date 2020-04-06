@@ -13,7 +13,9 @@ const Footer = ({ children }) => {
 
   return $(Box, { display: 'flex', flexDirection: 'column', minHeight: '100vh' },
     $(Box, { flexGrow: 1 }, children),
-    $(Box, { display: 'flex', justifyContent: 'center' },
+    $(Box, notMobile 
+        ? { display: 'flex', justifyContent: 'center' }
+        : { padding: 1 },
       $(CustomLink, { to: '/hospitals' },
         $(Typography, { variant: 'caption', color: 'secondary' }, 'Больницы-участники')),
       $(CustomLink, { to: '/hospitals' },
