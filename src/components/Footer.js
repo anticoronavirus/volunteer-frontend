@@ -18,19 +18,25 @@ const Footer = ({ children }) => {
         : { padding: 1 },
       $(CustomLink, { to: '/hospitals' },
         $(Typography, { variant: 'caption', color: 'secondary' }, 'Больницы-участники')),
-      $(CustomLink, { to: '/hospitals' },
+      $(CustomLink, { to: '/pages/volunteers' },
         $(Typography, { variant: 'caption', color: 'secondary' }, 'Волонтёрам')),
-      $(CustomLink, { to: '/hospitals' },
+      $(CustomLink, { to: '/pages/coordinators' },
         $(Typography, { variant: 'caption', color: 'secondary' }, 'Координаторам')),
-      $(CustomLink, { href: 'mailto:help@memedic.ru'},
-        $(Typography, { variant: 'caption', color: 'secondary' }, 'Обратная связь'))))
+      $(HelpLabel, { variant: 'caption'}, 'Обратная связь: '),
+      $(CustomLink, { component: 'a', href: 'mailto:help@memedic.ru'},
+        $(Typography, { variant: 'caption', color: 'secondary' }, 'help@memedic.ru'))))
 }
+
+const HelpLabel = styled(Typography)({
+  padding: 8,
+  paddingRight: 0
+})
 
 const CustomLink = styled(Link)({
   textDecoration: 'none',
   underline: 'none',
   display: 'block',
-  padding: 8
+  padding: 8,
 })
 
 export default Footer

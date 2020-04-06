@@ -4,6 +4,7 @@ import Main from 'Main'
 import Login from 'Login'
 import Hospital from 'Hospital'
 import Hospitals from 'Hospitals'
+import Pages from 'Pages'
 import Profile from 'Profile'
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
@@ -35,6 +36,7 @@ const App = () => {
     $(CustomCssBaseline),
     $(WithFooter, null,
       $(Switch, null,
+        $(Route, { path: '/pages/:page', component: Pages }),
         $(Route, { path: '/profile', component: Profile }),
         // eslint-disable-next-line
         !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
