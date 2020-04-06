@@ -1,5 +1,43 @@
 import gql from 'graphql-tag'
 
+export const me = gql`{
+  me {
+    uid
+    fname
+    mname
+    lname
+    phone
+    email
+    comment
+    profession
+    managedHospital {
+      uid
+      shortname
+    }
+  }
+}`
+
+export const hospital = gql`
+query hospital($uid: uuid!) {
+  hospital: hospital_by_pk(uid: $uid) {
+    uid
+    shortname
+    name
+    address
+    periods {
+      uid
+      start
+      end
+      demand
+    }
+  }
+  me {
+    managedHospital {
+      uid
+    }
+  }
+}`
+
 export const professions = gql`
 {
   professions: profession {
@@ -7,58 +45,76 @@ export const professions = gql`
   }
 }`
 
-export const addVolunteer = gql`
+export const updateVolunteer = gql`
 mutation UpsertVolunteer(
+  $uid: uuid
   $fname: String
   $mname: String
   $lname: String
   $email: String
+  $comment: String
   $profession: String
-  $phone: String
 ) {
-  insert_volunteer(
-    objects: [{
+  update_volunteer(
+    _set: {
       fname: $fname
       mname: $mname
       lname: $lname
       email: $email
-      phone: $phone
+      comment: $comment
       profession: $profession
-    }]
-    on_conflict: {
-      constraint: volunteer_phone_email_key
-      update_columns: [
-        fname
-        mname
-        lname
-        profession
-      ]
+    }
+    where: {
+      uid: { _eq: $uid }
     }) {
     returning {
       uid
-      shifts {
-        uid
-      }
+      fname
+      mname
+      lname
+      phone
+      email
+      comment
     }
   }
 }
 `
 
-export const addVolunteerToShift = gql`
-mutation AddVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
+export const myShifts = gql`
+subscription {
+  volunteer_shift {
+    uid
+    date
+    start
+    end
+    confirmed
+    hospital {
+      uid
+      shortname
+    }
+  }
+}
+`
+
+export const addVolunteerToShift = gql`  
+mutation addVolunteerToShift(
+  $userId: uuid
+  $hospitalId: uuid
+  $date: date
+  $start: timetz
+  $end: timetz
 ) {
   insert_volunteer_shift(objects: [{
-    volunteer_id: $volunteer_id
-    shift_id: $shift_id
+    volunteer_id: $userId
+    hospital_id: $hospitalId
+    date: $date
+    start: $start
+    end: $end
   }]) {
     returning {
-      shift {
+      uid
+      volunteer {
         uid
-        volunteers {
-          uid
-        }
       }
     }
   }
@@ -66,69 +122,53 @@ mutation AddVolunteerToShift(
 `
 
 export const removeVolunteerFromShift = gql`
-mutation AddVolunteerToShift(
-  $volunteer_id: uuid
-  $shift_id: uuid
-) {
-  delete_volunteer_shift(where: {
-    volunteer_id: { _eq: $volunteer_id }
-    shift_id: { _eq: $shift_id }
-  }) {
-    returning {
-      shift {
+mutation removeVolunteerFromShift($uid: uuid) {
+  delete_volunteer_shift(where: { uid: { _eq: $uid }}) {
+    affected_rows
+  }
+}
+`
+
+export const shifts = gql`
+subscription shifts($hospitalId: uuid $userId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+    date
+    start
+    end
+    demand
+    hospitalscount
+    placesavailable
+    demand
+    shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
+      uid
+      confirmed
+      hospital {
         uid
-        volunteers {
-          uid
-        }
+        shortname
       }
     }
   }
 }
 `
 
-export const volunteerShifts = gql`
-subscription VolunteerShifts($from: date $to: date) {
-  volunteer_shift(
-    order_by: { shift: { date: asc } volunteer: { uid: asc } }
-    where: { shift: { date: { _gte: $from  _lt: $to }}}) {
-    confirmed
-    shift {
-      uid
-      date
-      start
-      end
-    }
-    volunteer {
-      uid
-      fname
-      mname
-      lname
-      phone
-      email
-      profession
-    }
-  }
-}`
-
-export const shifts = gql`
-subscription Shifts($from: date $to: date $profession: String ) {
-  shifts(
-    order_by: { date: asc, start: asc }
-    where: { date: { _gte: $from  _lt: $to } }) {
-    uid
+export const hospitalShifts = gql`
+subscription shifts($hospitalId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
     date
     start
     end
-    professions {
-      name
-      number
-    }
-    volunteers (where: { profession: { _eq: $profession }}) {
+    placesavailable
+    demand
+    shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
       uid
-      fname
-      mname
-      lname
-      phone
+      confirmed
+      volunteer {
+        uid
+        lname
+        fname
+        phone
+        profession
+      }
     }
   }
 }
@@ -154,3 +194,132 @@ mutation FlipConfirm(
     }
   }
 }`
+
+export const hint = gql`
+query hint ($name: String!) {
+  me { uid }
+  hint (where: { name: { _eq: $name }}) {
+    uid
+    text
+  } 
+}
+`
+
+export const seenHint = gql`
+mutation seenHint($userId: uuid! $hintId: uuid!) {
+  insert_seen_hint(objects: [{ user_id: $userId hint_id: $hintId }]) {
+    affected_rows
+  }
+}`
+
+export const hospitals = gql`{
+  hospitals: hospital {
+    uid
+    shortname
+    address
+    periods { demand }
+  }
+}`
+
+export const filteredHospitals = gql`
+query filteredHospitals (
+  $start: timetz,
+  $end: timetz
+) {
+  hospitals: hospital(where: { periods: { 
+    start: { _eq: $start }
+    end: { _eq: $end }
+  } }) {
+    uid
+    shortname
+    address
+    periods { demand }
+  }
+}`
+
+export const submitPhone = gql`
+  mutation submitPhone($phone: String) {
+    signUp(phone: $phone) {
+      status
+    }
+  }
+`
+
+export const login = gql`
+  mutation login($phone: String $password: String) {
+    getToken(phone: $phone password: $password) {
+      authenticated
+      accessToken
+      expires
+    }
+  }
+`
+
+export const addShift = gql`
+mutation addShift($uid: uuid! $start: timetz! $end: timetz! $demand: Int ) {
+  insert_period(objects: [{hospital_id: $uid start: $start end: $end demand: $demand}]) {
+    returning {
+      hospital {
+        uid
+        periods {
+          uid
+          start
+          end
+          demand
+        }
+      }
+    }
+  }
+}`
+
+export const removeShift = gql`
+mutation removeShift($uid: uuid!) {
+  delete_period (where: { uid: { _eq:  $uid } }) {
+    returning {
+      hospital {
+        uid
+        periods {
+          uid
+          start
+          end
+          demand
+        }
+      }
+    }
+  }
+}`
+
+export const confirm = gql`
+mutation confirmVolunteer($uid: uuid! $confirmed: Boolean) {
+  update_volunteer_shift(_set: { confirmed: $confirmed } where: { uid: { _eq: $uid } }) {
+    affected_rows
+    returning {
+      uid
+      confirmed
+    }
+  }
+}`
+
+export const removeVolunteerShift = gql`
+mutation removeVolunteerShift($uid: uuid!) {
+  delete_volunteer_shift(where: { uid: { _eq: $uid }}) {
+    affected_rows
+  }
+}`
+
+export const addToBlackList = gql`
+mutation addToBlackList($uid: uuid! $comment: String) {
+  insert_blacklist(objects: [{ volunteer_id: $uid comment: $comment }]) {
+    returning {
+      uid
+    }
+  }
+}`
+
+export const refreshToken = `
+ mutation {
+   refreshToken {
+     accessToken
+     expires
+   }
+ }` 

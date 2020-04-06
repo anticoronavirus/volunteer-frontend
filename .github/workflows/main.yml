@@ -1,8 +1,5 @@
 name: Deploy
-on:   
-  push:
-    branches: 
-    - master
+on: push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,6 +13,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Deploy to production
         uses: appleboy/ssh-action@master

@@ -1,122 +1,218 @@
-import { createElement as $, memo, Fragment } from 'react'
-import { useParams } from 'react-router-dom'
-import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
-import ru from 'date-fns/locale/ru'
+import { createElement as $, memo, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
-import find from 'lodash/fp/find'
-import CircularProgress from '@material-ui/core/CircularProgress'
+import {
+  shifts,
+  addVolunteerToShift,
+  removeVolunteerFromShift,
+  filteredHospitals
+} from 'queries'
+import { formatLabel, formatDate, uncappedMap } from 'utils'
+import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { Query } from '@apollo/react-components'
+
+import ButtonBase from '@material-ui/core/ButtonBase'
+import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
-import Checkbox from '@material-ui/core/Checkbox'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
-import {
-  shifts,
-  addVolunteerToShift,
-  removeVolunteerFromShift
-} from 'queries'
+import Skeleton from '@material-ui/lab/Skeleton'
+import Check from '@material-ui/icons/Check'
+import DoubleCheck from '@material-ui/icons/DoneAll'
+import green from '@material-ui/core/colors/green'
+import orange from '@material-ui/core/colors/orange'
 
-const now = new Date()
-const range = {
-  from: format(now, 'yyyy-MM-dd'),
-  to: format(addDays(now, 14), 'yyyy-MM-dd')
-}
+const AvailableShifts = memo(({ userId, hospitalId }) => {
 
-const AvailableShifts = memo(() => {
-
-  let { profession = 'врач' } = useParams()
+  hospitalId = hospitalId ? `{${hospitalId}}` : null
 
   const { data } = useSubscription(shifts, {
-    variables: {
-      profession,
-      ...range
-    }
+    variables: userId ? { userId, hospitalId } : { hospitalId }
   })
 
-  const generatedTable = data && reduce(generateTableReducer, {
+  const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
     columns: new Set(),
     rows: {}
   }, data.shifts)
 
-  return !data
-    ? $(Box, { padding: 2 }, $(CircularProgress))
-    : $(Table, null,
+  return $(Paper, null,
+    $(TableContainer, null,
+      $(Table, null,
         $(TableHead, null,
           $(TableRow, null,
-            map(Header, Array.from(generatedTable.columns)))),
-        $(TableBody, null,
-          map(Row, entries(generatedTable.rows))))
+            !data
+              ? LoadingTableHeader
+              : map(Header, Array.from(generatedTable.columns)))),
+          $(TableBody, null,
+            !data
+              ? LoadingTableBody
+              : map(Row, entries(generatedTable.rows))))))
 })
 
-const generateTableReducer = (result, shift) => {
+const generateTableReducer = ids => (result, shift) => {
   result.columns.add(shift.date)
   if (!result.rows[`${shift.start}-${shift.end}`])
     result.rows[`${shift.start}-${shift.end}`] = []
-  result.rows[`${shift.start}-${shift.end}`].push(shift)
+  result.rows[`${shift.start}-${shift.end}`].push({ ...ids, ...shift })
   return result
 }
 
 const Header = date =>
-  $(TableCell, { key: date, style: { minWidth: '16ex' }}, format(new Date(date), 'd MMMM', { locale: ru }))
+  $(TableCell, { key: date, style: { minWidth: '16ex' }}, formatDate(date))
 
 const Row = ([key, cells]) =>
   $(TableRow, { key }, map(CellFunction, cells))
 
-const CellFunction = cell => $(Cell, { key: cell.uid, ...cell })
+const CellFunction = cell => $(Cell, { key: cell.date + cell.start + cell.end, ...cell })
 
 const Cell = ({
-  uid,
+  date,
   start,
   end,
-  volunteers,
-  professions
-}) => {
-  const { profession = 'врач', volunteer_id } = useParams()
-
-  const required = find({ name: profession }, professions)
-
-  const available = required ? required.number - volunteers.length : 0
-
-  return $(TableCell, { key: uid, style: { minWidth: '16ex' }},
-    $(Box, null, start.slice(0, 5), ' - ', end.slice(0, 5)),
-    $(Box, null, formatAvailable(available)),
-    volunteer_id &&
-      $(AddSelf, { uid, volunteer_id, volunteers, available }))
-}
-
-const AddSelf = ({
-  uid,
-  volunteer_id,
-  volunteers,
-  available
+  hospitalscount,
+  placesavailable,
+  shiftRequests = [],
+  userId
 }) => {
 
-  const me = find({ uid: volunteer_id }, volunteers)
+  const history =  useHistory()
+  const match = useRouteMatch('/:hospitalId')
+  const hospitalId = match && match.params && match.params.hospitalId
+  const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
+  const [removeFromShift] = useMutation(removeVolunteerFromShift)
+  const [anchorEl, setAnchorEl] = useState()
 
-  const [mutate, { loading }] = useMutation(
-    me ? removeVolunteerFromShift : addVolunteerToShift,
-    { variables: { shift_id: uid, volunteer_id }})
+  const toggleShift = event =>
+    !userId
+      ? history.push('/login')
+      : shiftRequests.length
+        ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
+        : !hospitalId
+          ? setAnchorEl(event.currentTarget)
+          : addToShift({ variables: { date, start, end } })
 
   return $(Fragment, null,
-    loading
-      ? $(Box, { paddingTop: 1.1 }, $(CircularProgress, { size: 28 }))
-      : $(Box, { marginLeft: -1.5 },
-          $(Checkbox, { checked: !!me, disabled: !available, onClick: mutate })))
+    !hospitalId && anchorEl &&
+      $(Query, { query: filteredHospitals, variables: { start, end } }, ({ data }) =>
+        $(Menu, {
+          open: true,
+          onClose: () => setAnchorEl(null),
+          anchorEl
+        },
+          map(hospital =>
+            $(MenuItem, {
+              key: hospital.uid,
+              onClick: () => {
+                setAnchorEl(false)
+                addToShift({ variables: { date, start, end, hospitalId: hospital.uid }})
+              }
+            },
+              hospital.shortname),
+            data && data.hospitals))),
+    $(CellPure, { 
+      date,
+      start,
+      end,
+      placesavailable,
+      hospitalscount,
+      hospitalSelected: hospitalId,
+      myShift: shiftRequests[0],
+      toggleShift
+    }))
 }
 
-const formatAvailable = available =>
-  available === 0
-    ? 'нет мест'
-    : available === 1
-      ? '1 место'
-      : available > 4
-        ? `${available} мест`
-        : `${available} места`
+const CellPure = ({
+  date,
+  start,
+  end,
+  placesavailable,
+  hospitalscount,
+  hospitalSelected,
+  toggleShift,
+  myShift,
+  loading
+}) =>
+  $(TableCell, {
+    padding: 'none',
+    style: myShift && {
+      borderBottomColor: myShift.confirmed
+        ? green[300]
+        : orange[300],
+    }
+  },
+    $(ButtonBase, { onClick: toggleShift, disabled: !myShift && !placesavailable },
+      $(Box, {
+        width: 148,
+        padding: 2,
+        textAlign: 'left',
+        style: {
+          opacity: !myShift && !placesavailable && .4,
+          color: myShift && 'white',
+          backgroundColor: !myShift
+            ? 'inherit'
+            : myShift.confirmed
+              ? green[500]
+              : orange[500]
+        }
+      },
+        $(Typography, { variant: 'overline', color: 'inherit' },
+            loading
+              ? $(Skeleton, { width: '13ex' })
+              : `${start.slice(0, 5)}—${end.slice(0, 5)}`),
+        !hospitalSelected &&
+          $(Typography, { variant: 'body2', color: 'inherit' },
+            loading
+              ? $(Skeleton, { width: '11ex' })
+              : formatLabel('hospital', hospitalscount)),
+        $(Typography, { variant: 'body2', color: 'inherit' },
+          loading
+            ? $(Skeleton, { width: '8ex' })
+            : placesavailable
+              ? formatLabel('place', placesavailable)
+              : 'укомплектовано'),
+        $(Box, {
+          display: 'flex',
+          alignItems: 'center',
+          paddingTop: 1,
+        },
+          !myShift
+            ? $(Box, { height: 24 }) // FIXME empty box for preserving height 
+            : myShift.confirmed
+              ? $(DoubleCheck)
+              : $(Check),
+          $(Box, { width: '1ex'}),
+          myShift &&
+            $(Typography, { variant: 'body2', color: 'inherit' },
+              myShift.hospital.shortname)))))
+
+// Loading stuff
+
+const loadingRange = range(1, 14)
+
+const LoadingHeaderCell = (value, key) => 
+  $(TableCell, { key },
+    $(Skeleton, { width: '10ex', variant: 'text', }))
+
+const LoadingTableHeader =
+  uncappedMap(LoadingHeaderCell, loadingRange)
+
+const LoadingBodyCell = (value, key) =>
+  $(CellPure, { key, loading: true })
+
+const LoadingTableBody = [
+  $(TableRow, { key: 1 }, uncappedMap(LoadingBodyCell, loadingRange)),
+  $(TableRow, { key: 2 }, uncappedMap(LoadingBodyCell, loadingRange)),
+  $(TableRow, { key: 3 }, uncappedMap(LoadingBodyCell, loadingRange))
+]
 
 export default AvailableShifts

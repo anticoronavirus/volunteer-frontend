@@ -5,6 +5,8 @@ import addDays from 'date-fns/addDays'
 import format from 'date-fns/format'
 import Box from '@material-ui/core/Box'
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Paper from '@material-ui/core/Paper'
+import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
 import TableCell from '@material-ui/core/TableCell'
@@ -35,18 +37,21 @@ const Shifts = () => {
   return !data 
     ? $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100vw', height: '100vh' },
         $(CircularProgress))
-    : $(Table, null,
-        $(TableHead, null, 
-          $(TableRow, null,
-            $(TableCell, null, 'Дата'),
-            $(TableCell, null, 'Смена'),
-            $(TableCell, null, 'Профессия'),
-            $(TableCell, null, 'ФИО'),
-            $(TableCell, null, 'Телефон'),
-            $(TableCell, null, 'Профессия'),
-            $(TableCell, null, 'Подтвержден'))),
-        $(TableBody, null,
-          map(Row, data.volunteer_shift)))
+    : $(Paper, null, 
+        'ГКБ №40',
+        $(TableContainer, null, 
+            $(Table, null,
+                $(TableHead, null, 
+                  $(TableRow, null,
+                    $(TableCell, null, 'Дата'),
+                    $(TableCell, null, 'Смена'),
+                    $(TableCell, null, 'Профессия'),
+                    $(TableCell, null, 'ФИО'),
+                    $(TableCell, null, 'Телефон'),
+                    $(TableCell, null, 'Профессия'),
+                    $(TableCell, null, 'Подтвержден'))),
+                $(TableBody, null,
+                  map(Row, data.volunteer_shift)))))
 }
 
 const Row = ({ confirmed, shift, volunteer }) =>
