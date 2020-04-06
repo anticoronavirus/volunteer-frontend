@@ -20,7 +20,9 @@ const Hospitals = () => {
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Query, { query: hospitals }, ({ data }) =>
-    $(Box, notMobile &&  { display: 'flex', padding: 2 },
+    $(Box, notMobile 
+        ? { display: 'flex', padding: 2 }
+        : { padding: 1 },
       $(Back),
       $(Box, { margin: 'auto', flexGrow: 1, maxWidth: 480 },
         data &&
@@ -35,7 +37,7 @@ const Hospital = ({
   $(HospitalLink, { to: `/hospitals/${uid}` },
     $(Card, { key: uid },
       $(CardActionArea, null, 
-        $(HospitalImage, { image: `https://picsum.photos/480/140?random=${uid}` }),
+        // $(HospitalImage, { image: `https://picsum.photos/480/140?random=${uid}` }),
         $(CardContent, null,
           $(Typography, { variant: 'h5' }, shortname),
           $(Typography, { variant: 'body1' }, address )))))
