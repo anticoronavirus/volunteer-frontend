@@ -51,5 +51,5 @@ const fields = [
   'lname',
   'email',
   'comment',
-  'is_hatching'
+  'profession'
 ]

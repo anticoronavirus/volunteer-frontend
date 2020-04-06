@@ -97,7 +97,7 @@ const ProfilePure = data =>  {
                   variant: 'outlined' }),
                 $(Field, {
                   component: FormikButtonGroup,
-                  name: 'is_hatching' }),
+                  name: 'profession' }),
                 $(Field, {
                   component: TextField,
                   name: 'comment',
@@ -168,8 +168,9 @@ const FormikButtonGroup = ({
       exclusive: true,
       onChange: (event, value) => setFieldValue(name, value)
     },
-      $(ToggleButton, { value: true }, 'Студент'),
-      $(ToggleButton, { value: false }, 'Врач')))
+      $(ToggleButton, { value: 'cтудент' }, 'Студент'),
+      $(ToggleButton, { value: 'медперсонал' }, 'Медперсонал'),
+      $(ToggleButton, { value: 'врач' }, 'Врач')))
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 

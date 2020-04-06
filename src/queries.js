@@ -9,7 +9,7 @@ export const me = gql`{
     phone
     email
     comment
-    is_hatching
+    profession
     managedHospital {
       uid
       shortname
@@ -53,7 +53,7 @@ mutation UpsertVolunteer(
   $lname: String
   $email: String
   $comment: String
-  $is_hatching: Boolean
+  $profession: String
 ) {
   update_volunteer(
     _set: {
@@ -62,7 +62,7 @@ mutation UpsertVolunteer(
       lname: $lname
       email: $email
       comment: $comment
-      is_hatching: $is_hatching
+      profession: $profession
     }
     where: {
       uid: { _eq: $uid }
@@ -167,7 +167,7 @@ subscription shifts($hospitalId: uuid) {
         lname
         fname
         phone
-        is_hatching
+        profession
       }
     }
   }
