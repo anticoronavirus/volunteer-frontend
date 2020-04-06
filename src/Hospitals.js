@@ -1,6 +1,6 @@
 import { createElement as $ } from 'react'
 import { Query } from '@apollo/react-components'
-import { hospitals } from 'queries'
+// import { hospitals } from 'queries'
 import map from 'lodash/fp/map'
 import Back from 'components/Back'
 import { useMediaQuery, useTheme } from '@material-ui/core'
