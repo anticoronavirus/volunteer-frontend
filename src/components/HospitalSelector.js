@@ -35,7 +35,7 @@ const HospitalSelector = ({ hospital: [value, onChange]}) => {
         $(TitleButton, {
           endIcon: $(ExpandMoreIcon),
           onClick: event => setAnchorEl(event.currentTarget) },
-          hospital ? hospital.shortname : 'Все больницы'),
+          hospital ? hospital.shortname : 'Выберите больницу'),
         $(Menu, {
           open: Boolean(anchorEl),
           anchorEl: anchorEl,
