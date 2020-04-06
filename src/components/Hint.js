@@ -9,7 +9,7 @@ import Typography from '@material-ui/core/Typography'
 
 const Hint = ({ name, className }) => {
   const { data } = useQuery(hint, { variables: { name } })
-  return !data || !data.hint || !data.hint.length
+  return !data || !data.hint || !data.hint.length || !data.me.length
     ? null
     : $(Box, { className },
         $(Typography, { variant: 'body2' }, data.hint[0].text),

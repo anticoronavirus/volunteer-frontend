@@ -176,7 +176,7 @@ mutation FlipConfirm(
 }`
 
 export const hint = gql`
-query hint ($name: bpchar!) {
+query hint ($name: String!) {
   me { uid }
   hint (where: { name: { _eq: $name }}) {
     uid
