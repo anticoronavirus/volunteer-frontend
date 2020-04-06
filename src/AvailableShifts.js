@@ -193,11 +193,7 @@ const CellPure = ({
           $(Box, { width: '1ex'}),
           myShift &&
             $(Typography, { variant: 'body2', color: 'inherit' },
-                !hospitalSelected
-                  ? myShift.hospital.shortname
-                  : myShift.confirmed
-                    ? myShift.hospital.shortname
-                    : myShift.hospital.shortname)))))
+              myShift.hospital.shortname)))))
 
 // Loading stuff
 

@@ -63,7 +63,8 @@ const Section = ({
   date,
   start,
   end,
-  required = 10,
+  demand,
+  placesavailable,
   shiftRequests,
   loading
 }) =>
@@ -75,7 +76,7 @@ const Section = ({
           `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
           loading ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
-          `${shiftRequests.length}/${required}`)),
+          `${placesavailable}/${demand}`)),
       map(VolunteerShift, shiftRequests),
       $(Divider)))
 
