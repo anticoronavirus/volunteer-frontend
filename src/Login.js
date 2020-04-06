@@ -120,7 +120,7 @@ const Login = ({ history }) => {
                 loginStatus === 'loading'
                   ? $(CircularProgress, { size: 24 })
                   : 'Войти'))),
-        $(Typography, { variant: 'caption' }, 'При проблемах со входом или для восстановления доступа, пишите на '),
+        $(Typography, { variant: 'caption' }, 'Смска может идти до 20 секунд. При проблемах со входом или для восстановления доступа, пишите на '),
         $(Typography, { component: 'a', color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
 }
 
