@@ -14,6 +14,7 @@ import CircularProgress from '@material-ui/core/CircularProgress'
 import Box from '@material-ui/core/Box'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
+import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Avatar from '@material-ui/core/Avatar'
@@ -135,7 +136,8 @@ const ProfilePure = data =>  {
       $(Subscription, { subscription: myShifts }, ({ data }) =>
       $(Paper, null, 
         data &&
-          $(List, null, 
+          $(List, null,
+            $(ListSubheader, null, 'Мои смены'),
             map(MyShift, data.volunteer_shift))))))
 }
 
