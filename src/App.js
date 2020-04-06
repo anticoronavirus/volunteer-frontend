@@ -1,4 +1,5 @@
 import { createElement as $, useMemo } from 'react'
+import WithFooter from 'components/Footer'
 import Main from 'Main'
 import Login from 'Login'
 import Hospital from 'Hospital'
@@ -33,15 +34,16 @@ const App = () => {
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
-    $(Switch, null,
-      $(Route, { path: '/profile', component: Profile }),
-      !loading && data.me[0] && some(isEmpty, values(requiredProfileFields(data.me[0]))) &&
-        $(Redirect, { to: '/profile' }),
-      $(Route, { path: '/login', component: Login }),
-      $(Route, { path: '/hospitals/:uid', component: Hospital }),
-      $(Route, { path: '/hospitals/', component: Hospitals }),
-      $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
-      $(Redirect, { to: '/' })))
+    $(WithFooter, null,
+      $(Switch, null,
+        $(Route, { path: '/profile', component: Profile }),
+        !loading && data.me[0] && some(isEmpty, values(requiredProfileFields(data.me[0]))) &&
+          $(Redirect, { to: '/profile' }),
+        $(Route, { path: '/login', component: Login }),
+        $(Route, { path: '/hospitals/:uid', component: Hospital }),
+        $(Route, { path: '/hospitals/', component: Hospitals }),
+        $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
+        $(Redirect, { to: '/' }))))
 }
 
 const CustomCssBaseline = withStyles(() => ({
