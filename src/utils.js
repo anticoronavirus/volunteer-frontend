@@ -50,5 +50,6 @@ const fields = [
   'mname',
   'lname',
   'email',
-  'comment'
+  'comment',
+  'is_hatching'
 ]

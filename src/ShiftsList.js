@@ -104,6 +104,7 @@ const VolunteerShift = ({
     fname,
     phone,
     email,
+    is_hatching
   },
   loading
  }) =>
@@ -127,7 +128,7 @@ const VolunteerShift = ({
         fullName || `${lname} ${fname}`,
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-        $(Box, { display: 'flex' }, phone, ' · ', 'врач'),
+        $(Box, { display: 'flex' }, phone, ' · ', is_hatching ? 'студент' : 'врач'),
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :

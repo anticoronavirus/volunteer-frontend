@@ -4,7 +4,7 @@ import { Redirect, useHistory } from 'react-router-dom'
 import { me as meQuery, updateVolunteer } from 'queries'
 import Back from 'components/Back'
 import { Formik, Form, Field } from 'formik'
-import { TextField, RadioGroup } from 'formik-material-ui'
+import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
 import { requiredProfileFields } from 'utils'
 
@@ -121,7 +121,6 @@ const FormikButtonGroup = ({
   field: { name },
 }) =>
   $(Box, { margin: '16px 0 8px 0'}, 
-    console.log(values),
     $(ToggleButtonGroup, {
       value: values[name],
       exclusive: true,

@@ -37,7 +37,7 @@ const App = () => {
     $(WithFooter, null,
       $(Switch, null,
         $(Route, { path: '/profile', component: Profile }),
-        !loading && data.me[0] && some(isEmpty, values(requiredProfileFields(data.me[0]))) &&
+        !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
           $(Redirect, { to: '/profile' }),
         $(Route, { path: '/login', component: Login }),
         $(Route, { path: '/hospitals/:uid', component: Hospital }),
