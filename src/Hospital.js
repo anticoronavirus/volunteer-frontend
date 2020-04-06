@@ -16,6 +16,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import Tooltip from '@material-ui/core/Tooltip'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -57,9 +58,10 @@ const Hospital = ({
                 : $(Typography, { variant: 'subtitle2' }, data.hospital.name)),
             $(Box, { padding: '0 16px' },
               isManagedByMe &&
-                $(ButtonGroup, null,
-                  $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
-                  $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' })))),
+                $(Tooltip, { title: 'Здесь будет выгрукза в Excel и черный список'}, 
+                  $(ButtonGroup, null,
+                    $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
+                    $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' }))))),
             loading
               ? LoadingPeriods
               : $(List, null,
