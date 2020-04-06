@@ -39,7 +39,7 @@ const Main = ({ history, match }) => {
               data.me[0].managedHospital
                 ? `/hospitals/${data.me[0].managedHospital.uid}`
                 : '/profile') },
-              data.me[0].fname),
+              `${data.me[0].fname}${data.me[0].managedHospital ? ' @ ' + data.me[0].managedHospital.shortname : ''}`),
             $(Tooltip, { title: 'Выход' },
               $(Button, { onClick: () => logoff() && history.push('/')},
               $(ExitToApp, { fontSize: 'small' }))))
