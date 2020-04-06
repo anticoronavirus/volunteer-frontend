@@ -113,8 +113,10 @@ mutation addVolunteerToShift(
   }]) {
     returning {
       uid
-      volunteer {
+      confirmed
+      hospital {
         uid
+        shortname
       }
     }
   }
@@ -129,27 +131,41 @@ mutation removeVolunteerFromShift($uid: uuid) {
 }
 `
 
-export const shifts = gql`
-subscription shifts($hospitalId: uuid $userId: uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
-    date
-    start
-    end
-    demand
-    hospitalscount
-    placesavailable
-    demand
-    shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
+export const shiftFragment = gql`
+fragment shift on vshift {
+  date
+  start
+  end
+  demand
+  hospitalscount
+  placesavailable
+  demand
+  shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
+    uid
+    confirmed
+    hospital {
       uid
-      confirmed
-      hospital {
-        uid
-        shortname
-      }
+      shortname
     }
   }
 }
 `
+
+export const shifts = gql`
+query shifts($hospitalId: uuid $userId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+    ...shift
+  }
+}
+${shiftFragment}`
+
+export const shiftsSubscription = gql`
+subscription shiftsSubscription($hospitalId: uuid $userId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+    ...shift
+  }
+}
+${shiftFragment}`
 
 export const hospitalShifts = gql`
 subscription shifts($hospitalId: uuid) {

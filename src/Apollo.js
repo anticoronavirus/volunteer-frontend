@@ -84,7 +84,9 @@ const splitLink = split(
 
 export const client = new ApolloClient({
   cache: new InMemoryCache({
-    dataIdFromObject: ({ uid }) => uid
+    dataIdFromObject: ({ uid, __typename, ...rest }) => __typename === 'vshift'
+      ? `${rest.date}-${rest.start}-${rest.end}`
+      : uid
   }),
   link: splitLink
 })

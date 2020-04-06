@@ -1,17 +1,20 @@
 import { createElement as $, memo, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import set from 'lodash/fp/set'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
+  shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
-  filteredHospitals
+  filteredHospitals,
+  shiftFragment
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useSubscription, useMutation } from '@apollo/react-hooks'
+import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
@@ -36,8 +39,9 @@ const AvailableShifts = memo(({ userId, hospitalId }) => {
 
   hospitalId = hospitalId ? `{${hospitalId}}` : null
 
-  const { data } = useSubscription(shifts, {
-    variables: userId ? { userId, hospitalId } : { hospitalId }
+  const { data } = useQuery(shifts, {
+    pollInterval: 6000,
+    variables: userId ? { userId, hospitalId } : { hospitalId },
   })
 
   const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
@@ -85,21 +89,77 @@ const Cell = ({
   userId
 }) => {
 
-  const history =  useHistory()
+  const fragment = { 
+    id: `${date}-${start}-${end}`,
+    variables: { userId },
+    fragment: shiftFragment
+  } 
+
+  const history = useHistory()
   const match = useRouteMatch('/:hospitalId')
   const hospitalId = match && match.params && match.params.hospitalId
-  const [addToShift] = useMutation(addVolunteerToShift, { variables: { userId, hospitalId }})
-  const [removeFromShift] = useMutation(removeVolunteerFromShift)
+  const [updating, setUpdating] = useState(false)
   const [anchorEl, setAnchorEl] = useState()
+
+  const [addToShift] = useMutation(addVolunteerToShift, {
+    variables: { userId, hospitalId },
+    optimisticResponse: {
+      insert_volunteer_shift: {
+        returning: [{
+          uid: Math.random().toString(),
+          confirmed: false, 
+          hospital: {
+            uid: hospitalId,
+            __typename: 'hospital'
+          },
+          __typename: 'volunteer_shift'
+          }],
+        __typename: 'volunteer_shift_mutation_response'
+      }
+    },
+    update: (cache, result) => {
+      const data = cache.readFragment(fragment)
+      cache.writeFragment({
+        ...fragment,
+        data: {
+          ...data,
+          placesavailable: placesavailable - 1,
+          shiftRequests: result.data.insert_volunteer_shift.returning
+        }
+      })
+    }
+  })
+
+
+  const [removeFromShift] = useMutation(removeVolunteerFromShift, {
+    variables: shiftRequests[0] && { uid: shiftRequests[0].uid },
+    optimisticResponse: {
+      delete_volunteer_shift: {
+        affected_rows: 1,
+        __typename: 'volunteer_shift_mutation_response'
+      }
+    },
+    update: cache => {
+      const data = cache.readFragment(fragment)
+      cache.writeFragment({
+        ...fragment,
+        data: {
+          ...data,
+          placesavailable: data.placesavailable + 1,
+          shiftRequests: []
+        }
+      })
+    }
+  })
 
   const toggleShift = event =>
     !userId
       ? history.push('/login')
       : shiftRequests.length
-        ? removeFromShift({ variables: { uid: shiftRequests[0].uid } }) 
+        ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
         : !hospitalId
           ? setAnchorEl(event.currentTarget)
-          : addToShift({ variables: { date, start, end } })
+          : setUpdating(true) || addToShift({ variables: { date, start, end }}).then(() => setUpdating(false))
 
   return $(Fragment, null,
     !hospitalId && anchorEl &&
@@ -119,7 +179,7 @@ const Cell = ({
             },
               hospital.shortname),
             data && data.hospitals))),
-    $(CellPure, { 
+    $(CellPure, {
       date,
       start,
       end,
@@ -127,7 +187,8 @@ const Cell = ({
       hospitalscount,
       hospitalSelected: hospitalId,
       myShift: shiftRequests[0],
-      toggleShift
+      toggleShift,
+      updating
     }))
 }
 
@@ -140,7 +201,8 @@ const CellPure = ({
   hospitalSelected,
   toggleShift,
   myShift,
-  loading
+  loading,
+  updating
 }) =>
   $(TableCell, {
     padding: 'none',
@@ -150,7 +212,7 @@ const CellPure = ({
         : orange[300],
     }
   },
-    $(ButtonBase, { onClick: toggleShift, disabled: !myShift && !placesavailable },
+    $(ButtonBase, { onClick: toggleShift, disabled: updating || loading || (!myShift && !placesavailable) },
       $(Box, {
         width: 148,
         padding: 2,
@@ -185,15 +247,17 @@ const CellPure = ({
           alignItems: 'center',
           paddingTop: 1,
         },
-          !myShift
-            ? $(Box, { height: 24 }) // FIXME empty box for preserving height 
+          loading || !myShift
+            ? $(Box, { height: 24, width: 48 }) // FIXME empty box for preserving height 
             : myShift.confirmed
               ? $(DoubleCheck)
               : $(Check),
           $(Box, { width: '1ex'}),
           myShift &&
             $(Typography, { variant: 'body2', color: 'inherit' },
-              myShift.hospital.shortname)))))
+              loading
+                ? $(Skeleton, { width: '8ex' })
+                : myShift.hospital.shortname)))))
 
 // Loading stuff
 
