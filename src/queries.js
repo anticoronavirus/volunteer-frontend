@@ -9,6 +9,7 @@ export const me = gql`{
     phone
     email
     comment
+    is_hatching
     managedHospital {
       uid
       shortname

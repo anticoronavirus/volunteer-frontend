@@ -4,7 +4,7 @@ import { Redirect, useHistory } from 'react-router-dom'
 import { me as meQuery, updateVolunteer } from 'queries'
 import Back from 'components/Back'
 import { Formik, Form, Field } from 'formik'
-import { TextField } from 'formik-material-ui'
+import { TextField, RadioGroup } from 'formik-material-ui'
 import { logoff } from 'Apollo'
 import { requiredProfileFields } from 'utils'
 
@@ -17,6 +17,8 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import { useMediaQuery, useTheme } from '@material-ui/core'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import ToggleButton from '@material-ui/lab/ToggleButton'
 
 const Profile = () => {
   
@@ -85,6 +87,9 @@ const ProfilePure = data =>  {
                   fullWidth: true,
                   variant: 'outlined' }),
                 $(Field, {
+                  component: FormikButtonGroup,
+                  name: 'is_hatching' }),
+                $(Field, {
                   component: TextField,
                   name: 'comment',
                   validate: required,
@@ -110,6 +115,20 @@ const ProfilePure = data =>  {
                     }, 'Сохранить')
                   : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))))
 }
+
+const FormikButtonGroup = ({
+  form: { setFieldValue, values },
+  field: { name },
+}) =>
+  $(Box, { margin: '16px 0 8px 0'}, 
+    console.log(values),
+    $(ToggleButtonGroup, {
+      value: values[name],
+      exclusive: true,
+      onChange: (event, value) => setFieldValue(name, value)
+    },
+      $(ToggleButton, { value: true }, 'Студент'),
+      $(ToggleButton, { value: false }, 'Врач')))
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
