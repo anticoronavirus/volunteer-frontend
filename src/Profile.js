@@ -137,7 +137,7 @@ const ProfilePure = data =>  {
       $(Paper, null, 
         data &&
           $(List, null,
-            $(ListSubheader, null, 'Мои смены'),
+            $(ListSubheader, { disableSticky: true }, 'Мои смены'),
             map(MyShift, data.volunteer_shift))))))
 }
 
