@@ -11,7 +11,6 @@ import Paper from '@material-ui/core/Paper'
 import TextField from '@material-ui/core/TextField'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
-import Link from '@material-ui/core/Link'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import InputAdornment from '@material-ui/core/InputAdornment'
 import Button from '@material-ui/core/Button'
@@ -122,7 +121,7 @@ const Login = ({ history }) => {
                   ? $(CircularProgress, { size: 24 })
                   : 'Войти'))),
         $(Typography, { variant: 'caption' }, 'При проблемах со входом или для восстановления доступа, пишите на '),
-        $(Link, { color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
+        $(Typography, { component: 'a', color: 'secondary', variant: 'caption', href: 'mailto:help@memedic.ru'}, 'help@memedic.ru'))))
 }
 
 const PhoneInput = other =>

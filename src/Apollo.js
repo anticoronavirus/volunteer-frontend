@@ -10,7 +10,7 @@ const httpLink = new HttpLink({
 
 let refreshTokenPromise
 
-const authLink = setContext((operation, { headers }) => {
+const handleAuth = (operation, { headers }) => {
 
   let authorization = localStorage.getItem('authorization')
   let expires = parseInt(localStorage.getItem('expires'))
@@ -45,7 +45,9 @@ const authLink = setContext((operation, { headers }) => {
         authorization
       }
     }
-})
+}
+
+const authLink = setContext(handleAuth)
 
 const handleError = headers => () => {
   refreshTokenPromise = null
@@ -58,12 +60,14 @@ export const wsLink = new WebSocketLink({
   uri: `wss://${process.env.NODE_ENV === 'development' ? 'dev.memedic.ru' : window.location.hostname}/v1/graphql`,
   options: {
     reconnect: true,
-    connectionParams: () => localStorage.getItem('authorization') && {// FIXME should be dynamic
-      headers: {
-        Authorization: localStorage.getItem('authorization')
-      }
-    }
+    connectionParams: async () => handleAuth(null, { })
   }
+  //   () => localStorage.getItem('authorization') && {// FIXME should be dynamic
+  //     headers: {
+  //       Authorization: localStorage.getItem('authorization')
+  //     }
+  //   }
+  // }
 })
 
 const splitLink = split(

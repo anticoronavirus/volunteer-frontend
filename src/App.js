@@ -10,7 +10,6 @@ import { useQuery } from '@apollo/react-hooks'
 import { me } from 'queries'
 import some from 'lodash/fp/some'
 import values from 'lodash/fp/values'
-import isEmpty from 'lodash/fp/isEmpty'
 import { requiredProfileFields } from 'utils'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
@@ -37,6 +36,7 @@ const App = () => {
     $(WithFooter, null,
       $(Switch, null,
         $(Route, { path: '/profile', component: Profile }),
+        // eslint-disable-next-line
         !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
           $(Redirect, { to: '/profile' }),
         $(Route, { path: '/login', component: Login }),
