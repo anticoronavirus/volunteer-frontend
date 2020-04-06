@@ -144,7 +144,7 @@ const CheckHolder = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
-const AdditionalControls = ({ uid, volunteer_id }) => {
+const AdditionalControls = ({ uid, phone, volunteer_id }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -155,7 +155,7 @@ const AdditionalControls = ({ uid, volunteer_id }) => {
       anchorEl,
       onClose: () => setAnchorEl(null),
       open: Boolean(anchorEl) },
-      $(MenuItem, null,
+      $(MenuItem, { component: 'a', href: `tel:${phone}`},
         $(ListItemIcon, null, $(Phone, { fontSize: 'small' })),
         $(Typography, { variant: 'inherit' }, 'Позвонить')),
       $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
