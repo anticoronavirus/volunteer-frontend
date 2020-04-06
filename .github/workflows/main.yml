@@ -23,6 +23,6 @@ jobs:
           key: ${{ secrets.DEPLOY_KEY }}
           script: |
             cd volunteer-backend
-            docker login docker.pkg.github.com -u $GITHUB_ACTOR -p ${{ secrets.GITHUB_TOKEN }}
+            docker login -u $GITHUB_ACTOR -p ${{ secrets.GITHUB_TOKEN }} docker.pkg.github.com 
             docker-compose pull
             docker-compose up -d
