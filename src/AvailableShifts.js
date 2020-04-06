@@ -7,7 +7,7 @@ import {
   shifts,
   addVolunteerToShift,
   removeVolunteerFromShift,
-  hospitals
+  filteredHospitals
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
@@ -103,7 +103,7 @@ const Cell = ({
 
   return $(Fragment, null,
     !hospitalId && anchorEl &&
-      $(Query, { query: hospitals }, ({ data }) =>
+      $(Query, { query: filteredHospitals, variables: { start, end } }, ({ data }) =>
         $(Menu, {
           open: true,
           onClose: () => setAnchorEl(null),
@@ -196,8 +196,8 @@ const CellPure = ({
                 !hospitalSelected
                   ? myShift.hospital.shortname
                   : myShift.confirmed
-                    ? 'Приходи'
-                    : 'Отправлено')))))
+                    ? myShift.hospital.shortname
+                    : myShift.hospital.shortname)))))
 
 // Loading stuff
 

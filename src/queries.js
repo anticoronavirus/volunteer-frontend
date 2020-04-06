@@ -111,8 +111,8 @@ mutation removeVolunteerFromShift($uid: uuid) {
 `
 
 export const shifts = gql`
-subscription shifts($hospitalId: _uuid $userId: uuid) {
-  shifts: shift_selector(args: { hospital_ids: $hospitalId }) {
+subscription shifts($hospitalId: uuid $userId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
     date
     start
     end
@@ -133,11 +133,8 @@ subscription shifts($hospitalId: _uuid $userId: uuid) {
 `
 
 export const hospitalShifts = gql`
-subscription shifts(
-  $hospitalIds: _uuid
-  $hospitalId: uuid
-) {
-  shifts: shift_selector(args: { hospital_ids: $hospitalIds }) {
+subscription shifts($hospitalId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
     date
     start
     end
@@ -197,6 +194,22 @@ mutation seenHint($userId: uuid! $hintId: uuid!) {
 
 export const hospitals = gql`{
   hospitals: hospital {
+    uid
+    shortname
+    address
+    periods { demand }
+  }
+}`
+
+export const filteredHospitals = gql`
+query filteredHospitals (
+  $start: timetz,
+  $end: timetz
+) {
+  hospitals: hospital(where: { periods: { 
+    start: { _eq: $start }
+    end: { _eq: $end }
+  } }) {
     uid
     shortname
     address

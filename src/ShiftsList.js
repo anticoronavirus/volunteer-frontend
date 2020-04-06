@@ -35,10 +35,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 const Shifts = ({ hospitalId, isManagedByMe }) =>
   $(Subscription, {
     subscription: hospitalShifts,
-    variables: {
-      hospitalIds: hospitalId ? `{${hospitalId}}` : null,
-      hospitalId: hospitalId,
-    }
+    variables: { hospitalId }
   }, ({ data }) =>
   $(Paper, null,
     isManagedByMe &&
