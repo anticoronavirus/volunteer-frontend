@@ -1,15 +1,19 @@
 import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
+import merge from 'lodash/fp/merge'
 import get from 'lodash/fp/get'
 import sortBy from 'lodash/fp/sortBy'
-import { useQuery } from '@apollo/react-hooks'
+import omit from 'lodash/fp/omit'
+import entries from 'lodash/fp/entries'
+import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
 import { Redirect } from 'react-router-dom'
-import { hospital, removeShift } from 'queries'
+import { hospital, removeShift, exportQuery } from 'queries'
 import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
 import AddHospitalShift from 'components/AddHospitalShift'
+import generateXlsx from 'zipcelx'
 
 import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -37,6 +41,8 @@ const Hospital = ({
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   const { data, loading } = useQuery(hospital, { variables: { uid: match.params.uid }})
+  const client = useApolloClient()
+
   const isManagedByMe = data &&
     get(['hospital', 'uid'], data) ===
     get(['me', 0, 'managedHospital', 'uid'], data)
@@ -58,10 +64,20 @@ const Hospital = ({
                 : $(Typography, { variant: 'subtitle2' }, data.hospital.name)),
             $(Box, { padding: '0 16px' },
               isManagedByMe &&
-                $(Tooltip, { title: 'Здесь будет выгрукза в Excel и черный список'}, 
                   $(ButtonGroup, null,
-                    $(Button, { onClick: console.log, disabled: true }, $(CloudDownload, { fontSize: 'small' })),
-                    $(Button, { onClick: console.log, disabled: true }, $(PersonAddDisabled, { fontSize: 'small' }))))),
+                    $(Button, { onClick: () =>
+                        client.query({ query: exportQuery })
+                          .then(result => generateXlsx({
+                            filename: `Заявки волонтёров ${data.hospital.shortname}`,
+                            sheet: {
+                              data: [
+                                headers,
+                                ...map(formatShift, result.data.volunteer_shift)]
+                            }
+                          })) },
+                      $(CloudDownload, { fontSize: 'small' })),
+                    $(Button, { onClick: console.log, disabled: true },
+                      $(PersonAddDisabled, { fontSize: 'small' })))),
             loading
               ? LoadingPeriods
               : $(List, null,
@@ -79,6 +95,34 @@ const Hospital = ({
         data && data.hospital.periods.length > 0 &&
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
             $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))
+}
+
+const headers = map(value => ({ value, type: 'string' }), [
+  'дата',
+  'начало смены',
+  'конец смены',
+  'подтверждён',
+  'фамилия',
+  'имя',
+  'отчество',
+  'телефон',
+  'профессия',
+  'электронная почта',
+])
+
+const formatShift = shift => 
+  map(formatValue, entries(omit(['volunteer', '__typename'], merge(shift, shift.volunteer))))
+
+const formatValue = ([key, value]) => ({
+  value: customFormats[key]
+    ? customFormats[key](value)
+    : value,
+  type: 'string' })
+
+const customFormats = {
+  confirmed: value => value ? 'Да' : 'Нет',
+  start: value => value.slice(0, 5),
+  end: value => value.slice(0, 5),
 }
 
 const HospitalShift = ({

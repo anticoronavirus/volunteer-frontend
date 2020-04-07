@@ -96,6 +96,23 @@ subscription {
 }
 `
 
+export const exportQuery = gql`{
+  volunteer_shift {
+    date
+    start
+    end
+    confirmed
+    volunteer {
+      lname
+      fname
+      mname
+      phone
+      profession
+      email
+    }
+  }
+}`
+
 export const addVolunteerToShift = gql`  
 mutation addVolunteerToShift(
   $userId: uuid
