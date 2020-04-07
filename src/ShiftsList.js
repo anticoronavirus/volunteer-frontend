@@ -1,10 +1,11 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import { Subscription, Mutation } from '@apollo/react-components'
+import { Subscription, Query, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
 import { hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 import Hint from 'components/Hint'
+import gql from 'graphql-tag'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -33,8 +34,9 @@ import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 const Shifts = ({ hospitalId, isManagedByMe }) =>
-  $(Subscription, {
-    subscription: hospitalShifts,
+  $(Query, {
+    pollInterval: 6000,
+    query: hospitalShifts,
     variables: { hospitalId }
   }, ({ data }) =>
   $(Paper, null,
@@ -103,8 +105,7 @@ const VolunteerShift = ({
     lname,
     fname,
     phone,
-    email,
-    is_hatching
+    profession
   },
   loading
  }) =>
@@ -112,7 +113,22 @@ const VolunteerShift = ({
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
-        : $(Mutation, { mutation: confirm, variables: { uid, confirmed: !confirmed } }, mutate =>
+        : $(Mutation, {
+            mutation: confirm,
+            variables: { uid, confirmed: !confirmed },
+            optimisticResponse: {
+              update_volunteer_shift: {
+                affected_rows: 1,
+                __typename: 'volunteer_shift_mutation_response'
+              },
+            },
+            update: cache =>
+              cache.writeFragment({
+                id: uid,
+                fragment: confirmedFragment,
+                data: { confirmed: !confirmed }
+              })
+          }, mutate =>
             $(CustomButtonBase, { onClick: mutate }, 
               $(Badge, {
                 overlap: 'circle',
@@ -128,7 +144,7 @@ const VolunteerShift = ({
         fullName || `${lname} ${fname}`,
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-        $(Box, { display: 'flex' }, phone, ' · ', is_hatching ? 'студент' : 'врач'),
+        $(Box, { display: 'flex' }, phone, ' · ', profession),
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
@@ -143,6 +159,12 @@ const CheckHolder = styled('div')(({ theme }) => ({
   borderRadius: '50%',
   backgroundColor: theme.palette.background.paper
 }))
+
+const confirmedFragment = gql`
+  fragment confirmedFragment on volunteer_shift {
+    uid
+    confirmed,
+}`
 
 const AdditionalControls = ({ uid, phone, volunteer_id }) => {
 

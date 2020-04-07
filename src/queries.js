@@ -185,7 +185,7 @@ subscription shiftsSubscription($hospitalId: uuid $userId: uuid) {
 ${shiftFragment}`
 
 export const hospitalShifts = gql`
-subscription shifts($hospitalId: uuid) {
+query shifts($hospitalId: uuid) {
   shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
     date
     start
@@ -326,10 +326,6 @@ export const confirm = gql`
 mutation confirmVolunteer($uid: uuid! $confirmed: Boolean) {
   update_volunteer_shift(_set: { confirmed: $confirmed } where: { uid: { _eq: $uid } }) {
     affected_rows
-    returning {
-      uid
-      confirmed
-    }
   }
 }`
 
