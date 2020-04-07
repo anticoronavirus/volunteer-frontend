@@ -79,7 +79,7 @@ const Section = ({
           `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
           loading ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
-          `${placesavailable}/${demand}`)),
+          `${demand - placesavailable}/${demand}`)),
       map(VolunteerShift, shiftRequests),
       $(Divider)))
 
