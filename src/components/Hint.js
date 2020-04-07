@@ -22,14 +22,12 @@ const Hint = ({ name, className }) => {
                 __typename: 'seen_hint_mutation_response'
               }
             },
-            update: cache => {
-              const { me } = cache.readQuery({ query: hint, variables: { name } })
+            update: cache =>
               cache.writeQuery({
                 query: hint,
                 variables: { name },
-                data: { hint: null, me },
-              })
-            },
+                data: { ...data, hint: null },
+              }),
             variables: { userId: data.me[0].uid, hintId: data.hint[0].uid }
           }, mutate => 
             $(Button, { onClick: mutate },
