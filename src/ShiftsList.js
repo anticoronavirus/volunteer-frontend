@@ -3,7 +3,7 @@ import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import { Subscription, Query, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
+import { documentsProvisioned, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
 
@@ -25,6 +25,7 @@ import ButtonBase from '@material-ui/core/ButtonBase'
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'
 import MoreVert from '@material-ui/icons/MoreVert'
+import NoteAdd from '@material-ui/icons/NoteAdd'
 import CheckCircle from '@material-ui/icons/CheckCircle'
 import Phone from '@material-ui/icons/Phone'
 import Delete from '@material-ui/icons/Delete'
@@ -99,17 +100,21 @@ const SectionUL = styled('ul')({
 const VolunteerShift = ({
   uid,
   confirmed,
+  hospital: {
+    uid: hospital_id
+  },
   volunteer: { 
     uid: volunteer_id,
     fullName,
     lname,
     fname,
     phone,
-    profession
+    profession,
+    provisioned_documents
   },
   loading
  }) =>
-  $(ListItem, { key: uid },
+  $(ListItem, { key: uid, alignItems: 'flex-start'},
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
@@ -144,11 +149,12 @@ const VolunteerShift = ({
         fullName || `${lname} ${fname}`,
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-        $(Box, { display: 'flex' }, phone, ' · ', profession),
+        $(Box, { display: 'flex' },
+          !provisioned_documents.length && 'документы не предоставлены · ', phone, ' · ', profession),
     }),
     $(ListItemSecondaryAction, null,
       loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
-      $(AdditionalControls, { uid, phone, volunteer_id })))
+      $(AdditionalControls, { uid, phone, volunteer_id, hospital_id  })))
 
 const CustomButtonBase = styled(ButtonBase)({
   borderRadius: '50%',
@@ -166,7 +172,7 @@ const confirmedFragment = gql`
     confirmed,
 }`
 
-const AdditionalControls = ({ uid, phone, volunteer_id }) => {
+const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -187,7 +193,11 @@ const AdditionalControls = ({ uid, phone, volunteer_id }) => {
       $(Mutation, { mutation: addToBlackList, variables: { uid: volunteer_id, comment: 'прст' } }, mutate =>  
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
-          $(Typography, { variant: 'inherit' }, 'В черный список')))))
+          $(Typography, { variant: 'inherit' }, 'В черный список'))),
+      $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId: hospital_id  } }, mutate =>  
+        $(MenuItem, { onClick: mutate },
+          $(ListItemIcon, null, $(NoteAdd, { fontSize: 'small' })),
+          $(Typography, { variant: 'inherit' }, 'Документы предоставлены')))))
 }
 
 export default Shifts

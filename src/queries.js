@@ -195,17 +195,31 @@ query shifts($hospitalId: uuid) {
     shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
       uid
       confirmed
+      hospital { uid }
       volunteer {
         uid
         lname
         fname
         phone
         profession
+        provisioned_documents(where: { hospital_id: { _eq: $hospitalId }}) {
+          uid
+        }
       }
     }
   }
 }
 `
+
+export const documentsProvisioned = gql`
+mutation documentsProvisioned(
+  $hospitalId: uuid
+  $volunteerId: uuid
+) {
+  insert_provisioned_document(objects: [{ hospital_id: $hospitalId volunteer_id: $volunteerId}]) {
+    affected_rows
+  }
+}`
 
 export const flipConfirm = gql`
 mutation FlipConfirm(
