@@ -1,9 +1,11 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import { Subscription, Query, Mutation } from '@apollo/react-components'
+import { 
+  // Subscription, 
+  Query, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { documentsProvisioned, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
+import { documentsProvisioned, volunteerShiftCount, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
 
@@ -41,8 +43,10 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
     variables: { hospitalId }
   }, ({ data }) =>
   $(Paper, null,
-    isManagedByMe &&
-      $(PaddedHint, { name: 'how_confirm' }),
+    isManagedByMe && $(Query, { query: volunteerShiftCount }, ({ data }) =>
+      !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
+        ? null
+        : $(PaddedHint, { name: 'how_confirm' })),
     $(List, null,
       map(Section, data ? data.shifts : emptyShifts))))
 

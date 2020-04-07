@@ -96,6 +96,14 @@ subscription {
 }
 `
 
+export const volunteerShiftCount = gql`{
+  volunteer_shift_aggregate {
+    aggregate{
+      count
+    }
+  }
+}`
+
 export const exportShifts = gql`{
   volunteer_shift {
     date

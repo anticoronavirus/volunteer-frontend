@@ -1,12 +1,12 @@
 import { createElement as $, memo, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
-import set from 'lodash/fp/set'
+// import set from 'lodash/fp/set'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
-  shiftsSubscription,
+  // shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
   filteredHospitals,
@@ -14,7 +14,9 @@ import {
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { useHistory, useRouteMatch } from 'react-router-dom'
-import { useSubscription, useQuery, useMutation } from '@apollo/react-hooks'
+import { 
+  // useSubscription,
+  useQuery, useMutation } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
 
 import ButtonBase from '@material-ui/core/ButtonBase'

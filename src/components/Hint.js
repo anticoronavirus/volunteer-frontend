@@ -30,7 +30,7 @@ const Hint = ({ name, className }) => {
               }),
             variables: { userId: data.me[0].uid, hintId: data.hint[0].uid }
           }, mutate => 
-            $(Button, { onClick: mutate },
+            $(Button, { color: 'secondary', onClick: mutate },
             'Окей'))))
 }
 
