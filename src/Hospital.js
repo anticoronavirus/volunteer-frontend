@@ -8,7 +8,7 @@ import entries from 'lodash/fp/entries'
 import { useQuery, useApolloClient } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
 import { Redirect } from 'react-router-dom'
-import { hospital, removeShift, exportQuery } from 'queries'
+import { hospital, removeShift, exportShifts } from 'queries'
 import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
@@ -66,7 +66,7 @@ const Hospital = ({
               isManagedByMe &&
                   $(ButtonGroup, null,
                     $(Button, { onClick: () =>
-                        client.query({ query: exportQuery })
+                        client.query({ query: exportShifts })
                           .then(result => generateXlsx({
                             filename: `Заявки волонтёров ${data.hospital.shortname}`,
                             sheet: {
@@ -108,6 +108,7 @@ const headers = map(value => ({ value, type: 'string' }), [
   'телефон',
   'профессия',
   'электронная почта',
+  'документы предоставлены'
 ])
 
 const formatShift = shift => 
@@ -123,6 +124,7 @@ const customFormats = {
   confirmed: value => value ? 'Да' : 'Нет',
   start: value => value.slice(0, 5),
   end: value => value.slice(0, 5),
+  provisioned_documents: value => value.length ? 'Да' : 'Нет'
 }
 
 const HospitalShift = ({

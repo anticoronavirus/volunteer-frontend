@@ -96,7 +96,7 @@ subscription {
 }
 `
 
-export const exportQuery = gql`{
+export const exportShifts = gql`{
   volunteer_shift {
     date
     start
@@ -109,6 +109,9 @@ export const exportQuery = gql`{
       phone
       profession
       email
+      provisioned_documents {
+        uid
+      }
     }
   }
 }`
