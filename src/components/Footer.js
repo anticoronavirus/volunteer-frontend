@@ -24,7 +24,9 @@ const Footer = ({ children }) => {
         $(Typography, { variant: 'caption', color: 'secondary' }, 'Координаторам')),
       $(HelpLabel, { variant: 'caption'}, 'Обратная связь: '),
       $(CustomLink, { component: 'a', href: 'mailto:help@memedic.ru'},
-        $(Typography, { variant: 'caption', color: 'secondary' }, 'help@memedic.ru'))))
+        $(Typography, { variant: 'caption', color: 'secondary' }, 'help@memedic.ru')),
+      $(CustomLink, { component: 'a', href: 'tg://resolve?domain=mememedic' }, 
+        $(Typography, { variant: 'caption', color: 'secondary' }, 'Чат в Telegram'))))
 }
 
 const HelpLabel = styled(Typography)({
