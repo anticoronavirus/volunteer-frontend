@@ -284,9 +284,11 @@ query filteredHospitals (
   $start: timetz,
   $end: timetz
 ) {
-  hospitals: hospital(where: { periods: { 
-    start: { _eq: $start }
-    end: { _eq: $end }
+  hospitals: hospital(where: {
+    shortname: { _neq: "Коммунарка" } ## FIXME
+    periods: { 
+      start: { _eq: $start }
+      end: { _eq: $end }
   } }) {
     uid
     shortname
