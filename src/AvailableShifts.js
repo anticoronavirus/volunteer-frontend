@@ -42,7 +42,7 @@ const AvailableShifts = memo(({ userId, hospitalId }) => {
   hospitalId = hospitalId ? `{${hospitalId}}` : null
 
   const { data } = useQuery(shifts, {
-    pollInterval: 6000,
+    // pollInterval: 6000,
     variables: userId ? { userId, hospitalId } : { hospitalId },
   })
 

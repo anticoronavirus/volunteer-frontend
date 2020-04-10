@@ -38,7 +38,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 
 const Shifts = ({ hospitalId, isManagedByMe }) =>
   $(Query, {
-    pollInterval: 6000,
+    // pollInterval: 6000,
     query: hospitalShifts,
     variables: { hospitalId }
   }, ({ data }) =>
