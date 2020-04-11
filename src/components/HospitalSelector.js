@@ -50,7 +50,7 @@ const TitleButton = withStyles({
     marginLeft: -8
   },
   text: {
-    fontSize: 24,
+    fontSize: 18,
     textTransform: 'none'
   }
 })(Button)

@@ -7,6 +7,7 @@ import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me } from 'queries'
 import { logoff } from 'Apollo'
 
+import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
@@ -24,6 +25,8 @@ const Main = ({ history, match }) => {
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Paper, null,
+    $(Box, { padding: 2 },
+      $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров-медиков в больницы Москвы')),
     $(Box, { 
       padding: 2,
       alignItems: 'center',
