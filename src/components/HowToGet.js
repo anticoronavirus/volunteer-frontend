@@ -23,9 +23,10 @@ const HowToGet = ({
 
   const [source, setSource] = useState(directions)
   const [editing, setEditing] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const [mutate] = useMutation(updateDirections, { variables: { uid, directions: source }})
 
-  return $(ExpansionPanel, null,
+  return $(ExpansionPanel, { onChange: (event, value) => setExpanded(value) },
     $(ExpansionPanelSummary, null,
       $(Box, {
         display: 'flex',
@@ -34,8 +35,10 @@ const HowToGet = ({
         margin: '-8px',
         width: 'calc(100% + 16px)' },
         'Как добраться',
-        editable &&
-          $(IconButton, { onClick: event => event.stopPropagation() || setEditing(!editing) },
+        editable && expanded &&
+          $(IconButton, {
+            onClick: event => event.stopPropagation() || setEditing(!editing)
+          },
             $(editing ? RemoveRedEye : Edit, { fontSize: 'small'})))),
     $(ExpansionPanelDetails, null,
       $(Box, { margin: '-8px', width: 'calc(100% + 16px)'},
