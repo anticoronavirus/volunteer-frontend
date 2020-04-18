@@ -162,7 +162,7 @@ const FormikButtonGroup = ({
   form: { setFieldValue, values },
   field: { name },
 }) =>
-  $(Box, { margin: '16px 0 8px 0'}, 
+  $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
     $(ToggleButtonGroup, {
       value: values[name],
       exclusive: true,
@@ -170,7 +170,9 @@ const FormikButtonGroup = ({
     },
       $(ToggleButton, { value: 'cтудент' }, 'Студент'),
       $(ToggleButton, { value: 'медперсонал' }, 'Медперсонал'),
-      $(ToggleButton, { value: 'врач' }, 'Врач')))
+      $(ToggleButton, { value: 'врач' }, 'Врач'),
+      $(ToggleButton, { value: 'немедик' }, 'Немедик'),
+      ))
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
