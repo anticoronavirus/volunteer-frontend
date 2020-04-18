@@ -93,9 +93,13 @@ const Hospital = ({
                     sortBy('start', data.hospital.periods)),
                   data && isManagedByMe &&
                     $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital }))),
-        data &&
+        data && (data.hospital.directions || isManagedByMe) &&
           $(Box, { marginTop: 2 },
-            $(Paper, null, $(HowToGet, { uid: data.hospital.uid, directions: data.hospital.directions })))),
+            $(Paper, null,
+              $(HowToGet, {
+                uid: data.hospital.uid,
+                editable: isManagedByMe,
+                directions: data.hospital.directions })))),
         data && data.hospital.periods.length > 0 &&
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
             $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))
