@@ -1,4 +1,4 @@
-import { createElement as $, useState, Fragment } from 'react'
+import { createElement as $, useState, Fragment, createContext } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import { 
@@ -36,6 +36,8 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
+const IsManagedByMe = createContext(false)
+
 const Shifts = ({ hospitalId, isManagedByMe }) =>
   $(Query, {
     pollInterval: 6000,
@@ -43,13 +45,14 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
     variables: { hospitalId }
   }, ({ data }) =>
   $(Paper, null,
-    isManagedByMe && $(Query, { query: volunteerShiftCount }, ({ data }) =>
-      !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
-        ? null
-        : $(PaddedHint, { name: 'how_confirm' })),
-    $(List, null,
-      map(Section, data ? data.shifts : 
-        emptyShifts))))
+    isManagedByMe &&
+      $(Query, { query: volunteerShiftCount }, ({ data }) =>
+        !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
+          ? null
+          : $(PaddedHint, { name: 'how_confirm' })),
+    $(IsManagedByMe.Provider, { value: isManagedByMe },
+      $(List, null,
+        map(Section, data ? data.shifts : emptyShifts)))))
 
 const PaddedHint = styled(Hint)({
   padding: 16
@@ -162,8 +165,13 @@ const VolunteerShift = ({
           !provisioned_documents.length && 'документы не предоставлены · ', phone, ' · ', profession),
     }),
     $(ListItemSecondaryAction, null,
-      loading ? $(Skeleton, { variant: 'text', width: 16, height: 48 }) :
-      $(AdditionalControls, { uid, phone, volunteer_id, hospital_id  })))
+      loading
+        ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
+        : $(IsManagedByMe.Consumer, null, isManagedByMe => isManagedByMe
+            ? $(AdditionalControls, { uid, phone, volunteer_id, hospital_id  })
+            : $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
+                $(IconButton, { onClick: mutate },
+                  $(Delete, { fontSize: 'small' }))))))
 
 const CustomButtonBase = styled(ButtonBase)({
   borderRadius: '50%',
