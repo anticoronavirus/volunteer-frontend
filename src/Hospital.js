@@ -13,6 +13,7 @@ import { formatLabel } from 'utils'
 import Shifts from 'ShiftsList'
 import Back from 'components/Back'
 import AddHospitalShift from 'components/AddHospitalShift'
+import HowToGet from 'components/HowToGet'
 import generateXlsx from 'zipcelx'
 
 import Box from '@material-ui/core/Box'
@@ -51,9 +52,9 @@ const Hospital = ({
     ? $(Redirect, { to: '/hospitals'})
     : $(Box, notMobile && { display: 'flex', padding: 2 },
         $(Back),
-        $(Box, notMobile ? { marginRight: 2 } : { marginBottom: 2 },
+        $(Box, notMobile ? { marginRight: 2, width: 360 } : { marginBottom: 2, width: 'auto' },
           $(Paper, null,
-            $(Box, { padding: 2, width: notMobile ? 360 : 'auto' },
+            $(Box, { padding: 2 },
               loading
                 ? $(Skeleton, { variant: 'text', width: '61%', height: 45 }) // FIXME shouldbe more precise
                 : $(Typography, { variant: 'h4' }, data.hospital.shortname),
@@ -91,7 +92,10 @@ const Hospital = ({
                       : HospitalShift,
                     sortBy('start', data.hospital.periods)),
                   data && isManagedByMe &&
-                    $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital })))),
+                    $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital }))),
+        data &&
+          $(Box, { marginTop: 2 },
+            $(Paper, null, $(HowToGet, { uid: data.hospital.uid, directions: data.hospital.directions })))),
         data && data.hospital.periods.length > 0 &&
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
             $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))

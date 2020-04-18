@@ -24,6 +24,7 @@ query hospital($uid: uuid!) {
     shortname
     name
     address
+    directions
     periods {
       uid
       start
@@ -368,6 +369,16 @@ mutation addToBlackList($uid: uuid! $comment: String) {
   insert_blacklist(objects: [{ volunteer_id: $uid comment: $comment }]) {
     returning {
       uid
+    }
+  }
+}`
+
+export const updateDirections = gql`
+mutation updateDirections($uid: uuid! $directions: String!) {
+  update_hospital(where: { uid: { _eq: $uid } } _set: { directions: $directions }) {
+    returning {
+      uid
+      directions
     }
   }
 }`
