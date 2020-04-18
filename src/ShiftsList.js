@@ -48,7 +48,8 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
         ? null
         : $(PaddedHint, { name: 'how_confirm' })),
     $(List, null,
-      map(Section, data ? data.shifts : emptyShifts))))
+      map(Section, data ? data.shifts : 
+        emptyShifts))))
 
 const PaddedHint = styled(Hint)({
   padding: 16
@@ -78,12 +79,16 @@ const Section = ({
   $(SectionLI, { key: `${date}-${start}-${end}` },
     $(SectionUL, null,
       $(ZIndexedListSubheader, null,
-        $(Box, { display: 'flex', justifyContent: 'space-between' },
-          loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 42 }) : 
-          `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+        $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+          loading
+            ? $(Box, { padding: '8px 0' },
+                $(Skeleton, { variant: 'text', width: '25ex', height: 32 }))
+            : `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
           $(Box),
-          loading ? $(Skeleton, { variant: 'text', width: '5ex', height: 42 }) : 
-          `${demand - placesavailable}/${demand}`)),
+          loading
+            ? $(Box, { padding: '8px 0' },
+                $(Skeleton, { variant: 'text', width: '5ex', height: 32 }))
+            : `${demand - placesavailable}/${demand}`)),
       map(VolunteerShift, shiftRequests),
       $(Divider)))
 
