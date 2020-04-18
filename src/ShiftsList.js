@@ -122,7 +122,7 @@ const VolunteerShift = ({
     fname,
     phone,
     profession,
-    provisioned_documents
+    provisioned_documents_aggregate
   },
   loading
  }) =>
@@ -162,13 +162,13 @@ const VolunteerShift = ({
       secondary:
         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
         $(Box, { display: 'flex' },
-          !provisioned_documents.length && 'документы не предоставлены · ', phone, ' · ', profession),
+          !provisioned_documents_aggregate.aggregate.count && 'документы не предоставлены · ', phone, ' · ', profession),
     }),
     $(ListItemSecondaryAction, null,
       loading
         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
         : $(IsManagedByMe.Consumer, null, isManagedByMe => isManagedByMe
-            ? $(AdditionalControls, { uid, phone, volunteer_id, hospital_id  })
+            ? $(AdditionalControls, { uid, phone, volunteer_id, hospital_id, hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
             : $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
                 $(IconButton, { onClick: mutate },
                   $(Delete, { fontSize: 'small' }))))))
@@ -189,7 +189,7 @@ const confirmedFragment = gql`
     confirmed,
 }`
 
-const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id }) => {
+const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id, hasDocumentsProvisioned }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -211,10 +211,11 @@ const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id }) => {
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'В черный список'))),
-      $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId: hospital_id  } }, mutate =>  
-        $(MenuItem, { onClick: mutate },
-          $(ListItemIcon, null, $(NoteAdd, { fontSize: 'small' })),
-          $(Typography, { variant: 'inherit' }, 'Документы предоставлены')))))
+      !hasDocumentsProvisioned &&
+        $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId: hospital_id  } }, mutate =>  
+          $(MenuItem, { onClick: mutate },
+            $(ListItemIcon, null, $(NoteAdd, { fontSize: 'small' })),
+            $(Typography, { variant: 'inherit' }, 'Документы предоставлены')))))
 }
 
 export default Shifts

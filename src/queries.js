@@ -214,8 +214,10 @@ query shifts($hospitalId: uuid) {
         fname
         phone
         profession
-        provisioned_documents(where: { hospital_id: { _eq: $hospitalId }}) {
-          uid
+        provisioned_documents_aggregate {
+          aggregate {
+            count
+          }
         }
       }
     }
