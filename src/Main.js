@@ -26,7 +26,7 @@ const Main = ({ history, match }) => {
 
   return $(Paper, null,
     $(Box, { padding: 2 },
-      $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров-медиков в больницы Москвы')),
+      $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров в больницы Москвы')),
     $(Box, { 
       padding: 2,
       alignItems: 'center',
