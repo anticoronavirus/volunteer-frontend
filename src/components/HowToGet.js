@@ -46,7 +46,6 @@ const HowToGet = ({
           ? $(TextField, {
               multiline: true,
               fullWidth: true,
-              variant: 'outlined',
               label: 'Редактирование',
               onChange: event => setSource(event.target.value),
               value: source
