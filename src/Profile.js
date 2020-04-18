@@ -171,8 +171,7 @@ const FormikButtonGroup = ({
       $(ToggleButton, { value: 'cтудент' }, 'Студент'),
       $(ToggleButton, { value: 'медперсонал' }, 'Медперсонал'),
       $(ToggleButton, { value: 'врач' }, 'Врач'),
-      $(ToggleButton, { value: 'немедик' }, 'Немедик'),
-      ))
+      $(ToggleButton, { value: 'немедик' }, 'Немедик')))
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
