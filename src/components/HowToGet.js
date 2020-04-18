@@ -55,14 +55,20 @@ const HowToGet = ({
             : $(Helper, { variant: 'body1' },
               'Добавьте данные нажав на иконку редактирования'),
         $(Box, { height: 24 }),
-        editable &&
-          $(Button, {
-            variant: 'outlined',
-            fullWidth: true,
-            disabled: source === directions,
-            onClick: mutate
-          }, 'Обновить'))))
+        editable && source !== directions &&
+          $(StyledBox, null, 
+            $(Button, {
+              color: 'primary',
+              variant: 'contained',
+              fullWidth: true,
+              onClick: mutate
+            }, 'Обновить')))))
 }
+
+const StyledBox = styled(Box)({
+  position: 'sticky',
+  bottom: 0
+})
 
 const Helper = styled(Typography)({
   padding: '4px 0',
