@@ -12,6 +12,7 @@ import { me } from 'queries'
 import some from 'lodash/fp/some'
 import values from 'lodash/fp/values'
 import { requiredProfileFields } from 'utils'
+import { SnackbarProvider } from 'notistack'
 
 import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
@@ -34,18 +35,19 @@ const App = () => {
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
-    $(WithFooter, null,
-      $(Switch, null,
-        $(Route, { path: '/pages/:page', component: Pages }),
-        $(Route, { path: '/profile', component: Profile }),
-        // eslint-disable-next-line
-        !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
-          $(Redirect, { to: '/profile' }),
-        $(Route, { path: '/login', component: Login }),
-        $(Route, { path: '/hospitals/:uid', component: Hospital }),
-        $(Route, { path: '/hospitals/', component: Hospitals }),
-        $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
-        $(Redirect, { to: '/' }))))
+    $(SnackbarProvider, { maxSnack: 3 },
+      $(WithFooter, null,
+        $(Switch, null,
+          $(Route, { path: '/pages/:page', component: Pages }),
+          $(Route, { path: '/profile', component: Profile }),
+          // eslint-disable-next-line
+          !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
+            $(Redirect, { to: '/profile' }),
+          $(Route, { path: '/login', component: Login }),
+          $(Route, { path: '/hospitals/:uid', component: Hospital }),
+          $(Route, { path: '/hospitals/', component: Hospitals }),
+          $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
+          $(Redirect, { to: '/' })))))
 }
 
 const CustomCssBaseline = withStyles(() => ({

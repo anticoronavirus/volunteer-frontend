@@ -18,6 +18,7 @@ import {
   // useSubscription,
   useQuery, useMutation } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
+import { useSnackbar } from 'notistack'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
@@ -102,6 +103,7 @@ const Cell = ({
   const hospitalId = match && match.params && match.params.hospitalId
   const [updating, setUpdating] = useState(false)
   const [anchorEl, setAnchorEl] = useState()
+  const { enqueueSnackbar } = useSnackbar()
 
   const [addToShift] = useMutation(addVolunteerToShift, {
     variables: { userId, hospitalId },
@@ -154,6 +156,13 @@ const Cell = ({
     }
   })
 
+  const addToShiftWithExtraStuff = hospitalId => {
+    setUpdating(true)
+    addToShift({ variables: { date, start, end, hospitalId }})
+      .then(() => enqueueSnackbar('Спасибо! Координатор позвонит для подтверждения'))
+      .then(() => setUpdating(false))
+  }
+
   const toggleShift = event =>
     !userId
       ? history.push('/login')
@@ -161,7 +170,7 @@ const Cell = ({
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
         : !hospitalId
           ? setAnchorEl(event.currentTarget)
-          : setUpdating(true) || addToShift({ variables: { date, start, end }}).then(() => setUpdating(false))
+          : addToShiftWithExtraStuff()
 
   return $(Fragment, null,
     !hospitalId && anchorEl &&
@@ -176,7 +185,7 @@ const Cell = ({
               key: hospital.uid,
               onClick: () => {
                 setAnchorEl(false)
-                addToShift({ variables: { date, start, end, hospitalId: hospital.uid }})
+                addToShiftWithExtraStuff(hospital.uid)
               }
             },
               hospital.shortname),
