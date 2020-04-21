@@ -3,6 +3,7 @@ import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import { useQuery } from '@apollo/react-hooks'
 import { hospitals } from 'queries'
+import TaskSelector from 'components/MultipleSelector'
 
 import Button from '@material-ui/core/Button'
 import Menu from '@material-ui/core/Menu'
@@ -13,6 +14,7 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import { withStyles } from '@material-ui/core/styles'
 
 const HospitalSelector = ({ hospital: [value, onChange]}) => {
+  const [tasks, setTasks] = useState([])
 
   const [anchorEl, setAnchorEl] = useState(null)
   const { data } = useQuery(hospitals)
@@ -41,7 +43,9 @@ const HospitalSelector = ({ hospital: [value, onChange]}) => {
           anchorEl: anchorEl,
           onClose: () => setAnchorEl(null) },
           Hospital({shortname: 'Все больницы', uid: '' }),
-          map(Hospital, data.hospitals)))
+          map(Hospital, data.hospitals)),
+        $('br'),
+        $(TaskSelector, { value: tasks, onChange: setTasks }))
     }
 
 const TitleButton = withStyles({
