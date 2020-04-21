@@ -27,20 +27,38 @@ const Main = ({ history, match }) => {
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
 
   return $(Paper, null,
-    $(Box, { padding: 2 },
-      $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров в больницы Москвы')),
+    $(Box, {
+      display: notMobile ? 'flex' : 'block',
+      padding: 2,
+      alignItems: 'center'
+    },
+      $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров в больницы Москвы'),
+      $(Box, { height: 8, flexGrow: 1 }),
+      loading
+        ? $(Skeleton, { width: '15ex', height: 24 })
+        : $(Box, { flexShrink: 0 },
+          data && data.me.length
+            ? $(ButtonGroup, { size: 'small' },
+                $(Button, { onClick: () => history.push(
+                  data.me[0].managedHospital
+                    ? `/hospitals/${data.me[0].managedHospital.uid}`
+                    : '/profile') },
+                  `${data.me[0].fname}${data.me[0].managedHospital ? ' @ ' + data.me[0].managedHospital.shortname : ''}`),
+                $(Tooltip, { title: 'Выход' },
+                  $(Button, { onClick: () => logoff() && history.push('/')},
+                  $(ExitToApp, { fontSize: 'small' }))))
+            : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти'))),
     $(Box, { 
       padding: 2,
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'space-between' },
+      display: 'flex', 
+      flexDirection: notMobile ? 'row' : 'column' },
       $(MultipleSelector, {
         query: hospitals,
         path: 'hospitals',
         label: 'Больницы',
         emptyLabel: 'Выберите больницу',
         getOptionLabel: hospital => hospital.shortname,
-        getOptionValue: hospital => hospital.uid,
+        getOptionValue: hospital => hospital.shortname,
         value: hospitalsValue,
         onChange: setHospitals }),
       $(MultipleSelector, {
@@ -51,21 +69,7 @@ const Main = ({ history, match }) => {
         getOptionLabel: task => task.name,
         getOptionValue: task => task.name,
         value: tasks,
-        onChange: setTasks }),
-    // loading
-    //   ? $(Skeleton, { width: '15ex', height: 48 })
-    //   : data && data.me.length
-    //     ? $(ButtonGroup, { size: 'small' },
-    //         $(Button, { onClick: () => history.push(
-    //           data.me[0].managedHospital
-    //             ? `/hospitals/${data.me[0].managedHospital.uid}`
-    //             : '/profile') },
-    //           `${data.me[0].fname}${data.me[0].managedHospital ? ' @ ' + data.me[0].managedHospital.shortname : ''}`),
-    //         $(Tooltip, { title: 'Выход' },
-    //           $(Button, { onClick: () => logoff() && history.push('/')},
-    //           $(ExitToApp, { fontSize: 'small' }))))
-    //     : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти')
-        ),
+        onChange: setTasks })),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Hint, { name: 'welcome' })),
     data &&

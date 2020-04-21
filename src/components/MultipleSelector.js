@@ -1,6 +1,5 @@
 import { createElement as $ } from 'react'
 import { Query } from '@apollo/react-components'
-import { professions } from 'queries'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import includes from 'lodash/fp/includes'
@@ -21,10 +20,10 @@ const MultipleSelector = ({
   getOptionValue
 }) =>
   $(Query, { query }, ({ data, loading }) =>
-    $(FormControl, { fullWidth: true }, 
+    $(FormControl, null,//{ fullWidth: true }, 
       $(Select, {
         value,
-        fullWidth: true,
+        // fullWidth: true,
         disabled: loading,
         displayEmpty: true,
         onChange: (event, { props }) => onChange(
