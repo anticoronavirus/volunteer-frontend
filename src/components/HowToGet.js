@@ -28,20 +28,14 @@ const HowToGet = ({
 
   return $(ExpansionPanel, { onChange: (event, value) => setExpanded(value) },
     $(ExpansionPanelSummary, null,
-      $(Box, {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        margin: '-8px',
-        width: 'calc(100% + 16px)' },
-        'Как добраться',
-        editable && expanded &&
-          $(IconButton, {
-            onClick: event => event.stopPropagation() || setEditing(!editing)
-          },
-            $(editing ? RemoveRedEye : Edit, { fontSize: 'small'})))),
+      $(Box, { flexGrow: 1 }, 'Как добраться'),
+      editable && expanded &&
+        $(IconButton, {
+          size: 'small',
+          onClick: event => event.stopPropagation() || setEditing(!editing)},
+          $(editing ? RemoveRedEye : Edit, { fontSize: 'small'}))),
     $(ExpansionPanelDetails, null,
-      $(Box, { margin: '-8px', width: 'calc(100% + 16px)'},
+      $(Box, null,
         editing
           ? $(TextField, {
               multiline: true,
