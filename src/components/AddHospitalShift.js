@@ -18,6 +18,7 @@ import Typography from '@material-ui/core/Typography'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
+import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const AddHospitalShift = ({ uid, hospital }) => {
 
@@ -25,6 +26,8 @@ const AddHospitalShift = ({ uid, hospital }) => {
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
   const [demand, setDemand] = useState(20)
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [mutate] = useMutation(addShift, {
     optimisticResponse: { // FIXME this seems not to be working
@@ -57,6 +60,7 @@ const AddHospitalShift = ({ uid, hospital }) => {
   return $(Fragment, null,
     $(Dialog, {
       open,
+      fullScreen,
       onClose: () => setOpen(false) },
       $(DialogTitle, null, 'Новая смена'),
       $(DialogContent, null,
@@ -88,8 +92,10 @@ const AddHospitalShift = ({ uid, hospital }) => {
             type: 'number',
             label: 'Количество волонтёров' })),
       $(DialogActions, null,
-        start && end && demand &&
-          $(Button, { onClick: () => mutate().then(() => setOpen(false))}, 'Добавить'))),
+        $(Button, { onClick: () => setOpen(false) }, 'Закрыть'),
+        $(Button, {
+          disabled: !start || !end || !demand,
+          onClick: () => mutate().then(() => setOpen(false))}, 'Добавить'))),
     $(ListItem, { button: true, onClick: () => setOpen(true) },
       $(ListItemIcon, null,
         $(Add)),
