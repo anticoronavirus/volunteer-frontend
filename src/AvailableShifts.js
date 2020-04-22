@@ -180,8 +180,7 @@ const Cell = ({
         $(Menu, {
           open: true,
           onClose: () => setAnchorEl(null),
-          anchorEl
-        },
+          anchorEl },
           map(hospital =>
             $(MenuItem, {
               key: hospital.uid,

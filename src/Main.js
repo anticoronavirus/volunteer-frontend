@@ -1,8 +1,8 @@
 import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
+import TaskOption from 'components/TaskOption'
 import MultipleSelector from 'components/MultipleSelector'
-import Biohazard from 'components/Biohazard'
 import { useQuery } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me, professions, hospitals } from 'queries'
@@ -10,8 +10,6 @@ import { logoff } from 'Apollo'
 
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -78,19 +76,7 @@ const Main = ({ history }) => {
           query: professions,
           path: 'professions',
           label: 'Задача',
-          Option: task =>
-            $(ListItem, { button: true, key: task.uid, value: task.uid, style: { height: 'unset' } },
-              $(ListItemText, {
-                // disableTypography: true,
-                primary: $(Box, { display: 'flex' }, task.dangerous && $(Biohazard), task.name),
-                secondary: $(Box, { maxWidth: '60ex' },
-                  task.requirements &&
-                    $(Typography, { component: 'span', variant: 'caption' }, task.requirements),
-                  task.requirements &&
-                    $(Typography, { component: 'span' }, ' · '),
-                  $(Typography, { component: 'span', variant: 'caption' }, task.description))
-              })
-            ),
+          Option: TaskOption,
           defaultValue: {
             name: 'Все',
             uid: undefined
