@@ -13,7 +13,7 @@ import {
   shiftFragment
 } from 'queries'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
-import { useHistory, useRouteMatch } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import { 
   // useSubscription,
   useQuery, useMutation } from '@apollo/react-hooks'

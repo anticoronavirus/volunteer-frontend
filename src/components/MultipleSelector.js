@@ -28,7 +28,7 @@ const MultipleSelector = ({
       options = [defaultValue, ...options]
 
     const selectedLabel = value && options && getOptionLabel(find(option => value === getOptionValue(option), options))
-    const Option = option => $(MenuItem, { value: getOptionValue(option) }, getOptionLabel(option))
+    const Option = option => $(MenuItem, { key: getOptionValue(option), value: getOptionValue(option) }, getOptionLabel(option))
 
     return $(FormControl, null,//{ fullWidth: true }, 
       $(Select, {
