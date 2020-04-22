@@ -24,8 +24,8 @@ import {
 const Main = ({ history, match }) => {
 
   const { data, loading } = useQuery(me)
-  const [hospitalsValue, setHospitals] = useQueryParam('hospital', StringParam)
-  const [tasks, setTasks] = useQueryParam('task', StringParam)
+  const [hospitalId, setHospitals] = useQueryParam('hospital', StringParam)
+  const [taskId, setTasks] = useQueryParam('task', StringParam)
 
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
@@ -64,7 +64,7 @@ const Main = ({ history, match }) => {
           emptyLabel: 'Выберите больницу',
           getOptionLabel: hospital => hospital.shortname,
           getOptionValue: hospital => hospital.uid,
-          value: hospitalsValue,
+          value: hospitalId,
           onChange: setHospitals })),
       $(Box, { marginRight: 2 },
         $(MultipleSelector, {
@@ -73,14 +73,15 @@ const Main = ({ history, match }) => {
           label: 'Задача',
           emptyLabel: 'Выберите задачу',
           getOptionLabel: task => task.name,
-          getOptionValue: task => task.name,
-          value: tasks,
+          getOptionValue: task => task.uid,
+          value: taskId,
           onChange: setTasks }))),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Hint, { name: 'welcome' })),
     data &&
       $(AvialableShifts, {
-        hospitalId: match.params.hospitalId,
+        hospitalId,
+        taskId,
         userId: data && data.me.length && data.me[0].uid
       })
       )

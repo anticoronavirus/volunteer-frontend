@@ -2,8 +2,8 @@ import { createElement as $, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
 import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
-import { useMutation } from '@apollo/react-hooks'
-import { addShift } from 'queries'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { addShift, professions as professionsQuery } from 'queries'
 
 import Box from '@material-ui/core/Box'
 import ListItem from '@material-ui/core/ListItem'
@@ -18,38 +18,19 @@ import Typography from '@material-ui/core/Typography'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Add from '@material-ui/icons/Add'
 import { useMediaQuery, useTheme } from '@material-ui/core'
+import Add from '@material-ui/icons/Add'
+import { styled } from '@material-ui/core/styles'
+import yellow from '@material-ui/core/colors/yellow'
+import Warning from '@material-ui/icons/Warning'
 
 const AddHospitalShift = ({ uid, hospital }) => {
 
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(false)
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
   const demands = useState({})
-
-  const [professions] = useState([{
-    uid: 'test',
-    danger: true,
-    name: 'Санитары',
-    description: 'Bring about the coffin',
-    requiremnets: 'Be geh'
-  },{
-    uid: 'rest',
-    name: 'Прачечная',
-    description: 'Bring about the hlemh',
-    requiremnets: 'Be mlehm'
-  },{
-    uid: 'plest',
-    name: 'Статистика',
-    description: 'Bring about the hlemh',
-    requiremnets: 'Be mlehm'
-  },{
-    uid: 'flest',
-    name: 'Разгрузка',
-    description: 'Bring about the hlemh',
-    requiremnets: 'Be mlehm'
-  }])
+  const { data } = useQuery(professionsQuery)
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -110,9 +91,9 @@ const AddHospitalShift = ({ uid, hospital }) => {
               map(RangeButton, range(start + 4, start + 2 + 24)))),
         $(Box, { height: 16 }),
         !!end &&
-          $(Typography, { variant: 'caption' }, 'Задачи, красным помечена работа в карантинной зоне'),
-        !!end &&
-          map(Demand(demands), professions)),
+          $(Typography, { variant: 'caption' }, 'Задачи, помечена работа в карантинной зоне'),
+        !!end && data &&
+          map(Demand(demands), data.professions)),
           // $(Box, { display: 'flex' },
           //   map(
           //     Profession({ demands, setDemands }),
@@ -136,18 +117,23 @@ const Demand = ([
 ])=>({
   uid,
   name,
-  danger
+  dangerous
 }) =>
   $(Box, { key: name, margin: '16px 0' },
-    $(ButtonGroup, { fullWidth: true, color: danger && 'secondary' },
+    $(ButtonGroup, { fullWidth: true },
       $(Button, {
         style: { flexGrow: 1, width: 'initial' },
         onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) + 1 }) },
+        dangerous && $(Biohazard, { src: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Biohazard.svg' }), 
         `${name} ${demands[uid] || 0}`),
       $(Button, {
         style: { width: 'initial' },
         onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) - 1 })}, '-')))
 
+const Biohazard = styled('img')({
+  height: '16px'
+})
+        
 const RangeButton = value =>
   $(ToggleButton, {
     key: value,

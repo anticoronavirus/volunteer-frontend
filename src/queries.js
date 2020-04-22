@@ -42,7 +42,9 @@ query hospital($uid: uuid!) {
 export const professions = gql`
 {
   professions: profession {
+    uid
     name
+    dangerous
   }
 }`
 

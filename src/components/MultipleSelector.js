@@ -43,7 +43,7 @@ const MultipleSelector = ({
           //     : without([props.value], value)
           //   : [...value, props.value]),
         // multiple: true,
-        renderValue: selected => !selected
+        renderValue: selected => !selected || !options
           ? emptyLabel
           : `${label}: ${selectedLabel}`, //`${label}: ${selected.join(', ')}`,
         disableUnderline: true,
