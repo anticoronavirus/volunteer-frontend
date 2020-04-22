@@ -21,7 +21,7 @@ import {
   //DelimitedArrayParam
 } from 'use-query-params'
 
-const Main = ({ history, match }) => {
+const Main = ({ history }) => {
 
   const { data, loading } = useQuery(me)
   const [hospitalId, setHospitals] = useQueryParam('hospital', StringParam)

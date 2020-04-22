@@ -139,27 +139,31 @@ const HospitalShift = ({
   uid,
   start,
   end,
-  demand
+  period_demands
 }) =>
   $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      secondary: formatLabel('volunteer', demand)}))
+      secondary: map(Demand, period_demands)}))
 
 const HospitalShiftDeletable = ({
   uid,
   start,
   end,
-  demand
+  demand,
+  period_demands
 }) =>
   $(Mutation, { key: uid, mutation: removeShift }, mutate =>
     $(ListItem, null,
       $(ListItemText, {
         primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-        secondary: formatLabel('volunteer', demand)}),
+        secondary: map(Demand, period_demands).join(', ')}),
       $(ListItemSecondaryAction, null,
         $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
           $(Delete, { fontSize: 'small'})))))
+
+const Demand = ({ demand, profession: { name } }) =>
+  `${name}: ${demand}`
 
 const LoadingPeriods =
   $(List, null,

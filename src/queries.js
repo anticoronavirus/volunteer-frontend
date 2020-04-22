@@ -29,7 +29,13 @@ query hospital($uid: uuid!) {
       uid
       start
       end
-      demand
+      period_demands {
+        uid
+        demand
+        profession {
+          name
+        }
+      }
     }
   }
   me {
@@ -321,8 +327,8 @@ export const login = gql`
 `
 
 export const addShift = gql`
-mutation addShift($uid: uuid! $start: timetz! $end: timetz! $demand: Int ) {
-  insert_period(objects: [{hospital_id: $uid start: $start end: $end demand: $demand}]) {
+mutation addShift($shift: period_insert_input!) {
+  insert_period(objects: [$shift]) {
     returning {
       hospital {
         uid
@@ -330,7 +336,13 @@ mutation addShift($uid: uuid! $start: timetz! $end: timetz! $demand: Int ) {
           uid
           start
           end
-          demand
+          period_demands {
+            uid
+            demand
+            profession {
+              name
+            }
+          }
         }
       }
     }
