@@ -15,13 +15,17 @@ import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Skeleton from '@material-ui/lab/Skeleton'
-import { useQueryParam, DelimitedArrayParam } from 'use-query-params'
+import {
+  useQueryParam,
+  StringParam,
+  //DelimitedArrayParam
+} from 'use-query-params'
 
 const Main = ({ history, match }) => {
 
   const { data, loading } = useQuery(me)
-  const [hospitalsValue, setHospitals] = useQueryParam('hospitals', DelimitedArrayParam)
-  const [tasks, setTasks] = useQueryParam('tasks', DelimitedArrayParam)
+  const [hospitalsValue, setHospitals] = useQueryParam('hospital', StringParam)
+  const [tasks, setTasks] = useQueryParam('task', StringParam)
 
   const theme = useTheme()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
@@ -52,24 +56,26 @@ const Main = ({ history, match }) => {
       padding: 2,
       display: 'flex', 
       flexDirection: notMobile ? 'row' : 'column' },
-      $(MultipleSelector, {
-        query: hospitals,
-        path: 'hospitals',
-        label: 'Больницы',
-        emptyLabel: 'Выберите больницу',
-        getOptionLabel: hospital => hospital.shortname,
-        getOptionValue: hospital => hospital.shortname,
-        value: hospitalsValue,
-        onChange: setHospitals }),
-      $(MultipleSelector, {
-        query: professions,
-        path: 'professions',
-        label: 'Задачи',
-        emptyLabel: 'Выберите задачу',
-        getOptionLabel: task => task.name,
-        getOptionValue: task => task.name,
-        value: tasks,
-        onChange: setTasks })),
+      $(Box, { marginRight: 2 }, 
+        $(MultipleSelector, {
+          query: hospitals,
+          path: 'hospitals',
+          label: 'Больница',
+          emptyLabel: 'Выберите больницу',
+          getOptionLabel: hospital => hospital.shortname,
+          getOptionValue: hospital => hospital.uid,
+          value: hospitalsValue,
+          onChange: setHospitals })),
+      $(Box, { marginRight: 2 },
+        $(MultipleSelector, {
+          query: professions,
+          path: 'professions',
+          label: 'Задача',
+          emptyLabel: 'Выберите задачу',
+          getOptionLabel: task => task.name,
+          getOptionValue: task => task.name,
+          value: tasks,
+          onChange: setTasks }))),
     $(Box, { padding: '0 16px', maxWidth: '120ex'},
       $(Hint, { name: 'welcome' })),
     data &&

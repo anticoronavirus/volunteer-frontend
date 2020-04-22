@@ -37,6 +37,7 @@ import Check from '@material-ui/icons/Check'
 import DoubleCheck from '@material-ui/icons/DoneAll'
 import green from '@material-ui/core/colors/green'
 import orange from '@material-ui/core/colors/orange'
+import { useQueryParam, DelimitedArrayParam } from 'use-query-params'
 
 const AvailableShifts = memo(({ userId, hospitalId }) => {
 
@@ -99,8 +100,9 @@ const Cell = ({
   } 
 
   const history = useHistory()
-  const match = useRouteMatch('/:hospitalId')
-  const hospitalId = match && match.params && match.params.hospitalId
+  const [hospitalId] = useQueryParam('hospitals', DelimitedArrayParam)
+  // const match = useRouteMatch('/:hospitalId')
+  // const hospitalId = match && match.params && match.params.hospitalId
   const [updating, setUpdating] = useState(false)
   const [anchorEl, setAnchorEl] = useState()
   const { enqueueSnackbar } = useSnackbar()
