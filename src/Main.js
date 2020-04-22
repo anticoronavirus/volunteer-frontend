@@ -2,6 +2,7 @@ import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
 import MultipleSelector from 'components/MultipleSelector'
+import Biohazard from 'components/Biohazard'
 import { useQuery } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { me, professions, hospitals } from 'queries'
@@ -9,6 +10,7 @@ import { logoff } from 'Apollo'
 
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
+import MenuItem from '@material-ui/core/MenuItem'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -75,6 +77,8 @@ const Main = ({ history }) => {
           query: professions,
           path: 'professions',
           label: 'Задача',
+          Option: task =>
+            $(MenuItem, { value: task.uid }, task.dangerous && $(Biohazard), task.name),
           defaultValue: {
             name: 'Все',
             uid: undefined
