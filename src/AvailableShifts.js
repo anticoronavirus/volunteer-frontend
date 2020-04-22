@@ -44,8 +44,6 @@ const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
   hospitalId = hospitalId ? `{${hospitalId}}` : undefined
   taskId = taskId ? `{${taskId}}` : undefined
 
-  console.log(taskId)
-  
   const { data } = useQuery(shifts, {
     variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId },
   })

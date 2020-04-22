@@ -51,6 +51,7 @@ export const professions = gql`
     uid
     name
     description
+    requirements
     dangerous
   }
 }`
