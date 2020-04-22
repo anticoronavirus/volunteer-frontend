@@ -39,13 +39,14 @@ import green from '@material-ui/core/colors/green'
 import orange from '@material-ui/core/colors/orange'
 import { useQueryParam, DelimitedArrayParam } from 'use-query-params'
 
-const AvailableShifts = memo(({ userId, hospitalId }) => {
+const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
 
   hospitalId = hospitalId ? `{${hospitalId}}` : null
+  taskId = taskId ? `{${taskId}}` : null
 
   const { data } = useQuery(shifts, {
     pollInterval: 6000,
-    variables: userId ? { userId, hospitalId } : { hospitalId },
+    variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId },
   })
 
   const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {

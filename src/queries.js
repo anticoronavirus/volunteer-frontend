@@ -183,8 +183,8 @@ fragment shift on vshift {
 `
 
 export const shifts = gql`
-query shifts($hospitalId: uuid $userId: uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+query shifts($hospitalId: uuid $userId: uuid $taskId: _uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
     ...shift
   }
 }
