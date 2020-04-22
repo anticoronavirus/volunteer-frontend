@@ -1,4 +1,5 @@
 import { createElement as $, memo, useState, Fragment } from 'react'
+import AddVolunteerShiftDialog from 'components/AddVolunteerShiftDialog'
 import map from 'lodash/fp/map'
 // import set from 'lodash/fp/set'
 import range from 'lodash/fp/range'
@@ -12,11 +13,11 @@ import {
   filteredHospitals,
   shiftFragment
 } from 'queries'
-import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { useHistory } from 'react-router-dom'
 import { 
   // useSubscription,
   useQuery, useMutation } from '@apollo/react-hooks'
+import { formatLabel, formatDate, uncappedMap } from 'utils'
 import { Query } from '@apollo/react-components'
 import { useSnackbar } from 'notistack'
 
@@ -37,7 +38,7 @@ import Check from '@material-ui/icons/Check'
 import DoubleCheck from '@material-ui/icons/DoneAll'
 import green from '@material-ui/core/colors/green'
 import orange from '@material-ui/core/colors/orange'
-import { useQueryParam, DelimitedArrayParam } from 'use-query-params'
+import { useQueryParam, StringParam } from 'use-query-params'
 
 const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
 
@@ -100,11 +101,10 @@ const Cell = ({
   } 
 
   const history = useHistory()
-  const [hospitalId] = useQueryParam('hospitals', DelimitedArrayParam)
-  // const match = useRouteMatch('/:hospitalId')
-  // const hospitalId = match && match.params && match.params.hospitalId
+  const [hospitalId] = useQueryParam('hospital', StringParam)
+  const [taskId] = useQueryParam('task', StringParam)
+  const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
-  const [anchorEl, setAnchorEl] = useState()
   const { enqueueSnackbar } = useSnackbar()
 
   const [addToShift] = useMutation(addVolunteerToShift, {
@@ -159,6 +159,8 @@ const Cell = ({
   })
 
   const addToShiftWithExtraStuff = hospitalId => {
+    console.log(hospitalId)
+    setOpen(false)
     setUpdating(true)
     addToShift({ variables: hospitalId ? { date, start, end, hospitalId } : { date, start, end }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит для подтверждения'))
@@ -171,26 +173,18 @@ const Cell = ({
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
         : !hospitalId
-          ? setAnchorEl(event.currentTarget)
+          ? setOpen(true)
           : addToShiftWithExtraStuff()
 
   return $(Fragment, null,
-    !hospitalId && anchorEl &&
-      $(Query, { query: filteredHospitals, variables: { start, end } }, ({ data }) =>
-        $(Menu, {
-          open: true,
-          onClose: () => setAnchorEl(null),
-          anchorEl },
-          map(hospital =>
-            $(MenuItem, {
-              key: hospital.uid,
-              onClick: () => {
-                setAnchorEl(false)
-                addToShiftWithExtraStuff(hospital.uid)
-              }
-            },
-              hospital.shortname),
-            data && data.hospitals))),
+    (!hospitalId || !taskId) && open &&
+      $(AddVolunteerShiftDialog, {
+        start,
+        end,
+        open,
+        onClose: () => setOpen(false),
+        onAdd: addToShiftWithExtraStuff
+      }),
     $(CellPure, {
       date,
       start,

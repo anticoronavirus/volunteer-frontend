@@ -292,10 +292,11 @@ export const hospitals = gql`{
   }
 }`
 
-export const filteredHospitals = gql`
-query filteredHospitals (
-  $start: timetz,
+export const filteredShiftData = gql`
+query filteredHospitals(
+  $start: timetz
   $end: timetz
+  $hospitalId: uuid
 ) {
   hospitals: hospital(where: {
     shortname: { _neq: "Коммунарка" } ## FIXME
@@ -306,7 +307,23 @@ query filteredHospitals (
     uid
     shortname
     address
-    periods { demand }
+  }
+  period_demand (where: {
+    demand: { _gte: 0 }
+    period: {
+      hospital_id: { _eq: $hospitalId }
+      start: { _eq: $start }
+      end: { _eq: $end }
+    }
+  }) {
+    uid
+    profession {
+      uid
+      name
+      dangerous
+      description
+      requirements
+    }
   }
 }`
 

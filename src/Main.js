@@ -2,6 +2,7 @@ import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
 import TaskOption from 'components/TaskOption'
+import HospitalOption from 'components/HospitalOption'
 import MultipleSelector from 'components/MultipleSelector'
 import { useQuery } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
@@ -63,6 +64,7 @@ const Main = ({ history }) => {
           path: 'hospitals',
           label: 'Больница',
           emptyLabel: 'Выберите больницу',
+          Option: HospitalOption,
           defaultValue: {
             shortname: 'Все',
             uid: undefined
