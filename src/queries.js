@@ -50,6 +50,7 @@ export const professions = gql`
   professions: profession {
     uid
     name
+    description
     dangerous
   }
 }`

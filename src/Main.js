@@ -10,7 +10,8 @@ import { logoff } from 'Apollo'
 
 import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
-import MenuItem from '@material-ui/core/MenuItem'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -78,7 +79,12 @@ const Main = ({ history }) => {
           path: 'professions',
           label: 'Задача',
           Option: task =>
-            $(MenuItem, { value: task.uid }, task.dangerous && $(Biohazard), task.name),
+            $(ListItem, { value: task.uid, style: { height: 'unset' } },
+              $(ListItemText, {
+                primary: $(Box, { display: 'flex' }, task.dangerous && $(Biohazard), task.name),
+                secondary: task.description
+              })
+            ),
           defaultValue: {
             name: 'Все',
             uid: undefined
@@ -95,8 +101,7 @@ const Main = ({ history }) => {
         hospitalId,
         taskId,
         userId: data && data.me.length && data.me[0].uid
-      })
-      )
+      }))
 }
 
 export default Main

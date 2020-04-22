@@ -41,11 +41,12 @@ import { useQueryParam, DelimitedArrayParam } from 'use-query-params'
 
 const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
 
-  hospitalId = hospitalId ? `{${hospitalId}}` : null
-  taskId = taskId ? `{${taskId}}` : null
+  hospitalId = hospitalId ? `{${hospitalId}}` : undefined
+  taskId = taskId ? `{${taskId}}` : undefined
 
+  console.log(taskId)
+  
   const { data } = useQuery(shifts, {
-    pollInterval: 6000,
     variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId },
   })
 

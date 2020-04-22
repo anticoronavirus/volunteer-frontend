@@ -97,9 +97,9 @@ const ProfilePure = data =>  {
                   margin: 'normal',
                   fullWidth: true,
                   variant: 'outlined' }),
-                $(Field, {
-                  component: FormikButtonGroup,
-                  name: 'profession' }),
+                // $(Field, {
+                //   component: FormikButtonGroup,
+                //   name: 'profession' }),
                 $(Field, {
                   component: TextField,
                   name: 'comment',
@@ -127,13 +127,10 @@ const ProfilePure = data =>  {
                   : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))),
     $(Box, { maxWidth: '60ex' },
       $(Paper, null,
-        $(Box, { padding: 2, style: { whiteSpace: 'pre-line'} },
-          $(Typography, { variant: 'body2'},
-          `При первом посещении больницы необходимо предоставить следующие документы: 
-          1. Паспорт гражданина РФ
-          2. Медицинская книжка 
-          3. Диплом об окончании образовательного медицинского учреждения или студенческий билет
-          `))),
+        $(Query, { query: professions }, ({ data }) =>
+          !data
+            ? $(CircularProgress)
+            : map(Profession, data.professions))),
       $(Box, { height: 16 }),
       $(Subscription, { subscription: myShifts }, ({ data }) =>
       $(Paper, null, 
@@ -142,6 +139,13 @@ const ProfilePure = data =>  {
             $(ListSubheader, { disableSticky: true }, 'Мои смены'),
             map(MyShift, data.volunteer_shift))))))
 }
+
+const Profession = ({ uid, name, dangerous }) =>
+  $(ListItem, null,
+    $(ListItemText, {
+      primary: name,
+      secondary: 'test'
+    }))
 
 const MyShift = ({
   uid,
@@ -160,21 +164,21 @@ const MyShift = ({
       $(IconButton, { onClick: mutate },
         $(Delete, { fontSize: 'small' })))))
 
-const FormikButtonGroup = ({
-  form: { setFieldValue, values },
-  field: { name },
-}) =>
-  $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
-    $(Query, { query: professions }, ({ data }) => 
-      $(ToggleButtonGroup, {
-        value: values[name],
-        exclusive: true,
-        onChange: (event, value) => setFieldValue(name, value)
-      }, data &&
-      map(Profession, data.professions))))
+// const FormikButtonGroup = ({
+//   form: { setFieldValue, values },
+//   field: { name },
+// }) =>
+//   $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
+//     $(Query, { query: professions }, ({ data }) => 
+//       $(ToggleButtonGroup, {
+//         value: values[name],
+//         exclusive: true,
+//         onChange: (event, value) => setFieldValue(name, value)
+//       }, data &&
+//       map(Profession, data.professions))))
 
-const Profession = ({ uid, name, dangerous }) =>
-  $(ToggleButton, { value: uid }, dangerous && $(Biohazard), name)
+// const Profession = ({ uid, name, dangerous }) =>
+//   $(ToggleButton, { value: uid }, dangerous && $(Biohazard), name)
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
