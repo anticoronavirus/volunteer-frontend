@@ -1,11 +1,13 @@
 import { createElement as $ } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { Query } from '@apollo/react-components'
+// import { Query } from '@apollo/react-components'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { Redirect, useHistory } from 'react-router-dom'
-import { me as meQuery, professions, updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
+import { me as meQuery, 
+  // professions,
+updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
 import Back from 'components/Back'
-import Biohazard from 'components/Biohazard'
+// import Biohazard from 'components/Biohazard'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
@@ -28,8 +30,8 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import ToggleButton from '@material-ui/lab/ToggleButton'
+// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+// import ToggleButton from '@material-ui/lab/ToggleButton'
 
 const Profile = () => {
   
@@ -126,11 +128,11 @@ const ProfilePure = data =>  {
                     }, 'Сохранить')
                   : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))),
     $(Box, { maxWidth: '60ex' },
-      $(Paper, null,
-        $(Query, { query: professions }, ({ data }) =>
-          !data
-            ? $(CircularProgress)
-            : map(Profession, data.professions))),
+      // $(Paper, null,
+      //   $(Query, { query: professions }, ({ data }) =>
+      //     !data
+      //       ? $(CircularProgress)
+      //       : map(Profession, data.professions))),
       $(Box, { height: 16 }),
       $(Subscription, { subscription: myShifts }, ({ data }) =>
       $(Paper, null, 
@@ -140,12 +142,12 @@ const ProfilePure = data =>  {
             map(MyShift, data.volunteer_shift))))))
 }
 
-const Profession = ({ uid, name, dangerous }) =>
-  $(ListItem, null,
-    $(ListItemText, {
-      primary: name,
-      secondary: 'test'
-    }))
+// const Profession = ({ uid, name, dangerous }) =>
+//   $(ListItem, null,
+//     $(ListItemText, {
+//       primary: name,
+//       secondary: 'test'
+//     }))
 
 const MyShift = ({
   uid,

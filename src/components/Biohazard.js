@@ -1,6 +1,6 @@
 import { createElement as $ } from 'react'
 
-import Tooltip from '@material-ui/core/tooltip'
+import Tooltip from '@material-ui/core/Tooltip'
 import Box from '@material-ui/core/Box'
 import { SvgIcon } from '@material-ui/core'
 

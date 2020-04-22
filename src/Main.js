@@ -1,4 +1,4 @@
-import { createElement as $, Fragment } from 'react'
+import { createElement as $ } from 'react'
 import AvialableShifts from 'AvailableShifts'
 import Hint from 'components/Hint'
 import MultipleSelector from 'components/MultipleSelector'
@@ -81,7 +81,7 @@ const Main = ({ history }) => {
           Option: task =>
             $(ListItem, { button: true, key: task.uid, value: task.uid, style: { height: 'unset' } },
               $(ListItemText, {
-                disableTypography: true,
+                // disableTypography: true,
                 primary: $(Box, { display: 'flex' }, task.dangerous && $(Biohazard), task.name),
                 secondary: $(Box, { maxWidth: '60ex' },
                   task.requirements &&
