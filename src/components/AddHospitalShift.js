@@ -21,6 +21,7 @@ import ButtonGroup from '@material-ui/core/ButtonGroup'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import Add from '@material-ui/icons/Add'
 import { styled } from '@material-ui/core/styles'
+import biohazard from './biohazard.svg'
 import yellow from '@material-ui/core/colors/yellow'
 import Warning from '@material-ui/icons/Warning'
 
@@ -124,14 +125,15 @@ const Demand = ([
       $(Button, {
         style: { flexGrow: 1, width: 'initial' },
         onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) + 1 }) },
-        dangerous && $(Biohazard, { src: 'file:///C:/Users/esses/Downloads/Telegram%20Desktop/biohazard.svg' }), 
+        dangerous && $(Biohazard, { src: biohazard }), 
         `${name} ${demands[uid] || 0}`),
       $(Button, {
         style: { width: 'initial' },
         onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) - 1 })}, '-')))
 
 const Biohazard = styled('img')({
-  height: '16px'
+  height: '16px',
+  marginRight: '16px'
 })
         
 const RangeButton = value =>
