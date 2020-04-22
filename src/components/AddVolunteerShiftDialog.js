@@ -6,6 +6,7 @@ import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
 
 import Button from '@material-ui/core/Button'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import List from '@material-ui/core/List'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Box from '@material-ui/core/Box'
@@ -23,7 +24,7 @@ const AddVolunteerShiftDialog = ({
   const [open, setOpen] = useState(true)
   const [hospitalId, setHospitalId] = useState(null)
 
-  const { data } = useQuery(filteredShiftData, {
+  const { data, loading } = useQuery(filteredShiftData, {
     variables: { start, end, hospitalId },
     skip: !open
   })
@@ -44,6 +45,7 @@ const AddVolunteerShiftDialog = ({
     onClose: () => setOpen(false) },
     $(DialogTitle, null, $(Box, { marginLeft: -1 }, 'Добавиться в смену')),
     // $(DialogContent, null,
+      !data && $(Box, { padding: 2 }, $(CircularProgress)),
       $(List, null,
         data &&
           $(ListSubheader, null, data.hospitals.length > 1  ? 'Выбрать больницу' : 'Больница'),
