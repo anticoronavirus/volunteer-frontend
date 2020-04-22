@@ -144,7 +144,7 @@ const HospitalShift = ({
   $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      secondary: map(Demand, period_demands)}))
+      secondary: map(Demand, period_demands).join(', ')}))
 
 const HospitalShiftDeletable = ({
   uid,
