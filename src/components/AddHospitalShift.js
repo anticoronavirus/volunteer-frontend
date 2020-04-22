@@ -124,7 +124,7 @@ const Demand = ([
       $(Button, {
         style: { flexGrow: 1, width: 'initial' },
         onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) + 1 }) },
-        dangerous && $(Biohazard, { src: 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Biohazard.svg' }), 
+        dangerous && $(Biohazard, { src: 'file:///C:/Users/esses/Downloads/Telegram%20Desktop/biohazard.svg' }), 
         `${name} ${demands[uid] || 0}`),
       $(Button, {
         style: { width: 'initial' },

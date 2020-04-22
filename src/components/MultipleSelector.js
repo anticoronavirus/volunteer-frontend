@@ -18,11 +18,15 @@ const MultipleSelector = ({
   emptyLabel,
   path,
   getOptionLabel,
-  getOptionValue
+  getOptionValue,
+  defaultValue
 }) =>
   $(Query, { query }, ({ data, loading }) => {
 
-    const options = get(path, data)
+    let options = get(path, data)
+    if (options && defaultValue)
+      options = [defaultValue, ...options]
+
     const selectedLabel = value && options && getOptionLabel(find(option => value === getOptionValue(option), options))
     const Option = option => $(MenuItem, { value: getOptionValue(option) }, getOptionLabel(option))
 
@@ -32,11 +36,7 @@ const MultipleSelector = ({
         // fullWidth: true,
         disabled: loading,
         displayEmpty: true,
-        onChange: (event, { props }) => onChange(
-          props.value === value
-            ? undefined
-            : props.value
-        ),
+        onChange: (event, { props }) => onChange(props.value),
           // includes(props.value, value)
           //   ? value.length === 1
           //     ? undefined // This is needed to clear the param

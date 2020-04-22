@@ -62,6 +62,10 @@ const Main = ({ history, match }) => {
           path: 'hospitals',
           label: 'Больница',
           emptyLabel: 'Выберите больницу',
+          defaultValue: {
+            shortname: 'Все',
+            uid: undefined
+          },
           getOptionLabel: hospital => hospital.shortname,
           getOptionValue: hospital => hospital.uid,
           value: hospitalId,
@@ -71,6 +75,10 @@ const Main = ({ history, match }) => {
           query: professions,
           path: 'professions',
           label: 'Задача',
+          defaultValue: {
+            name: 'Все',
+            uid: undefined
+          },
           emptyLabel: 'Выберите задачу',
           getOptionLabel: task => task.name,
           getOptionValue: task => task.uid,
