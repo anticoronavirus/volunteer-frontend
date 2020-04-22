@@ -1,5 +1,6 @@
 import { createElement as $, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
+import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
 import { useMutation } from '@apollo/react-hooks'
 import { addShift } from 'queries'
@@ -13,19 +14,43 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
-import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Add from '@material-ui/icons/Add'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const AddHospitalShift = ({ uid, hospital }) => {
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
-  const [demand, setDemand] = useState(20)
+  const demands = useState({})
+
+  const [professions] = useState([{
+    uid: 'test',
+    danger: true,
+    name: 'Санитары',
+    description: 'Bring about the coffin',
+    requiremnets: 'Be geh'
+  },{
+    uid: 'rest',
+    name: 'Прачечная',
+    description: 'Bring about the hlemh',
+    requiremnets: 'Be mlehm'
+  },{
+    uid: 'plest',
+    name: 'Статистика',
+    description: 'Bring about the hlemh',
+    requiremnets: 'Be mlehm'
+  },{
+    uid: 'flest',
+    name: 'Разгрузка',
+    description: 'Bring about the hlemh',
+    requiremnets: 'Be mlehm'
+  }])
+
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -42,7 +67,7 @@ const AddHospitalShift = ({ uid, hospital }) => {
                   uid: Math.random(),
                   start: `${start}:00+03:00`,
                   end: `${end}:00+03:00`,
-                  demand
+                  // demand
                 }
               ]
             }
@@ -52,7 +77,7 @@ const AddHospitalShift = ({ uid, hospital }) => {
     },
     variables: {
       uid,
-      demand, 
+      // demand, 
       start: `${start}:00+03:00`,
       end: `${end}:00+03:00`,
     }})
@@ -73,28 +98,29 @@ const AddHospitalShift = ({ uid, hospital }) => {
             onChange: (event, value) => setStart(value) },
             map(RangeButton, range(0, 23)))),
         $(Box, { height: 16 }),
-        !!start &&
+        start !== null &&
           $(Typography, { variant: 'caption' }, 'Конец смены'),
-        !!start &&
+        start !== null &&
           $(Box, { overflow: 'scroll', maxWidth: 420 },
             $(ToggleButtonGroup, {
               size: 'small',
               exclusive: true,
               value: end,
               onChange: (event, value) => setEnd(value) },
-              map(RangeButton, range(start + 2, start + 2 + 24)))),
+              map(RangeButton, range(start + 4, start + 2 + 24)))),
+        $(Box, { height: 16 }),
         !!end &&
-          $(TextField, {
-            value: demand,
-            margin: 'normal',
-            fullWidth: true,
-            onChange: ({ target }) => setDemand(target.value.replace(/^[+d]/, '')),
-            type: 'number',
-            label: 'Количество волонтёров' })),
+          $(Typography, { variant: 'caption' }, 'Задачи, красным помечена работа в карантинной зоне'),
+        !!end &&
+          map(Demand(demands), professions)),
+          // $(Box, { display: 'flex' },
+          //   map(
+          //     Profession({ demands, setDemands }),
+          //     filter(({ uid }) => !demands[uid], professions)))),
       $(DialogActions, null,
         $(Button, { onClick: () => setOpen(false) }, 'Закрыть'),
         $(Button, {
-          disabled: !start || !end || !demand,
+          disabled: !start || !end || isEmpty(demands),
           onClick: () => mutate().then(() => setOpen(false))}, 'Добавить'))),
     $(ListItem, { button: true, onClick: () => setOpen(true) },
       $(ListItemIcon, null,
@@ -103,6 +129,24 @@ const AddHospitalShift = ({ uid, hospital }) => {
         primary: 'Добавить смену'
       })))
 }
+
+const Demand = ([
+  demands,
+  onChange
+])=>({
+  uid,
+  name,
+  danger
+}) =>
+  $(Box, { key: name, margin: '16px 0' },
+    $(ButtonGroup, { fullWidth: true, color: danger && 'secondary' },
+      $(Button, {
+        style: { flexGrow: 1, width: 'initial' },
+        onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) + 1 }) },
+        `${name} ${demands[uid] || 0}`),
+      $(Button, {
+        style: { width: 'initial' },
+        onClick: () => onChange({ ...demands, [uid]: (demands[uid] || 0) - 1 })}, '-')))
 
 const RangeButton = value =>
   $(ToggleButton, {
