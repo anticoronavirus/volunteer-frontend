@@ -1,9 +1,11 @@
 import { createElement as $ } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { Query } from '@apollo/react-components'
 import { Subscription, Mutation } from '@apollo/react-components'
 import { Redirect, useHistory } from 'react-router-dom'
-import { me as meQuery, updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
+import { me as meQuery, professions, updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
 import Back from 'components/Back'
+import Biohazard from 'components/Biohazard'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
@@ -163,15 +165,16 @@ const FormikButtonGroup = ({
   field: { name },
 }) =>
   $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
-    $(ToggleButtonGroup, {
-      value: values[name],
-      exclusive: true,
-      onChange: (event, value) => setFieldValue(name, value)
-    },
-      $(ToggleButton, { value: 'cтудент' }, 'Студент'),
-      $(ToggleButton, { value: 'медперсонал' }, 'Медперсонал'),
-      $(ToggleButton, { value: 'врач' }, 'Врач'),
-      $(ToggleButton, { value: 'немедик' }, 'Немедик')))
+    $(Query, { query: professions }, ({ data }) => 
+      $(ToggleButtonGroup, {
+        value: values[name],
+        exclusive: true,
+        onChange: (event, value) => setFieldValue(name, value)
+      }, data &&
+      map(Profession, data.professions))))
+
+const Profession = ({ uid, name, dangerous }) =>
+  $(ToggleButton, { value: uid }, dangerous && $(Biohazard), name)
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
