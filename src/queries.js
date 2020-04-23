@@ -39,6 +39,7 @@ query hospital($uid: uuid!) {
     }
   }
   me {
+    uid
     phone
     managedHospitals (where: { hospital: { uid: { _eq: $uid }}}) {
       coophone
@@ -219,19 +220,26 @@ query shifts($hospitalId: uuid) {
     end
     placesavailable
     demand
-    shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
-      uid
-      confirmed
-      hospital { uid }
-      volunteer {
-        uid
-        lname
-        fname
-        phone
-        profession
-        provisioned_documents_aggregate {
-          aggregate {
-            count
+    periods(where: { hospital_id: { _eq: $hospitalId }}) {
+      period_demands {
+        demand
+        profession {
+          name
+        }
+        volunteer_shifts {
+          uid
+          volunteer {
+            uid
+            fname
+            lname
+            fname
+            phone
+            profession
+            provisioned_documents_aggregate {
+              aggregate {
+                count
+              }
+            }
           }
         }
       }

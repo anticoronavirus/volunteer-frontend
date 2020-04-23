@@ -1,6 +1,7 @@
 import { createElement as $, useState, Fragment, createContext } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
+import reduce from 'lodash/fp/reduce'
 import { 
   // Subscription, 
   Query, Mutation } from '@apollo/react-components'
@@ -50,7 +51,7 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
         !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
           ? null
           : $(PaddedHint, { name: 'how_confirm' })),
-    $(IsManagedByMe.Provider, { value: isManagedByMe },
+    $(IsManagedByMe.Provider, { value: { isManagedByMe, hospital_id: hospitalId } },
       $(List, null,
         map(Section, data ? data.shifts : emptyShifts)))))
 
@@ -76,45 +77,62 @@ const Section = ({
   end,
   demand,
   placesavailable,
-  shiftRequests,
+  periods,
   loading
 }) =>
   $(SectionLI, { key: `${date}-${start}-${end}` },
-    $(SectionUL, null,
-      $(ZIndexedListSubheader, null,
-        $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
-          loading
-            ? $(Box, { padding: '8px 0' },
-                $(Skeleton, { variant: 'text', width: '25ex', height: 32 }))
-            : `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-          $(Box),
-          loading
-            ? $(Box, { padding: '8px 0' },
-                $(Skeleton, { variant: 'text', width: '5ex', height: 32 }))
-            : `${demand - placesavailable}/${demand}`)),
-      map(VolunteerShift, shiftRequests),
-      $(Divider)))
+    $(SubheaderWithData, {
+      title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+      right: !loading && `${demand - placesavailable}/${demand}`
+    }),
+    periods &&
+      map(TaskShifts, periods[0].period_demands),
+    $(Divider))
 
-const ZIndexedListSubheader = styled(ListSubheader)({
-  zIndex: 2
-})
+const SubheaderWithData = ({ title, right, loading, position }) =>
+  $(ZIndexedListSubheader, { position },
+    $(Box, { display: 'flex', alignItems: 'center', justifyContent: 'space-between' },
+      loading
+        ? $(Box, { padding: '8px 0' },
+            $(Skeleton, { variant: 'text', width: '25ex', height: 32 }))
+        : title,
+      $(Box),
+      loading
+        ? $(Box, { padding: '8px 0' },
+            $(Skeleton, { variant: 'text', width: '5ex', height: 32 }))
+        : right))
+
+const ZIndexedListSubheader = styled(ListSubheader)(
+({ position = 0 }) => ({
+  // zIndex: 2,
+  top: 48 * position,
+}))
 
 const SectionLI = styled('li')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
-const SectionUL = styled('ul')({
-  backgroundColor: 'inherit',
-  listStyle: 'none',
-  padding: 0
-})
+const TaskShifts = ({
+  profession: { name },
+  demand,
+  volunteer_shifts
+}) =>
+  $(Fragment, { key: name },
+    $(SubheaderWithData, {
+      title: name,
+      right: `${volunteer_shifts.length}/${demand}`
+    }),
+    map(VolunteerShift, volunteer_shifts))
+
+// const SectionUL = styled('ul')({
+//   backgroundColor: 'inherit',
+//   listStyle: 'none',
+//   padding: 0
+// })
 
 const VolunteerShift = ({
   uid,
   confirmed,
-  hospital: {
-    uid: hospital_id
-  },
   volunteer: { 
     uid: volunteer_id,
     fullName,
@@ -167,8 +185,13 @@ const VolunteerShift = ({
     $(ListItemSecondaryAction, null,
       loading
         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
-        : $(IsManagedByMe.Consumer, null, isManagedByMe => isManagedByMe
-            ? $(AdditionalControls, { uid, phone, volunteer_id, hospital_id, hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
+        : $(IsManagedByMe.Consumer, null, ({ isManagedByMe, hospital_id }) => isManagedByMe
+            ? $(AdditionalControls, {
+                uid,
+                phone,
+                volunteer_id,
+                hospital_id,
+                hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
             : $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
                 $(IconButton, { onClick: mutate },
                   $(Delete, { fontSize: 'small' }))))))
