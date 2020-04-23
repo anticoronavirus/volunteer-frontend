@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "https://dev.memedic.ru",
   "dependencies": {
-    "@apollo/client": "3.0.0-beta.43",
+    "@apollo/client": "3.0.0-beta.44",
     "@apollo/link-ws": "2.0.0-beta.3",
     "@apollo/react-components": "3.1.5",
     "@apollo/react-hoc": "3.1.5",
