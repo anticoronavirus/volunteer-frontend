@@ -139,17 +139,17 @@ export const exportShifts = gql`{
 export const addVolunteerToShift = gql`  
 mutation addVolunteerToShift(
   $userId: uuid
-  $hospitalId: uuid
+  $period_demand_id: uuid
   $date: date
-  $start: timetz
-  $end: timetz
+  # $start: timetz
+  # $end: timetz
 ) {
   insert_volunteer_shift(objects: [{
     volunteer_id: $userId
-    hospital_id: $hospitalId
+    period_demand_id: $period_demand_id
     date: $date
-    start: $start
-    end: $end
+    # start: $start
+    # end: $end
   }]) {
     returning {
       uid
@@ -183,9 +183,13 @@ fragment shift on vshift {
   shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
     uid
     confirmed
-    hospital {
-      uid
-      shortname
+    period_demand {
+      period {
+        hospital {
+          uid
+          shortname
+        }
+      }
     }
   }
 }

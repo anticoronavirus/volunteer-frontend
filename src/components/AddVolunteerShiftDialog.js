@@ -58,11 +58,11 @@ const AddVolunteerShiftDialog = ({
         data && hospitalId &&
           map(({ uid, profession }) =>
             TaskOption({
-              onClick: () => onAdd(hospitalId, uid),
+              onClick: () => onAdd(uid),
               ...profession}),
-            data.period_demand)))
+            data.period_demand)),
     $(DialogActions, null,
-      $(Button, null, 'закрыть'))
+      $(Button, null, 'Отмена')))
           // )
 }
 

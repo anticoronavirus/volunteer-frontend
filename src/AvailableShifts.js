@@ -10,7 +10,7 @@ import {
   // shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
-  filteredHospitals,
+  // filteredHospitals,
   shiftFragment
 } from 'queries'
 import { useHistory } from 'react-router-dom'
@@ -18,15 +18,15 @@ import {
   // useSubscription,
   useQuery, useMutation } from '@apollo/react-hooks'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
-import { Query } from '@apollo/react-components'
+// import { Query } from '@apollo/react-components'
 import { useSnackbar } from 'notistack'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
+// import Menu from '@material-ui/core/Menu'
+// import MenuItem from '@material-ui/core/MenuItem'
 import TableContainer from '@material-ui/core/TableContainer'
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -109,20 +109,20 @@ const Cell = ({
 
   const [addToShift] = useMutation(addVolunteerToShift, {
     variables: { userId, hospitalId },
-    optimisticResponse: {
-      insert_volunteer_shift: {
-        returning: [{
-          uid: Math.random().toString(),
-          confirmed: false, 
-          hospital: {
-            uid: hospitalId,
-            __typename: 'hospital'
-          },
-          __typename: 'volunteer_shift'
-          }],
-        __typename: 'volunteer_shift_mutation_response'
-      }
-    },
+    // optimisticResponse: {
+    //   insert_volunteer_shift: {
+    //     returning: [{
+    //       uid: Math.random().toString(),
+    //       confirmed: false, 
+    //       hospital: {
+    //         uid: hospitalId,
+    //         __typename: 'hospital'
+    //       },
+    //       __typename: 'volunteer_shift'
+    //       }],
+    //     __typename: 'volunteer_shift_mutation_response'
+    //   }
+    // },
     update: (cache, result) => {
       const data = cache.readFragment(fragment)
       cache.writeFragment({
@@ -158,11 +158,10 @@ const Cell = ({
     }
   })
 
-  const addToShiftWithExtraStuff = hospitalId => {
-    console.log(hospitalId)
+  const addToShiftWithExtraStuff = period_demand_id => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: hospitalId ? { date, start, end, hospitalId } : { date, start, end }})
+    addToShift({ variables: { date, period_demand_id }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит для подтверждения'))
       .then(() => setUpdating(false))
   }
@@ -263,7 +262,7 @@ const CellPure = ({
             $(Typography, { variant: 'body2', color: 'inherit' },
               loading
                 ? $(Skeleton, { width: '8ex' })
-                : myShift.hospital.shortname)))))
+                : myShift.period_demand.period.hospital.shortname)))))
 
 // Loading stuff
 
