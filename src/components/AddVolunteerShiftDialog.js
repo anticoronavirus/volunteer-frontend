@@ -24,7 +24,7 @@ const AddVolunteerShiftDialog = ({
   const [open, setOpen] = useState(true)
   const [hospitalId, setHospitalId] = useState(null)
 
-  const { data, loading } = useQuery(filteredShiftData, {
+  const { data } = useQuery(filteredShiftData, {
     variables: { start, end, hospitalId },
     skip: !open
   })

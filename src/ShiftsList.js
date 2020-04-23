@@ -1,7 +1,7 @@
 import { createElement as $, useState, Fragment, createContext } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import reduce from 'lodash/fp/reduce'
+// import reduce from 'lodash/fp/reduce'
 import { 
   // Subscription, 
   Query, Mutation } from '@apollo/react-components'

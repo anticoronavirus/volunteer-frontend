@@ -181,18 +181,25 @@ fragment shift on vshift {
   hospitalscount
   placesavailable
   demand
-  shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
-    uid
-    confirmed
-    period_demand {
-      period {
-        hospital {
-          uid
-          shortname
-        }
+  periods {
+    period_demands {
+      volunteer_shifts {
+        uid
       }
     }
   }
+  # shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
+  #   uid
+  #   confirmed
+  #   period_demand {
+  #     period {
+  #       hospital {
+  #         uid
+  #         shortname
+  #       }
+  #     }
+  #   }
+  # }
 }
 `
 
