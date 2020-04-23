@@ -39,8 +39,9 @@ query hospital($uid: uuid!) {
     }
   }
   me {
-    managedHospital {
-      uid
+    phone
+    managedHospitals (where: { hospital: { uid: { _eq: $uid }}}) {
+      coophone
     }
   }
 }`

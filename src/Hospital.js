@@ -1,5 +1,6 @@
 import { createElement as $ } from 'react'
 import map from 'lodash/fp/map'
+import find from 'lodash/fp/find'
 import merge from 'lodash/fp/merge'
 import get from 'lodash/fp/get'
 import sortBy from 'lodash/fp/sortBy'
@@ -45,8 +46,9 @@ const Hospital = ({
   const client = useApolloClient()
 
   const isManagedByMe = data &&
-    get(['hospital', 'uid'], data) ===
-    get(['me', 0, 'managedHospital', 'uid'], data)
+    find(
+      { coophone: get(['me', 0, 'phone'], data) },
+      get(['me', 0, 'managedHospitals'], data))
 
   return !loading && !data.hospital
     ? $(Redirect, { to: '/hospitals'})
