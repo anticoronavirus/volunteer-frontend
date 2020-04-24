@@ -92,7 +92,9 @@ const Section = ({
         map(periodDemand => TaskShifts({
           demand: periodDemand.demand,
           name: periodDemand.profession.name,
-          shifts: filter('period_demand.profession.name', shiftRequests)
+          shifts: filter(shiftRequest =>
+            shiftRequest.period_demand.profession.name === periodDemand.profession.name,
+            shiftRequests)
         }), period.period_demands),
       $(Divider))})
   
