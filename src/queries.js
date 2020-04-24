@@ -155,9 +155,13 @@ mutation addVolunteerToShift(
     returning {
       uid
       confirmed
-      hospital {
-        uid
-        shortname
+      period_demand {
+        period {
+          hospital {
+            uid
+            shortname
+          }
+        }
       }
     }
   }

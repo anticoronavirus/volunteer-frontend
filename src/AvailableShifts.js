@@ -109,20 +109,25 @@ const Cell = ({
 
   const [addToShift] = useMutation(addVolunteerToShift, {
     variables: { userId, hospitalId },
-    // optimisticResponse: {
-    //   insert_volunteer_shift: {
-    //     returning: [{
-    //       uid: Math.random().toString(),
-    //       confirmed: false, 
-    //       hospital: {
-    //         uid: hospitalId,
-    //         __typename: 'hospital'
-    //       },
-    //       __typename: 'volunteer_shift'
-    //       }],
-    //     __typename: 'volunteer_shift_mutation_response'
-    //   }
-    // },
+    optimisticResponse: {
+      insert_volunteer_shift: {
+        returning: [{
+          uid: Math.random().toString(),
+          confirmed: false, 
+          period_demand: {
+            period: {
+              hospital: {
+                uid: Math.random().toString(),
+                shortname: '',
+              __typename: 'hospital'
+              }
+            }
+          },
+          __typename: 'volunteer_shift'
+          }],
+        __typename: 'volunteer_shift_mutation_response'
+      }
+    },
     update: (cache, result) => {
       const data = cache.readFragment(fragment)
       cache.writeFragment({
