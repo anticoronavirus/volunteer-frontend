@@ -85,6 +85,7 @@ const Section = ({
         title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
         right: !loading && `${demand - placesavailable}/${demand}`
       }),
+      console.log(date, start, end, shiftRequests),
       shiftRequests && period && period.period_demands &&
         map(periodDemand => TaskShifts({
           demand: periodDemand.demand,

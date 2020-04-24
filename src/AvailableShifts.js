@@ -163,10 +163,10 @@ const Cell = ({
     }
   })
 
-  const addToShiftWithExtraStuff = period_demand_id => {
+  const addToShiftWithExtraStuff = (hospitalId, period_demand_id) => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: { date, start, end, period_demand_id }})
+    addToShift({ variables: { date, start, end, hospitalId, period_demand_id }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смен для подтверждения'))
       .then(() => setUpdating(false))
   }

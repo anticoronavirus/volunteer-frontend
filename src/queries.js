@@ -144,6 +144,7 @@ mutation addVolunteerToShift(
   $date: date
   $start: timetz
   $end: timetz
+  $hospitalId: uuid
 ) {
   insert_volunteer_shift(objects: [{
     volunteer_id: $userId
@@ -151,6 +152,7 @@ mutation addVolunteerToShift(
     date: $date
     start: $start
     end: $end
+    hospital_id: $hospitalId
   }]) {
     returning {
       uid
