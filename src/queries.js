@@ -117,8 +117,9 @@ export const volunteerShiftCount = gql`{
   }
 }`
 
-export const exportShifts = gql`{
-  volunteer_shift {
+export const exportShifts = gql`
+query exportShifts($hospitalId: uuid) {
+  volunteer_shift(where: { hospital_id: { _eq: $hospitalId }}) {
     date
     start
     end

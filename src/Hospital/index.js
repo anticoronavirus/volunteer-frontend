@@ -70,7 +70,7 @@ const Hospital = ({
               isManagedByMe &&
                   $(ButtonGroup, null,
                     $(Button, { onClick: () =>
-                        client.query({ query: exportShifts })
+                        client.query({ query: exportShifts, variables: { hospitalId: data.hospital.uid } })
                           .then(result => generateXlsx({
                             filename: `Заявки волонтёров ${data.hospital.shortname}`,
                             sheet: {
