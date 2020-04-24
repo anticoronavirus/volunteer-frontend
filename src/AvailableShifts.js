@@ -6,7 +6,7 @@ import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
-  shifts,
+  // shifts,
   shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
@@ -15,8 +15,7 @@ import {
 } from 'queries'
 import { useHistory } from 'react-router-dom'
 import { 
-  useSubscription,
-  useQuery, useMutation } from '@apollo/react-hooks'
+  useSubscription, useMutation } from '@apollo/react-hooks'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 // import { Query } from '@apollo/react-components'
 import { useSnackbar } from 'notistack'
