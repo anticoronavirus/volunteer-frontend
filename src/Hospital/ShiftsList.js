@@ -90,7 +90,7 @@ const Section = ({
           demand: periodDemand.demand,
           name: periodDemand.profession.name,
           shifts: filter(shiftRequest =>
-            shiftRequest.period_demand.profession.name === periodDemand.profession.name,
+            shiftRequest.period_demand && shiftRequest.period_demand.profession.name === periodDemand.profession.name,
             shiftRequests)
         }), period.period_demands),
       $(Divider))})
