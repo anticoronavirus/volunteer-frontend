@@ -230,6 +230,7 @@ subscription shifts($hospitalId: uuid) {
       start
       end
       hospital_id
+      confirmed
       period_demand {
         profession {
           name

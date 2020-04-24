@@ -6,7 +6,7 @@ import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
-  // shifts,
+  shifts,
   shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
@@ -14,8 +14,7 @@ import {
   shiftFragment
 } from 'queries'
 import { useHistory } from 'react-router-dom'
-import { 
-  useSubscription, useMutation } from '@apollo/react-hooks'
+import { useQuery, useSubscription, useMutation } from '@apollo/react-hooks'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 // import { Query } from '@apollo/react-components'
 import { useSnackbar } from 'notistack'
@@ -41,10 +40,14 @@ import { useQueryParam, StringParam } from 'use-query-params'
 
 const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
 
-  hospitalId = hospitalId ? `{${hospitalId}}` : undefined
-  taskId = taskId ? `{${taskId}}` : undefined
+  const variables = {
+    hospitalId: hospitalId ? `{${hospitalId}}` : undefined,
+    taskId: taskId ? `{${taskId}}` : undefined,
+    userId: userId || undefined
+  }
 
-  const { data } = useSubscription(shiftsSubscription, { variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId }})
+  const { data } = useQuery(shifts, { variables })
+  useSubscription(shiftsSubscription, { variables })
 
   const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
     columns: new Set(),
