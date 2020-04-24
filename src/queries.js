@@ -241,6 +241,7 @@ query shifts($hospitalId: uuid) {
         lname
         fname
         phone
+        profession
         provisioned_documents_aggregate {
           aggregate {
             count
