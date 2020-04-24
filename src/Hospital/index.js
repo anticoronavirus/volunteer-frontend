@@ -107,7 +107,7 @@ const Hospital = ({
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
             $(HospitalContext.Provider, {
               value: {
-                hospitalId: match.params.uid,
+                hospital_id: match.params.uid,
                 isManagedByMe,
                 periods: data.hospital.periods }},
               $(Shifts, { hospitalId: match.params.uid, isManagedByMe }))))
