@@ -84,6 +84,7 @@ const Section = ({
     
     return $(SectionLI, { key: `${date}-${start}-${end}` },
       $(SubheaderWithData, {
+        loading,
         title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
         right: !loading && `${demand - placesavailable}/${demand}`
       }),
