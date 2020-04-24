@@ -7,7 +7,7 @@ import entries from 'lodash/fp/entries'
 import reduce from 'lodash/fp/reduce'
 import {
   shifts,
-  // shiftsSubscription,
+  shiftsSubscription,
   addVolunteerToShift,
   removeVolunteerFromShift,
   // filteredHospitals,
@@ -15,7 +15,7 @@ import {
 } from 'queries'
 import { useHistory } from 'react-router-dom'
 import { 
-  // useSubscription,
+  useSubscription,
   useQuery, useMutation } from '@apollo/react-hooks'
 import { formatLabel, formatDate, uncappedMap } from 'utils'
 // import { Query } from '@apollo/react-components'
@@ -45,9 +45,7 @@ const AvailableShifts = memo(({ userId, hospitalId, taskId }) => {
   hospitalId = hospitalId ? `{${hospitalId}}` : undefined
   taskId = taskId ? `{${taskId}}` : undefined
 
-  const { data } = useQuery(shifts, {
-    variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId },
-  })
+  const { data } = useSubscription(shiftsSubscription, { variables: userId ? { userId, hospitalId, taskId } : { hospitalId, taskId }})
 
   const generatedTable = data && reduce(generateTableReducer({ userId, hospitalId }), {
     columns: new Set(),
@@ -102,7 +100,7 @@ const Cell = ({
 
   const history = useHistory()
   const [hospitalId] = useQueryParam('hospital', StringParam)
-  const [taskId] = useQueryParam('task', StringParam)
+  // const [taskId] = useQueryParam('task', StringParam)
   const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -184,6 +182,7 @@ const Cell = ({
   return $(Fragment, null,
     open &&
       $(AddVolunteerShiftDialog, {
+        hospitalscount,
         start,
         end,
         open,

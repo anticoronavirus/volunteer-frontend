@@ -3,9 +3,7 @@ import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
-import { 
-  // Subscription, 
-  Query, Mutation } from '@apollo/react-components'
+import { Query, Subscription, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
 import { documentsProvisioned, volunteerShiftCount, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 import Hint from 'components/Hint'
@@ -40,9 +38,8 @@ import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
 const Shifts = ({ hospitalId, isManagedByMe }) =>
-  $(Query, {
-    pollInterval: 6000,
-    query: hospitalShifts,
+  $(Subscription, {
+    subscription: hospitalShifts,
     variables: { hospitalId }
   }, ({ data }) =>
   $(Paper, null,

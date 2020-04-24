@@ -209,15 +209,15 @@ query shifts($hospitalId: uuid $userId: uuid $taskId: _uuid) {
 ${shiftFragment}`
 
 export const shiftsSubscription = gql`
-subscription shiftsSubscription($hospitalId: uuid $userId: uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+subscription shiftsSubscription($hospitalId: uuid $userId: uuid $taskId: _uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
     ...shift
   }
 }
 ${shiftFragment}`
 
 export const hospitalShifts = gql`
-query shifts($hospitalId: uuid) {
+subscription shifts($hospitalId: uuid) {
   shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
     date
     start
@@ -249,30 +249,6 @@ query shifts($hospitalId: uuid) {
         }
       }
     }
-    # periods(where: { hospital_id: { _eq: $hospitalId }}) {
-    #   period_demands {
-    #     demand
-    #     profession {
-    #       name
-    #     }
-    #     volunteer_shifts {
-    #       uid
-    #       volunteer {
-    #         uid
-    #         fname
-    #         lname
-    #         fname
-    #         phone
-    #         profession
-    #         provisioned_documents_aggregate {
-    #           aggregate {
-    #             count
-    #           }
-    #         }
-    #       }
-    #     }
-    #   }
-    # }
   }
 }
 `

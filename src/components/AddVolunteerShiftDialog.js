@@ -19,9 +19,11 @@ const AddVolunteerShiftDialog = ({
   onAdd,
   start,
   end,
+  onClose,
+  hospitalscount,
+  open
 }) => {
 
-  const [open, setOpen] = useState(true)
   const [hospitalId, setHospitalId] = useState(null)
 
   const { data } = useQuery(filteredShiftData, {
@@ -42,7 +44,7 @@ const AddVolunteerShiftDialog = ({
   return $(Dialog, {
     open,
     fullScreen,
-    onClose: () => setOpen(false) },
+    onClose },
     $(DialogTitle, null, $(Box, { marginLeft: -1 }, 'Добавиться в смену')),
     // $(DialogContent, null,
       !data && $(Box, { padding: 2 }, $(CircularProgress)),
@@ -62,7 +64,7 @@ const AddVolunteerShiftDialog = ({
               ...profession}),
             data.period_demand)),
     $(DialogActions, null,
-      $(Button, { onClick: () => setOpen(false )}, 'Отмена')))
+      $(Button, { onClick: onClose }, 'Отмена')))
 }
 
 export default AddVolunteerShiftDialog

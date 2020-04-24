@@ -7,9 +7,10 @@ import { client } from 'Apollo'
 import App from 'App.js'
 
 render( 
-  $(StrictMode, null,
+  // $(StrictMode, null,
     $(ApolloProvider, { client },
       $(Router, null,
         $(QueryParamProvider, { ReactRouterRoute: Route },
-          $(App))))),
+          $(App)))),
+          // ),
   document.getElementById('root'))
