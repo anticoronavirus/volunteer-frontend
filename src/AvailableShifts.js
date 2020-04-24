@@ -167,7 +167,7 @@ const Cell = ({
     setOpen(false)
     setUpdating(true)
     addToShift({ variables: { date, start, end, hospitalId, period_demand_id }})
-      .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смен для подтверждения'))
+      .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смены для подтверждения'))
       .then(() => setUpdating(false))
   }
 

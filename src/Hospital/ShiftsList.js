@@ -111,7 +111,7 @@ const SubheaderWithData = ({ title, right, loading, position }) =>
 
 const ZIndexedListSubheader = styled(ListSubheader)(
 ({ position = 0 }) => ({
-  // zIndex: 2,
+  zIndex: 2,
   top: 48 * position,
 }))
 
