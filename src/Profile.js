@@ -30,8 +30,8 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
-// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-// import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import ToggleButton from '@material-ui/lab/ToggleButton'
 
 const Profile = () => {
   
@@ -133,7 +133,7 @@ const ProfilePure = data =>  {
       //     !data
       //       ? $(CircularProgress)
       //       : map(Profession, data.professions))),
-      $(Box, { height: 16 }),
+      // $(Box, { height: 16 }),
       $(Subscription, { subscription: myShifts }, ({ data }) =>
       $(Paper, null, 
         data &&
