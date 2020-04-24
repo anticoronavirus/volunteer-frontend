@@ -1,7 +1,8 @@
 import { createElement as $, useState, Fragment, createContext } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-// import reduce from 'lodash/fp/reduce'
+import entries from 'lodash/fp/entries'
+import groupBy from 'lodash/fp/groupBy'
 import { 
   // Subscription, 
   Query, Mutation } from '@apollo/react-components'
@@ -36,8 +37,6 @@ import RemoveCircle from '@material-ui/icons/RemoveCircle'
 import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
-
-const IsManagedByMe = createContext(false)
 
 const Shifts = ({ hospitalId, isManagedByMe }) =>
   $(Query, {
@@ -77,7 +76,7 @@ const Section = ({
   end,
   demand,
   placesavailable,
-  periods,
+  shiftRequests,
   loading
 }) =>
   $(SectionLI, { key: `${date}-${start}-${end}` },
@@ -85,8 +84,8 @@ const Section = ({
       title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       right: !loading && `${demand - placesavailable}/${demand}`
     }),
-    periods &&
-      map(TaskShifts, periods[0].period_demands),
+    shiftRequests &&
+      map(TaskShifts, entries(groupBy('period_demand.profession.name', shiftRequests))),
     $(Divider))
 
 const SubheaderWithData = ({ title, right, loading, position }) =>
@@ -112,17 +111,13 @@ const SectionLI = styled('li')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
-const TaskShifts = ({
-  profession: { name },
-  demand,
-  volunteer_shifts
-}) =>
-  $(Fragment, { key: name },
+const TaskShifts = ([key, shifts]) =>
+  $(Fragment, { key },
     $(SubheaderWithData, {
-      title: name,
-      right: `${volunteer_shifts.length}/${demand}`
+      title: key,
+      right: `${shifts.length}/${0}`
     }),
-    map(VolunteerShift, volunteer_shifts))
+    map(VolunteerShift, shifts))
 
 // const SectionUL = styled('ul')({
 //   backgroundColor: 'inherit',

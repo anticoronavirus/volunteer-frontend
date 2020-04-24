@@ -161,7 +161,7 @@ const Cell = ({
   const addToShiftWithExtraStuff = period_demand_id => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: { date, period_demand_id }})
+    addToShift({ variables: { date, start, end, period_demand_id }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит для подтверждения'))
       .then(() => setUpdating(false))
   }
@@ -262,7 +262,7 @@ const CellPure = ({
             $(Typography, { variant: 'body2', color: 'inherit' },
               loading
                 ? $(Skeleton, { width: '8ex' })
-                : myShift.period_demand.period.hospital.shortname)))))
+                : myShift.period_demand && myShift.period_demand.period.hospital.shortname)))))
 
 // Loading stuff
 

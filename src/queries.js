@@ -142,15 +142,15 @@ mutation addVolunteerToShift(
   $userId: uuid
   $period_demand_id: uuid
   $date: date
-  # $start: timetz
-  # $end: timetz
+  $start: timetz
+  $end: timetz
 ) {
   insert_volunteer_shift(objects: [{
     volunteer_id: $userId
     period_demand_id: $period_demand_id
     date: $date
-    # start: $start
-    # end: $end
+    start: $start
+    end: $end
   }]) {
     returning {
       uid
@@ -181,25 +181,18 @@ fragment shift on vshift {
   hospitalscount
   placesavailable
   demand
-  periods {
-    period_demands {
-      volunteer_shifts {
-        uid
+  shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
+    uid
+    confirmed
+    period_demand {
+      period {
+        hospital {
+          uid
+          shortname
+        }
       }
     }
   }
-  # shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
-  #   uid
-  #   confirmed
-  #   period_demand {
-  #     period {
-  #       hospital {
-  #         uid
-  #         shortname
-  #       }
-  #     }
-  #   }
-  # }
 }
 `
 
@@ -227,30 +220,54 @@ query shifts($hospitalId: uuid) {
     end
     placesavailable
     demand
-    periods(where: { hospital_id: { _eq: $hospitalId }}) {
-      period_demands {
-        demand
+    shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
+      uid
+      date
+      start
+      end
+      hospital_id
+      period_demand {
         profession {
           name
         }
-        volunteer_shifts {
-          uid
-          volunteer {
-            uid
-            fname
-            lname
-            fname
-            phone
-            profession
-            provisioned_documents_aggregate {
-              aggregate {
-                count
-              }
-            }
+      }
+      volunteer {
+        uid
+        fname
+        lname
+        fname
+        phone
+        provisioned_documents_aggregate {
+          aggregate {
+            count
           }
         }
       }
     }
+    # periods(where: { hospital_id: { _eq: $hospitalId }}) {
+    #   period_demands {
+    #     demand
+    #     profession {
+    #       name
+    #     }
+    #     volunteer_shifts {
+    #       uid
+    #       volunteer {
+    #         uid
+    #         fname
+    #         lname
+    #         fname
+    #         phone
+    #         profession
+    #         provisioned_documents_aggregate {
+    #           aggregate {
+    #             count
+    #           }
+    #         }
+    #       }
+    #     }
+    #   }
+    # }
   }
 }
 `
