@@ -108,7 +108,7 @@ const Cell = ({
   const { enqueueSnackbar } = useSnackbar()
 
   const [addToShift] = useMutation(addVolunteerToShift, {
-    variables: { userId, hospitalId },
+    variables: { userId },
     optimisticResponse: {
       insert_volunteer_shift: {
         returning: [{
@@ -167,7 +167,7 @@ const Cell = ({
     setOpen(false)
     setUpdating(true)
     addToShift({ variables: { date, start, end, period_demand_id }})
-      .then(() => enqueueSnackbar('Спасибо! Координатор позвонит для подтверждения'))
+      .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смен для подтверждения'))
       .then(() => setUpdating(false))
   }
 
@@ -176,12 +176,13 @@ const Cell = ({
       ? history.push('/login')
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
-        : !hospitalId
-          ? setOpen(true)
-          : addToShiftWithExtraStuff()
+        : setOpen(true)
+        // !hospitalId
+        //   ? setOpen(true)
+        //   : addToShiftWithExtraStuff()
 
   return $(Fragment, null,
-    (!hospitalId || !taskId) && open &&
+    open &&
       $(AddVolunteerShiftDialog, {
         start,
         end,

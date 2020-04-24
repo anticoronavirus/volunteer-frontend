@@ -62,8 +62,7 @@ const AddVolunteerShiftDialog = ({
               ...profession}),
             data.period_demand)),
     $(DialogActions, null,
-      $(Button, null, 'Отмена')))
-          // )
+      $(Button, { onClick: () => setOpen(false )}, 'Отмена')))
 }
 
 export default AddVolunteerShiftDialog
