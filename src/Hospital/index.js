@@ -11,11 +11,12 @@ import { Mutation } from '@apollo/react-components'
 import { Redirect } from 'react-router-dom'
 import { hospital, removeShift, exportShifts } from 'queries'
 // import { formatLabel } from 'utils'
-import Shifts from 'ShiftsList'
+import Shifts from './ShiftsList'
 import Back from 'components/Back'
 import AddHospitalShift from 'components/AddHospitalShift'
 import HowToGet from 'components/HowToGet'
 import generateXlsx from 'zipcelx'
+import HospitalContext from './HospitalContext'
 
 import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
@@ -104,7 +105,12 @@ const Hospital = ({
                 directions: data.hospital.directions })))),
         data && data.hospital.periods.length > 0 &&
           $(Box, notMobile && { maxWidth: 360, flexGrow: 1 },
-            $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))
+            $(HospitalContext.Provider, {
+              value: {
+                hospitalId: match.params.uid,
+                isManagedByMe,
+                periods: data.hospital.periods }},
+              $(Shifts, { hospitalId: match.params.uid, isManagedByMe }))))
 }
 
 const headers = map(value => ({ value, type: 'string' }), [

@@ -1,8 +1,8 @@
-import { createElement as $, useState, Fragment, createContext } from 'react'
+import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
-import entries from 'lodash/fp/entries'
-import groupBy from 'lodash/fp/groupBy'
+import filter from 'lodash/fp/filter'
 import { 
   // Subscription, 
   Query, Mutation } from '@apollo/react-components'
@@ -10,6 +10,7 @@ import { formatDate, uncappedMap } from 'utils'
 import { documentsProvisioned, volunteerShiftCount, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
+import HospitalContext from './HospitalContext'
 
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
@@ -50,9 +51,8 @@ const Shifts = ({ hospitalId, isManagedByMe }) =>
         !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
           ? null
           : $(PaddedHint, { name: 'how_confirm' })),
-    $(IsManagedByMe.Provider, { value: { isManagedByMe, hospital_id: hospitalId } },
       $(List, null,
-        map(Section, data ? data.shifts : emptyShifts)))))
+        map(Section, data ? data.shifts : emptyShifts))))
 
 const PaddedHint = styled(Hint)({
   padding: 16
@@ -79,14 +79,22 @@ const Section = ({
   shiftRequests,
   loading
 }) =>
-  $(SectionLI, { key: `${date}-${start}-${end}` },
-    $(SubheaderWithData, {
-      title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      right: !loading && `${demand - placesavailable}/${demand}`
-    }),
-    shiftRequests &&
-      map(TaskShifts, entries(groupBy('period_demand.profession.name', shiftRequests))),
-    $(Divider))
+  $(HospitalContext.Consumer, null, ({ periods }) => {
+    const period = find({ start, end}, periods)
+    
+    return $(SectionLI, { key: `${date}-${start}-${end}` },
+      $(SubheaderWithData, {
+        title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+        right: !loading && `${demand - placesavailable}/${demand}`
+      }),
+      shiftRequests && period && period.period_demands &&
+        map(periodDemand => TaskShifts({
+          demand: periodDemand.demand,
+          name: periodDemand.profession.name,
+          shifts: filter('period_demand.profession.name', shiftRequests)
+        }), period.period_demands),
+      $(Divider))})
+  
 
 const SubheaderWithData = ({ title, right, loading, position }) =>
   $(ZIndexedListSubheader, { position },
@@ -111,11 +119,16 @@ const SectionLI = styled('li')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
-const TaskShifts = ([key, shifts]) =>
-  $(Fragment, { key },
+const TaskShifts = ({
+  name,
+  demand,
+  shifts
+}) =>
+  $(Fragment, { key: name },
     $(SubheaderWithData, {
-      title: key,
-      right: `${shifts.length}/${0}`
+      title: name,
+      position: 1,
+      right: `${shifts.length}/${demand}`
     }),
     map(VolunteerShift, shifts))
 
@@ -180,7 +193,7 @@ const VolunteerShift = ({
     $(ListItemSecondaryAction, null,
       loading
         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
-        : $(IsManagedByMe.Consumer, null, ({ isManagedByMe, hospital_id }) => isManagedByMe
+        : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospital_id }) => isManagedByMe
             ? $(AdditionalControls, {
                 uid,
                 phone,
