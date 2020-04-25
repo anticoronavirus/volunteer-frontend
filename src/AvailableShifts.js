@@ -251,7 +251,7 @@ const CellPure = ({
         $(Typography, { variant: 'body2', color: 'inherit' },
           loading
             ? $(Skeleton, { width: '8ex' })
-            : placesavailable < 1
+            : placesavailable > 0
               ? formatLabel('place', placesavailable)
               : 'укомплектовано'),
         $(Box, {
