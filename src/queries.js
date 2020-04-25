@@ -49,7 +49,7 @@ query hospital($uid: uuid!) {
 
 export const professions = gql`
 {
-  professions: profession {
+  professions: profession(where: {period_demands: {uid: {_neq: null}}}) {
     uid
     name
     description
