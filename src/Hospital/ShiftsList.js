@@ -1,11 +1,21 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import without from 'lodash/fp/without'
 import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
-import { Query, Subscription, Mutation } from '@apollo/react-components'
+import { useQuery, useSubscription } from '@apollo/react-hooks'
+import { Query, Mutation } from '@apollo/react-components'
 import { formatDate, uncappedMap } from 'utils'
-import { documentsProvisioned, volunteerShiftCount, hospitalShifts, confirm, removeVolunteerShift, addToBlackList } from 'queries'
+import {
+  documentsProvisioned,
+  volunteerShiftCount,
+  hospitalShiftsSubscription,
+  hospitalShiftsQuery,
+  confirm,
+  removeVolunteerShift,
+  addToBlackList
+} from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
 import HospitalContext from './HospitalContext'
@@ -37,19 +47,19 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Shifts = ({ hospitalId, isManagedByMe }) =>
-  $(Subscription, {
-    subscription: hospitalShifts,
-    variables: { hospitalId }
-  }, ({ data }) =>
-  $(Paper, null,
+const Shifts = ({ hospitalId, isManagedByMe }) => {
+  const options = { variables: { hospitalId }}
+  const { data } = useQuery(hospitalShiftsQuery, options)
+  useSubscription(hospitalShiftsSubscription, options)
+  return $(Paper, null,
     isManagedByMe &&
       $(Query, { query: volunteerShiftCount }, ({ data }) =>
         !data || (data && !data.volunteer_shift_aggregate.aggregate.count)
           ? null
           : $(PaddedHint, { name: 'how_confirm' })),
       $(List, null,
-        map(Section, data ? data.shifts : emptyShifts))))
+        map(Section, data ? data.shifts : emptyShifts)))
+}
 
 const PaddedHint = styled(Hint)({
   padding: 16
@@ -193,17 +203,42 @@ const VolunteerShift = ({
     $(ListItemSecondaryAction, null,
       loading
         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
-        : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospital_id }) => isManagedByMe
+        : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospital_id }) => {
+          const removeVolunteerShiftMutation = {
+            mutation: removeVolunteerShift,
+            variables: { uid },
+            update: store =>
+              store.writeQuery({
+                query: hospitalShiftsQuery,
+                variables: { hospitalId: hospital_id },
+                data: {
+                  shifts: map(shift => ({
+                      ...shift,
+                      shiftRequests: filter(request => request.uid !== uid, shift.shiftRequests),
+                    }),
+                    store.readQuery({
+                      query: hospitalShiftsQuery,
+                      variables: { hospitalId: hospital_id }}).shifts)}}),
+            optimisitcResponse: {
+              delete_volunteer_shift: {
+                affected_rows: 1,
+                __typename: "volunteer_shift_mutation_response"
+              }
+            }
+          }
+          return isManagedByMe
             ? $(AdditionalControls, {
-                uid,
-                phone,
-                volunteer_id,
-                hospital_id,
-                hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
-            : $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
+              uid,
+              phone,
+              volunteer_id,
+              hospital_id,
+              removeVolunteerShiftMutation,
+              hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
+            : $(Mutation, removeVolunteerShiftMutation, mutate =>
                 $(IconButton, { onClick: mutate },
-                  $(Delete, { fontSize: 'small' }))))))
-
+                  $(Delete, { fontSize: 'small' })))
+        })))
+                  
 const CustomButtonBase = styled(ButtonBase)({
   borderRadius: '50%',
 })
@@ -220,7 +255,14 @@ const confirmedFragment = gql`
     confirmed,
 }`
 
-const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id, hasDocumentsProvisioned }) => {
+const AdditionalControls = ({
+  uid,
+  phone,
+  volunteer_id,
+  hospital_id,
+  removeVolunteerShiftMutation,
+  hasDocumentsProvisioned
+}) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
 
@@ -234,7 +276,7 @@ const AdditionalControls = ({ uid, phone, volunteer_id, hospital_id, hasDocument
       $(MenuItem, { component: 'a', href: `tel:${phone}`},
         $(ListItemIcon, null, $(Phone, { fontSize: 'small' })),
         $(Typography, { variant: 'inherit' }, 'Позвонить')),
-      $(Mutation, { mutation: removeVolunteerShift, variables: { uid } }, mutate =>
+      $(Mutation, removeVolunteerShiftMutation, mutate =>
         $(MenuItem, { onClick: mutate },
           $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
