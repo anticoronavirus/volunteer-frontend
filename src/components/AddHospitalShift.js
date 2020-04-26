@@ -89,7 +89,7 @@ const AddHospitalShift = ({ uid }) => {
       $(DialogTitle, null, 'Новая смена'),
       $(DialogContent, null,
         $(Typography, { variant: 'caption' }, 'Начало смены'),
-        $(Box, { overflow: 'scroll', maxWidth: 420 },
+        $(Box, { overflow: 'scroll' },
           $(ToggleButtonGroup, {
             size: 'small',
             exclusive: true,
@@ -100,7 +100,7 @@ const AddHospitalShift = ({ uid }) => {
         start !== null &&
           $(Typography, { variant: 'caption' }, 'Конец смены'),
         start !== null &&
-          $(Box, { overflow: 'scroll', maxWidth: 420 },
+          $(Box, { overflow: 'scroll' },
             $(ToggleButtonGroup, {
               size: 'small',
               exclusive: true,
