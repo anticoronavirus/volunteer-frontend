@@ -219,43 +219,56 @@ subscription shiftsSubscription($hospitalId: uuid $userId: uuid $taskId: _uuid) 
 }
 ${shiftFragment}`
 
-export const hospitalShifts = gql`
-subscription shifts($hospitalId: uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+const hospitalShiftFragment = gql`
+fragment hospitalShiftFragment on vshift {
+  date
+  start
+  end
+  placesavailable
+  demand
+  shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
+    uid
     date
     start
     end
-    placesavailable
-    demand
-    shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
-      uid
-      date
-      start
-      end
-      hospital_id
-      confirmed
-      period_demand {
-        profession {
-          name
-        }
+    hospital_id
+    confirmed
+    period_demand {
+      profession {
+        name
       }
-      volunteer {
-        uid
-        fname
-        lname
-        fname
-        phone
-        profession
-        provisioned_documents_aggregate {
-          aggregate {
-            count
-          }
+    }
+    volunteer {
+      uid
+      fname
+      lname
+      fname
+      phone
+      profession
+      provisioned_documents_aggregate {
+        aggregate {
+          count
         }
       }
     }
   }
+}`
+
+export const hospitalShiftsSubscription = gql`
+subscription shifts($hospitalId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+    ...hospitalShiftFragment
+  }
 }
-`
+${hospitalShiftFragment}`
+
+export const hospitalShiftsQuery = gql`
+query shifts($hospitalId: uuid) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId }) {
+    ...hospitalShiftFragment
+  }
+}
+${hospitalShiftFragment}`
 
 export const documentsProvisioned = gql`
 mutation documentsProvisioned(
