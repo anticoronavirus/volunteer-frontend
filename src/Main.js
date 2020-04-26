@@ -76,6 +76,15 @@ const Main = ({ history }) => {
       $(Box, { marginRight: 2 },
         $(MultipleSelector, {
           query: professions,
+          variables: {
+            where: {
+              period_demands: {
+                uid: {
+                  _neq: null
+                }
+              }
+            }
+          },
           path: 'professions',
           label: 'Задача',
           Option: TaskOption,

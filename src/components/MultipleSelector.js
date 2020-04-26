@@ -16,13 +16,14 @@ const MultipleSelector = ({
   query,
   label,
   emptyLabel,
+  variables,
   path,
   getOptionLabel,
   getOptionValue,
   defaultValue,
   ...rest
 }) =>
-  $(Query, { query }, ({ data, loading }) => {
+  $(Query, { query, variables }, ({ data, loading }) => {
 
     let options = get(path, data)
     if (options && defaultValue)
