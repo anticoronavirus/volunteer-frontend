@@ -265,6 +265,11 @@ const AdditionalControls = ({
 }) => {
 
   const [anchorEl, setAnchorEl] = useState(null)
+  const [disabled, setLoading] = useState(false)
+  const withLoading = mutate => () => {
+    setLoading(true)
+    mutate().then(() => setLoading(false))
+  }
 
   return $(Fragment, null,
     $(IconButton, { edge: 'end', onClick: event => setAnchorEl(event.currentTarget) },
@@ -273,20 +278,20 @@ const AdditionalControls = ({
       anchorEl,
       onClose: () => setAnchorEl(null),
       open: Boolean(anchorEl) },
-      $(MenuItem, { component: 'a', href: `tel:${phone}`},
+      $(MenuItem, { disabled, component: 'a', href: `tel:${phone}`},
         $(ListItemIcon, null, $(Phone, { fontSize: 'small' })),
         $(Typography, { variant: 'inherit' }, 'Позвонить')),
       $(Mutation, removeVolunteerShiftMutation, mutate =>
-        $(MenuItem, { onClick: mutate },
+        $(MenuItem, { disabled, onClick: withLoading(mutate) },
           $(ListItemIcon, null, $(Delete, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'Удалить из смены'))),
       $(Mutation, { mutation: addToBlackList, variables: { uid: volunteer_id, comment: 'прст' } }, mutate =>  
-        $(MenuItem, { onClick: mutate },
+        $(MenuItem, { disabled, onClick: withLoading(mutate) },
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'В черный список'))),
       !hasDocumentsProvisioned &&
         $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId: hospital_id  } }, mutate =>  
-          $(MenuItem, { onClick: mutate },
+          $(MenuItem, { disabled, onClick: withLoading(mutate) },
             $(ListItemIcon, null, $(NoteAdd, { fontSize: 'small' })),
             $(Typography, { variant: 'inherit' }, 'Документы предоставлены')))))
 }
