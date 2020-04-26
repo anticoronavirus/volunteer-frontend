@@ -5,6 +5,7 @@ import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
 import { useQuery, useMutation } from '@apollo/react-hooks'
+import { Query } from '@apollo/react-components'
 import { addShift, professions as professionsQuery } from 'queries'
 
 import Box from '@material-ui/core/Box'
@@ -81,7 +82,31 @@ const AddHospitalShift = ({ uid }) => {
     }
   })
 
-  return $(Fragment, null,
+  return $(HospitalShift, {
+    open,
+    setOpen,
+    fullScreen,
+    start,
+    setStart,
+    end,
+    setEnd,
+    demands,
+    onSave: console.log
+  })
+}
+
+const HospitalShift = ({
+  open,
+  setOpen,
+  fullScreen,
+  start,
+  setStart,
+  end,
+  setEnd,
+  demands,
+  onSave
+}) =>
+  $(Fragment, null,
     $(Dialog, {
       open,
       fullScreen,
@@ -110,25 +135,25 @@ const AddHospitalShift = ({ uid }) => {
         $(Box, { height: 16 }),
         !!end &&
           $(Typography, { variant: 'caption' }, 'Задачи, помечена работа в карантинной зоне'),
-        !!end && data &&
-          map(Demand(demands), data.professions)),
+        $(Query, { query: professionsQuery }, ({ data }) =>
+          !!start && !!end && data &&
+            map(Demand(demands), data.professions))),
       $(DialogActions, null,
         $(Button, { onClick: () => setOpen(false) }, 'Закрыть'),
         $(Button, {
-          disabled: !start === null || !end === null || isEmpty(demands[0]),
-          onClick: () => { setOpen(false); mutate().then() }}, 'Добавить'))),
+          disabled: start === null || end === null || isEmpty(demands[0]),
+          onClick: () => { setOpen(false); onSave() }}, 'Добавить'))),
     $(ListItem, { button: true, onClick: () => setOpen(true) },
       $(ListItemIcon, null,
         $(Add)),
       $(ListItemText, {
         primary: 'Добавить смену'
       })))
-}
 
 const Demand = ([
   demands,
   onChange
-])=>({
+]) => ({
   uid,
   name,
   dangerous
