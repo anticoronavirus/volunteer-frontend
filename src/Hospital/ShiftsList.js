@@ -1,6 +1,5 @@
 import { createElement as $, useState, Fragment } from 'react'
 import map from 'lodash/fp/map'
-import without from 'lodash/fp/without'
 import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
