@@ -224,13 +224,13 @@ const CellPure = ({
         : orange[300],
     }
   },
-    $(ButtonBase, { onClick: toggleShift, disabled: updating || loading || (!myShift && !placesavailable) },
+    $(ButtonBase, { onClick: toggleShift, disabled: updating || loading || (!myShift && placesavailable < 1 ) },
       $(Box, {
         width: 148,
         padding: 2,
         textAlign: 'left',
         style: {
-          opacity: !myShift && !placesavailable && .4,
+          opacity: !myShift && placesavailable < 1 && .4,
           color: myShift && 'white',
           backgroundColor: !myShift
             ? 'inherit'
