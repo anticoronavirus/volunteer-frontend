@@ -7,7 +7,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 // import Box from '@material-ui/core/Box'
 
 const HospitalOption = ({ onClick, ...hospital }) =>
-  $(ListItem, { button: true, key: hospital.uid, value: hospital.uid, onClick },
+  $(ListItem, { button: true, key: hospital.uid || '', value: hospital.uid, onClick },
     $(ListItemText, {
       primary: hospital.shortname,
       secondary: hospital.address && hospital.address.split(', ').slice(2).join(', ') }))

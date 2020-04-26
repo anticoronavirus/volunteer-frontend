@@ -85,7 +85,7 @@ const Section = ({
   shiftRequests,
   loading
 }) =>
-  $(HospitalContext.Consumer, null, ({ periods }) => {
+  $(HospitalContext.Consumer, { key: date + start + end }, ({ periods }) => {
     const period = find({ start, end}, periods)
     
     return $(SectionLI, { key: `${date}-${start}-${end}` },
@@ -124,7 +124,7 @@ const ZIndexedListSubheader = styled(ListSubheader)(
   top: 48 * position,
 }))
 
-const SectionLI = styled('li')(({ theme }) => ({
+const SectionLI = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
@@ -218,7 +218,7 @@ const VolunteerShift = ({
                     store.readQuery({
                       query: hospitalShiftsQuery,
                       variables: { hospitalId: hospital_id }}).shifts)}}),
-            optimisitcResponse: {
+            optimisticResponse: {
               delete_volunteer_shift: {
                 affected_rows: 1,
                 __typename: "volunteer_shift_mutation_response"
