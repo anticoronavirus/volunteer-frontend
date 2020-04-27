@@ -33,6 +33,7 @@ query hospital($uid: uuid!) {
         uid
         demand
         profession {
+          uid
           name
         }
       }
@@ -234,6 +235,7 @@ fragment hospitalShiftFragment on vshift {
     hospital_id
     confirmed
     period_demand {
+      uid
       profession {
         name
       }
@@ -416,6 +418,37 @@ mutation removeShift($uid: uuid!) {
           demand
         }
       }
+    }
+  }
+}`
+
+export const updatePeriodDemand = gql`
+mutation updatePeriodDemand($uid: uuid! $periodDemands: [period_demand_insert_input!]!) {
+  delete_period_demand(where: { period_id: { _eq: $uid }}) {
+    affected_rows
+  }
+  insert_period_demand(objects: $periodDemands) {
+    affected_rows
+    returning {
+      uid
+      demand
+      profession {
+        uid
+        name
+      }
+    }
+  }
+}
+`
+
+export const periodFragment = gql`
+fragment period on period {
+  period_demands {
+    uid
+    demand
+    profession {
+      uid
+      name
     }
   }
 }`

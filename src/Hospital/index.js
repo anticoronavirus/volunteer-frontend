@@ -1,4 +1,4 @@
-import { createElement as $ } from 'react'
+import { createElement as $, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import merge from 'lodash/fp/merge'
@@ -13,7 +13,7 @@ import { hospital, removeShift, exportShifts } from 'queries'
 // import { formatLabel } from 'utils'
 import Shifts from './ShiftsList'
 import Back from 'components/Back'
-import AddHospitalShift from 'components/AddHospitalShift'
+import { AddHospitalShift, EditHospitalShift } from 'components/HospitalShift'
 import HowToGet from 'components/HowToGet'
 import generateXlsx from 'zipcelx'
 import HospitalContext from './HospitalContext'
@@ -91,7 +91,7 @@ const Hospital = ({
                       : 'Нет доступных смен'),
                   map(
                     isManagedByMe
-                      ? HospitalShiftDeletable
+                      ? HospitalShiftManaged
                       : HospitalShift,
                     sortBy('start', data.hospital.periods)),
                   data && isManagedByMe &&
@@ -154,21 +154,28 @@ const HospitalShift = ({
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       secondary: map(Demand, period_demands).join(', ')}))
 
-const HospitalShiftDeletable = ({
+const HospitalShiftManaged = data => 
+  $(HospitalShiftManagedWithState, data)
+
+const HospitalShiftManagedWithState = ({
   uid,
   start,
   end,
-  demand,
   period_demands
-}) =>
-  $(Mutation, { key: uid, mutation: removeShift }, mutate =>
-    $(ListItem, null,
-      $(ListItemText, {
-        primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-        secondary: map(Demand, period_demands).join(', ')}),
-      $(ListItemSecondaryAction, null,
-        $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
-          $(Delete, { fontSize: 'small'})))))
+}) => {
+  const [open, setOpen] = useState(false)
+  return $(Fragment, null,
+    open &&
+      $(EditHospitalShift, { uid, start, end, period_demands, open, setOpen }),
+    $(Mutation, { key: uid, mutation: removeShift }, mutate =>
+      $(ListItem, { button: true, onClick: () => setOpen(true) },
+        $(ListItemText, {
+          primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+          secondary: map(Demand, period_demands).join(', ')}),
+        $(ListItemSecondaryAction, null,
+          $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
+            $(Delete, { fontSize: 'small'}))))))
+}
 
 const Demand = ({ demand, profession: { name } }) =>
   `${name}: ${demand}`

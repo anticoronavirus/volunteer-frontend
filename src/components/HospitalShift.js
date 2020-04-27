@@ -1,12 +1,14 @@
 import { createElement as $, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
+import set from 'lodash/fp/set'
+import reduce from 'lodash/fp/reduce'
 import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
-import { useQuery, useMutation } from '@apollo/react-hooks'
+import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
-import { addShift, professions as professionsQuery } from 'queries'
+import { addShift, updatePeriodDemand, professions as professionsQuery, periodFragment } from 'queries'
 
 import Box from '@material-ui/core/Box'
 import ListItem from '@material-ui/core/ListItem'
@@ -26,16 +28,15 @@ import Add from '@material-ui/icons/Add'
 // import yellow from '@material-ui/core/colors/yellow'
 // import Warning from '@material-ui/icons/Warning'
 
-const AddHospitalShift = ({ uid }) => {
-
+export const AddHospitalShift = ({ uid }) => {
+  
   const [open, setOpen] = useState(false)
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const [start, setStart] = useState(null)
   const [end, setEnd] = useState(null)
   const demands = useState({})
-  const { data } = useQuery(professionsQuery)
 
-  const theme = useTheme()
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [mutate] = useMutation(addShift, {
     // FIXME optimistic response does not work
@@ -82,18 +83,81 @@ const AddHospitalShift = ({ uid }) => {
     }
   })
 
+  return $(Fragment, null,
+    $(HospitalShift, {
+      open,
+      setOpen,
+      fullScreen,
+      start,
+      setStart,
+      end,
+      setEnd,
+      demands,
+      onSave: mutate
+    }),
+    $(ListItem, { button: true, onClick: () => setOpen(true) },
+      $(ListItemIcon, null, $(Add)),
+      $(ListItemText, {
+        primary: 'Добавить смену'
+      })))
+}
+
+export const EditHospitalShift = ({
+  open,
+  setOpen,
+  ...data
+}) => {
+
+  const theme = useTheme()
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const demands = useState(reduce(demandsReducer, {}, data.period_demands))
+  const [updateDemand] = useMutation(updatePeriodDemand, {
+    variables: {
+      uid: data.uid,
+      periodDemands: map(([key, value]) => ({
+        period_id: data.uid,
+        profession_id: key,
+        demand: value
+      }), entries(demands[0]))
+    },
+    optimisticResponse: {
+      insert_period_demand: {
+        returning: {
+          period_demands: map(([key, value]) => ({
+            uid: Math.random(),
+            demand: value,
+            profession: {
+              uid: Math.random(),
+              name: 'test'
+            }
+          }), entries(demands[0]))
+        }
+      }
+    },
+    update: (cache, { data: { insert_period_demand } }) => cache.writeFragment({
+      id: data.uid,
+      fragment: periodFragment,
+      data: {
+        period_demands: insert_period_demand.returning
+      }
+    })
+  })
+
   return $(HospitalShift, {
     open,
     setOpen,
-    fullScreen,
-    start,
-    setStart,
-    end,
-    setEnd,
     demands,
-    onSave: console.log
+    fullScreen,
+    start: parseInt(data.start.slice(0, 2), 10),
+    end: parseInt(data.end.slice(0, 2), 10),
+    setEnd: console.log,
+    setStart: console.log,
+    onSave: updateDemand
   })
 }
+
+const demandsReducer = (result, { profession, demand }) =>
+  set(profession.uid, demand, result)
 
 const HospitalShift = ({
   open,
@@ -106,49 +170,44 @@ const HospitalShift = ({
   demands,
   onSave
 }) =>
-  $(Fragment, null,
-    $(Dialog, {
-      open,
-      fullScreen,
-      onClose: () => setOpen(false) },
-      $(DialogTitle, null, 'Новая смена'),
-      $(DialogContent, null,
-        $(Typography, { variant: 'caption' }, 'Начало смены'),
+  $(Dialog, {
+    open,
+    fullScreen,
+    onClose: () => setOpen(false) },
+    $(DialogTitle, null, 'Новая смена'),
+    $(DialogContent, null,
+      $(Typography, { variant: 'caption' }, 'Начало смены'),
+      $(Box, { overflow: 'scroll' },
+        $(ToggleButtonGroup, {
+          size: 'small',
+          exclusive: true,
+          value: start,
+          onChange: (event, value) => setStart(value) },
+          map(RangeButton, range(0, 23)))),
+      $(Box, { height: 16 }),
+      start !== null &&
+        $(Typography, { variant: 'caption' }, 'Конец смены'),
+      start !== null &&
         $(Box, { overflow: 'scroll' },
           $(ToggleButtonGroup, {
             size: 'small',
             exclusive: true,
-            value: start,
-            onChange: (event, value) => setStart(value) },
-            map(RangeButton, range(0, 23)))),
-        $(Box, { height: 16 }),
-        start !== null &&
-          $(Typography, { variant: 'caption' }, 'Конец смены'),
-        start !== null &&
-          $(Box, { overflow: 'scroll' },
-            $(ToggleButtonGroup, {
-              size: 'small',
-              exclusive: true,
-              value: end,
-              onChange: (event, value) => setEnd(value) },
-              map(RangeButton, range(start + 4, start + 2 + 24)))),
-        $(Box, { height: 16 }),
-        !!end &&
-          $(Typography, { variant: 'caption' }, 'Задачи, помечена работа в карантинной зоне'),
-        $(Query, { query: professionsQuery }, ({ data }) =>
-          !!start && !!end && data &&
-            map(Demand(demands), data.professions))),
-      $(DialogActions, null,
-        $(Button, { onClick: () => setOpen(false) }, 'Закрыть'),
+            value: end,
+            onChange: (event, value) => setEnd(value) },
+            map(RangeButton, range(start + 4, start + 2 + 24)))),
+      $(Box, { height: 16 }),
+      !!end &&
+        $(Typography, { variant: 'caption' }, 'Задачи, помечена работа в карантинной зоне'),
+      $(Query, { query: professionsQuery }, ({ data }) =>
+        (!!start && !!end && data)
+          ? map(Demand(demands), data.professions)
+          : null)),
+    $(DialogActions, null,
+      $(Button, { onClick: () => setOpen(false) }, 'Закрыть'),
+      onSave &&
         $(Button, {
           disabled: start === null || end === null || isEmpty(demands[0]),
-          onClick: () => { setOpen(false); onSave() }}, 'Добавить'))),
-    $(ListItem, { button: true, onClick: () => setOpen(true) },
-      $(ListItemIcon, null,
-        $(Add)),
-      $(ListItemText, {
-        primary: 'Добавить смену'
-      })))
+          onClick: () => { setOpen(false); onSave() }}, 'Добавить')))
 
 const Demand = ([
   demands,
