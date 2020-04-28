@@ -6,7 +6,7 @@ import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
 import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
-import { useQuery, useMutation, useApolloClient } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
 import { addShift, updatePeriodDemand, professions as professionsQuery, periodFragment } from 'queries'
 

@@ -377,6 +377,7 @@ query periodDemandsByHospital(
     }
   }) {
     uid
+    notabene
     profession {
       uid
       name
