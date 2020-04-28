@@ -1,4 +1,4 @@
-import { createElement as $ } from 'react'
+import { createElement as $, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
 import { Subscription, Mutation } from '@apollo/react-components'
@@ -15,10 +15,11 @@ import { requiredProfileFields, formatDate } from 'utils'
 import map from 'lodash/fp/map'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 import Box from '@material-ui/core/Box'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListSubheader from '@material-ui/core/ListSubheader'
 import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import Avatar from '@material-ui/core/Avatar'
@@ -29,6 +30,8 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
+import CheckCircle from '@material-ui/icons/CheckCircle'
+import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 // import ToggleButton from '@material-ui/lab/ToggleButton'
@@ -128,19 +131,53 @@ const ProfilePure = data =>  {
                     }, 'Сохранить')
                   : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))),
     $(Box, { maxWidth: '60ex' },
+      $(ShiftsAndRequests)
       // $(Paper, null,
       //   $(Query, { query: professions }, ({ data }) =>
       //     !data
       //       ? $(CircularProgress)
       //       : map(Profession, data.professions))),
       // $(Box, { height: 16 }),
-      $(Subscription, { subscription: myShifts }, ({ data }) =>
-      $(Paper, null, 
-        data &&
-          $(List, null,
-            $(ListSubheader, { disableSticky: true }, 'Мои смены'),
-            map(MyShift, data.volunteer_shift))))))
+                ))
 }
+
+const ShiftsAndRequests = () => {
+  const [tab, setTab] = useState('schedule')
+  return $(Paper, null, 
+    $(Tabs, { value: tab, onChange: (event, value) => setTab(value) },
+      $(Tab, { value: 'schedule', label: 'Смены' }),
+      $(Tab, { value: 'requests', label: 'Заявки' })),
+      tab === 'requests' && // FIXME add real data
+        $(List, null,
+          map(ShiftRequest, [1])),
+      tab === 'schedule' &&
+        $(Subscription, { subscription: myShifts }, ({ data }) =>
+          !data ? $(CircularProgress) :
+            $(List, null,
+              map(MyShift, data.volunteer_shift))))
+}
+
+const ShiftRequest = ({
+  uid,
+  hospital = { name: 'ГКБ №64' },
+  profession = { name: 'Санитар' },
+  requirements = [{
+    name: 'Медицинская книжка',
+    confirmed: true
+  },{
+    name: 'Трудовой договор',
+    confirmed: false
+  }]
+}) =>
+  $(ListItem, { key: uid },
+    $(ListItemText, {
+      primary: `${profession.name} в ${hospital.name}`,
+      secondary: $(Box, null,
+        map(Requirement, requirements))}))
+
+const Requirement = ({ name, confirmed }) =>
+  $(Box, { display: 'flex', alignItems: 'center', margin: '8px 0' },
+    $(confirmed ? CheckCircle : RemoveCircleOutline, { fontSize: 'small' }), $(Box, { marginLeft: 1 }, name))
 
 // const Profession = ({ uid, name, dangerous }) =>
 //   $(ListItem, null,
