@@ -333,7 +333,6 @@ export const filteredShiftData = gql`
 query filteredHospitals(
   $start: timetz
   $end: timetz
-  $hospitalId: uuid
 ) {
   hospitals: hospital(where: {
     shortname: { _neq: "Коммунарка" } ## FIXME
@@ -345,12 +344,36 @@ query filteredHospitals(
     shortname
     address
   }
+  # period_demand (where: {
+  #   demand: { _gte: 0 }
+  #   period: {
+  #     hospital_id: { _eq: $hospitalId }
+  #     start: { _eq: $start }
+  #     end: { _eq: $end }
+  #   }
+  # }) {
+  #   uid
+  #   profession {
+  #     uid
+  #     name
+  #     dangerous
+  #     description
+  #     requirements
+  #   }
+  # }
+}`
+
+export const periodDemandsByHospital = gql`
+query periodDemandsByHospital(
+  $start: timetz!
+  $end: timetz!
+  $hospitalId: uuid!
+) {
   period_demand (where: {
-    demand: { _gte: 0 }
     period: {
-      hospital_id: { _eq: $hospitalId }
       start: { _eq: $start }
       end: { _eq: $end }
+      hospital_id: { _eq: $hospitalId }
     }
   }) {
     uid
@@ -361,8 +384,9 @@ query filteredHospitals(
       description
       requirements
     }
-  }
-}`
+}
+}
+`
 
 export const submitPhone = gql`
   mutation submitPhone($phone: String) {

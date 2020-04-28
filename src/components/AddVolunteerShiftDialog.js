@@ -1,6 +1,7 @@
 import { createElement as $, useState, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { filteredShiftData } from 'queries'
+import { Query } from '@apollo/react-components'
+import { filteredShiftData, periodDemandsByHospital } from 'queries'
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
@@ -27,15 +28,8 @@ const AddVolunteerShiftDialog = ({
   const [hospitalId, setHospitalId] = useState(null)
 
   const { data } = useQuery(filteredShiftData, {
-    variables: { start, end, hospitalId },
-    skip: !open
+    variables: { start, end },
   })
-
-  useEffect(() => {
-    data && data.hospitals.length === 1 &&
-      setHospitalId(data.hospitals[0].uid)
-  }, [data])
-
 
   const theme = useTheme()
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
@@ -58,11 +52,12 @@ const AddVolunteerShiftDialog = ({
         data && hospitalId &&
           $(ListSubheader, null, 'Выберите задачу'),
         data && hospitalId &&
-          map(({ uid, profession }) =>
-            TaskOption({
-              onClick: () => onAdd(hospitalId, uid),
-              ...profession}),
-            data.period_demand)),
+          $(Query, { query: periodDemandsByHospital, variables: { start, end, hospitalId }}, ({ data }) =>
+            map(({ uid, profession }) =>
+              TaskOption({
+                onClick: () => onAdd(hospitalId, uid),
+                ...profession}),
+              data && data.period_demand))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена')))
 }
