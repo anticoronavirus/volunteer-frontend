@@ -144,7 +144,7 @@ const ProfilePure = data =>  {
 const ShiftsAndRequests = () => {
   const [tab, setTab] = useState('schedule')
   return $(Paper, null, 
-    $(Tabs, { value: tab, onChange: (event, value) => setTab(value) },
+    $(Tabs, { variant: 'fullWidth', value: tab, onChange: (event, value) => setTab(value) },
       $(Tab, { value: 'schedule', label: 'Смены' }),
       $(Tab, { value: 'requests', label: 'Заявки' })),
       tab === 'requests' && // FIXME add real data

@@ -5,6 +5,7 @@ import { filteredShiftData, periodDemandsByHospital } from 'queries'
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
+import { useSnackbar } from 'notistack'
 
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -28,6 +29,7 @@ const AddVolunteerShiftDialog = ({
 
   const [hospitalId, setHospitalId] = useState(null)
   const [professionWithRequirements, setProfessionWithRequirements] = useState(null)
+  const { enqueueSnackbar } = useSnackbar()
 
   const { data } = useQuery(filteredShiftData, {
     variables: { start, end },
@@ -74,7 +76,10 @@ const AddVolunteerShiftDialog = ({
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       professionWithRequirements &&
-        $(Button, { onClick: onClose }, 'Оставить заявку ')))
+        $(Button, { onClick: () => {
+          enqueueSnackbar('Вы можете отследить статус заявки в своём профиле')
+          onClose()
+        } }, 'Оставить заявку ')))
 }
 
 const ConfirmRequest = ({
