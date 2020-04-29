@@ -52,7 +52,7 @@ const Shifts = () => {
   const options = { variables: { hospitalId }}
   const { data } = useQuery(hospitalShiftsQuery, options)
   useSubscription(hospitalShiftsSubscription, options)
-
+  
   return $(Paper, null,
     isManagedByMe &&
       $(Query, { query: volunteerShiftCount }, ({ data }) =>

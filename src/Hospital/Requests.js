@@ -21,10 +21,17 @@ const Requests = () => {
   const { data = {
     requests: [{
       uid: 'test',
+      // profession_id ->
+      profession: {
+        uid: 'test',
+        name: 'Санитар'
+      },
+      // volunteer_id ->
       volunteer: {
         uid: 'test',
         name: 'geh'
       },
+      // hospital_id + profession_id ->
       requirements: [{
         uid: 'rest',
         name: 'geh',

@@ -38,8 +38,6 @@ const Hospital = ({
 
   const isDesktop = useIsDesktop()
 
-  console.log('test')
-
   return $(Box, null,
     $(Paper, null, 
       $(Box, isDesktop && { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
