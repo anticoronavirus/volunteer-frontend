@@ -77,7 +77,7 @@ const ProfilePure = data =>  {
               car: '',
               licenceplate: ''
             },
-            validateOnBlur: false,
+            // validateOnBlur: false,
             validateOnMount: true,
             onSubmit: variables =>
               mutate({ variables: requiredProfileFields(variables) })
@@ -140,7 +140,7 @@ const ProfilePure = data =>  {
                   component: TextField,
                   name: 'licenceplate',
                   label: 'Номер машины',
-                  validate: value => value.match('_') && 'Заполните номер целиком, ключая регион',
+                  validate: value => value !== '_ ___ __ __' && value.match('_') && 'Заполните номер целиком, ключая регион',
                   margin: 'normal',
                   fullWidth: true,
                   variant: 'outlined',
@@ -154,7 +154,7 @@ const ProfilePure = data =>  {
                       variant: 'outlined',
                       fullWidth: true,
                     }, 'Сохранить')
-                  : $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))),
+                  : $(Box, { padding: '8px 0' }, $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля'))))))),
     $(Box, { maxWidth: '60ex' },
       $(ShiftsAndRequests)
       // $(Paper, null,
@@ -185,6 +185,10 @@ const ShiftsAndRequests = () => {
 const LicensePlate = other =>
   $(MaskedInput, {
     ...other,
+    onChange: event => {
+      event.target.value = event.target.value.toUpperCase()
+      other.onChange(event)
+    },
     formatChars: {
       'A': '[АВЕКМНОРСТУХаверкмнорстух]',
       '9': '[0-9]'
