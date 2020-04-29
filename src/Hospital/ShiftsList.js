@@ -1,4 +1,4 @@
-import { createElement as $, useState, Fragment } from 'react'
+import { createElement as $, useState, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
@@ -46,10 +46,13 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Shifts = ({ hospitalId, isManagedByMe }) => {
+const Shifts = () => {
+
+  const { hospitalId, isManagedByMe } = useContext(HospitalContext)
   const options = { variables: { hospitalId }}
   const { data } = useQuery(hospitalShiftsQuery, options)
   useSubscription(hospitalShiftsSubscription, options)
+
   return $(Paper, null,
     isManagedByMe &&
       $(Query, { query: volunteerShiftCount }, ({ data }) =>

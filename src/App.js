@@ -30,11 +30,11 @@ const App = () => {
           type: prefersDarkMode ? 'dark' : 'light',
         },
       }),
-    [prefersDarkMode],
-  )
+    [prefersDarkMode])
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
+    !loading &&
     $(SnackbarProvider, { maxSnack: 3 },
       $(WithFooter, null,
         $(Switch, null,

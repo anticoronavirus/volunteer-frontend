@@ -34,7 +34,6 @@ import Skeleton from '@material-ui/lab/Skeleton'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 import PersonAddDisabled from '@material-ui/icons/PersonAddDisabled'
 import Delete from '@material-ui/icons/Delete'
-import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const Hospital = ({
   match
