@@ -18,6 +18,7 @@ import Box from '@material-ui/core/Box'
 import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { styled } from '@material-ui/core/styles'
 
 const Hospital = ({
   match,
@@ -41,9 +42,12 @@ const Hospital = ({
     $(Paper, null, 
       $(Box, { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
         $(Box, { padding: 3 },
-          $(Typography, { variant: 'h4' }, loading
-            ? $(Skeleton, { variant: 'text', width: '10ex'})
-            : data.hospital.shortname)),
+          $(Typography, { variant: 'h4', align: 'center' }, loading
+            ? $(CustomSkeleton, { width: '6ex'})
+            : data.hospital.shortname),
+          $(Typography, { variant: 'subtitle2', align: 'center' }, loading
+            ? $(CustomSkeleton, { width: '50ex'})
+            : data.hospital.name)),
         $(Tabs, {
           variant: 'scrollable',
           value: match.params.page || '',
@@ -90,5 +94,9 @@ const tabs = {
 }
 
 const tabsArray = entries(tabs)
+
+const CustomSkeleton = styled(Skeleton)({
+  display: 'inline-block'
+})
 
 export default Hospital
