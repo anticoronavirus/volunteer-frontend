@@ -2,6 +2,7 @@ import { createElement as $, Fragment, useState, useRef, useEffect } from 'react
 import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
+import find from 'lodash/fp/find'
 // import set from 'lodash/fp/set'
 // import reduce from 'lodash/fp/reduce'
 // import isEmpty from 'lodash/fp/isEmpty'
@@ -103,7 +104,7 @@ export const HospitalShift = ({
           variant: 'outlined',
           fullWidth: true,
           multiline: true,
-          placeholder: 'Уточнённое описание'
+          placeholder: find({ uid: professionId }, data.professions).description
         }))),
     professionId &&
     $(Box, { marginTop: 3 },
