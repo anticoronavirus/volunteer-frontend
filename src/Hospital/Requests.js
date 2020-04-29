@@ -13,7 +13,7 @@ const Requests = () => {
   const { data = {
     requests: [{
       uid: 'test',
-      volunter: {
+      volunteer: {
         uid: 'test',
         name: 'geh'
       }

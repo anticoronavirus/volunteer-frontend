@@ -44,7 +44,7 @@ const App = () => {
           !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
             $(Redirect, { to: '/profile' }),
           $(Route, { path: '/login', component: Login }),
-          $(Route, { path: '/hospitals/:uid', component: Hospital }),
+          $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
           $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
