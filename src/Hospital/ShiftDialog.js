@@ -1,6 +1,7 @@
-import { createElement as $, Fragment, useState } from 'react'
+import { createElement as $, Fragment, useState, useRef, useEffect } from 'react'
 import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
+import noop from 'lodash/fp/noop'
 import set from 'lodash/fp/set'
 import reduce from 'lodash/fp/reduce'
 import isEmpty from 'lodash/fp/isEmpty'
@@ -9,14 +10,17 @@ import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
 import { useMutation } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
+import { useQuery } from '@apollo/react-hooks'
 import { addShift, updatePeriodDemand, professions as professionsQuery, periodFragment } from 'queries'
 
 import Box from '@material-ui/core/Box'
 import ListItem from '@material-ui/core/ListItem'
+import Select from '@material-ui/core/Select'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
+import TextField from '@material-ui/core/TextField'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
@@ -32,17 +36,30 @@ import { styled } from '@material-ui/core/styles'
 
 export const HospitalShift = ({
   uid,
-  ...data
+  ...values
 }) => {
+
   const fullScreen = useIsDesktop()
-  const [start, setStart] = useState(data.start)
-  const [end, setEnd] = useState(data.end)
+  const [start, setStart] = useState(values.start)
+  const [end, setEnd] = useState(values.end)
+  const [professionId, setProfessionId] = useState(values.professionId)
+  const startRef = useRef(null)
+  const { data } = useQuery(professionsQuery)
+  // const endRef = useRef(null)
+
+  useEffect(() => {
+    startRef && startRef.current &&
+      startRef.current.scrollTo((start * 38) + 24, 0)
+    // endRef && endRef.current &&
+    // endRef.current.scrollTo((end - start) * 38, 0)
+    return noop
+  })
   
   return $(Dialog, { open: true, fullScreen: !fullScreen },
     $(DialogTitle, null, 'Добавление смены'),
-    $(Box, { marginTop: 2 },
+    $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Начало смены'),
-    $(Box, { overflow: 'scroll', display: 'flex', },
+    $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
       $(Box, { minWidth: 24 }),
       $(ToggleButtonGroup, {
         size: 'small',
@@ -52,19 +69,50 @@ export const HospitalShift = ({
         map(RangeButton, range(0, 23))),
       $(Box, { minWidth: 24 }))),
     start !== undefined &&
-    $(Box, { marginTop: 2 },
+    $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Конец смены'),
-      $(Box, { overflow: 'scroll', display: 'flex', },
+      $(Box, { overflow: 'scroll', display: 'flex' },
         $(Box, { minWidth: 24 }),
         $(ToggleButtonGroup, {
           size: 'small',
           exclusive: true,
           value: end,
           onChange: (event, value) => setEnd(value) },
-          map(RangeButton, range(start + 4, 23))),
+          map(RangeButton, range(start + 4, start + 4 + 24))),
         $(Box, { minWidth: 24 }))),
-    )
+    end !== undefined && data &&
+    $(Box, { marginTop: 3 },
+      $(Caption, { variant: 'caption' }, 'Профессия'),
+      $(Box, { overflow: 'scroll', display: 'flex' },
+        $(Box, { minWidth: 24 }),
+        $(ToggleButtonGroup, {
+          size: 'small',
+          exclusive: true,
+          value: professionId,
+          onChange: (event, value) => setProfessionId(value) },
+          map(Profession, data.professions)),
+        $(Box, { minWidth: 24 }))),
+    // $(Box, { padding: '0 24px' },
+    //   $(TextField, {
+    //     variant: 'outlined',
+    //     fullWidth: true,
+    //     label: 'Описание'
+    //   }))
+      )
 }
+
+const Profession = ({
+  uid,
+  name
+}) =>
+  $(Unbreakab1e, {
+    key: uid,
+    value: uid
+  }, name)
+
+const Unbreakab1e = styled(ToggleButton)({
+  whiteSpace: 'nowrap'
+})
 
 const Caption = styled(Typography)({
   display: 'block',
