@@ -2,14 +2,14 @@ import { createElement as $, Fragment, useState, useRef, useEffect } from 'react
 import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
-import set from 'lodash/fp/set'
-import reduce from 'lodash/fp/reduce'
-import isEmpty from 'lodash/fp/isEmpty'
+// import set from 'lodash/fp/set'
+// import reduce from 'lodash/fp/reduce'
+// import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
-import entries from 'lodash/fp/entries'
-import Biohazard from 'components/Biohazard'
-import { useMutation } from '@apollo/react-hooks'
-import { Query } from '@apollo/react-components'
+// import entries from 'lodash/fp/entries'
+// import Biohazard from 'components/Biohazard'
+// import { useMutation } from '@apollo/react-hooks'
+// import { Query } from '@apollo/react-components'
 import { useQuery } from '@apollo/react-hooks'
 import { addShift, updatePeriodDemand, professions as professionsQuery, periodFragment } from 'queries'
 
@@ -25,12 +25,15 @@ import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Checkbox from '@material-ui/core/Checkbox'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Add from '@material-ui/icons/Add'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { styled } from '@material-ui/core/styles'
+
 // import yellow from '@material-ui/core/colors/yellow'
 // import Warning from '@material-ui/icons/Warning'
 
@@ -53,7 +56,7 @@ export const HospitalShift = ({
     // endRef && endRef.current &&
     // endRef.current.scrollTo((end - start) * 38, 0)
     return noop
-  })
+  }, [start, startRef])
   
   return $(Dialog, { open: true, fullScreen: !fullScreen },
     $(DialogTitle, null, 'Добавление смены'),
@@ -92,14 +95,37 @@ export const HospitalShift = ({
           onChange: (event, value) => setProfessionId(value) },
           map(Profession, data.professions)),
         $(Box, { minWidth: 24 }))),
-    // $(Box, { padding: '0 24px' },
-    //   $(TextField, {
-    //     variant: 'outlined',
-    //     fullWidth: true,
-    //     label: 'Описание'
-    //   }))
-      )
+    professionId &&
+    $(Box, { marginTop: 3 },
+      $(Caption, { variant: 'caption' }, 'Описание'),
+      $(Box, { padding: '0 24px' },
+        $(TextField, {
+          variant: 'outlined',
+          fullWidth: true,
+          multiline: true,
+          placeholder: 'Уточнённое описание'
+        }))),
+    professionId &&
+    $(Box, { marginTop: 3 },
+      $(Caption, { variant: 'caption' }, 'Обязательные условия'),
+      $(Box, { padding: '0 24px' },
+        $(FormGroup, null,
+          map(Requirement, [{ uid: 'test', name: 'rest' }, { uid: 'gest', name: 'plest' }])))),
+    $(DialogActions, null,
+      $(Button, { onClick: console.log }, 'Отмена'),
+      start && end && professionId &&
+        $(Button, { onClick: console.log }, 'Добавить')))
 }
+
+const Requirement = ({
+  uid,
+  name,
+  required
+}) =>
+  $(FormControlLabel, {
+    control: $(Checkbox, { checked: true }),
+    label: name
+  })
 
 const Profession = ({
   uid,
