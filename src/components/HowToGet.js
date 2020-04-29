@@ -28,35 +28,7 @@ const HowToGet = ({
 
   return $(ExpansionPanel, { onChange: (event, value) => setExpanded(value) },
     $(ExpansionPanelSummary, null,
-      $(Box, { flexGrow: 1 }, 'Как добраться'),
-      editable && expanded &&
-        $(IconButton, {
-          size: 'small',
-          onClick: event => event.stopPropagation() || setEditing(!editing)},
-          $(editing ? RemoveRedEye : Edit, { fontSize: 'small'}))),
-    $(ExpansionPanelDetails, null,
-      $(Box, null,
-        editing
-          ? $(TextField, {
-              multiline: true,
-              fullWidth: true,
-              label: 'Редактирование',
-              onChange: event => setSource(event.target.value),
-              value: source
-            })
-          : source
-            ? $(Markdown, { source })
-            : $(Helper, { variant: 'body1' },
-              'Добавьте данные нажав на иконку редактирования'),
-        $(Box, { height: 24 }),
-        editable && source !== directions &&
-          $(StyledBox, null, 
-            $(Button, {
-              color: 'primary',
-              variant: 'contained',
-              fullWidth: true,
-              onClick: mutate
-            }, 'Обновить')))))
+      )
 }
 
 const StyledBox = styled(Box)({

@@ -208,6 +208,14 @@ fragment shift on vshift {
 }
 `
 
+export const directions = gql`
+query directions($hospitalId: uuid!) {
+  hospital: hospital_by_pk(uid: $hospitalId) {
+    uid
+    directions
+  }
+}`
+
 export const shifts = gql`
 query shifts($hospitalId: uuid $userId: uuid $taskId: _uuid) {
   shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
@@ -506,8 +514,8 @@ mutation addToBlackList($uid: uuid! $comment: String) {
 }`
 
 export const updateDirections = gql`
-mutation updateDirections($uid: uuid! $directions: String!) {
-  update_hospital(where: { uid: { _eq: $uid } } _set: { directions: $directions }) {
+mutation updateDirections($hospitalId: uuid! $directions: String!) {
+  update_hospital(where: { uid: { _eq: $hospitalId } } _set: { directions: $directions }) {
     returning {
       uid
       directions

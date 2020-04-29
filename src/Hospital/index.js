@@ -11,6 +11,7 @@ import Requests from './Requests'
 import ShiftsList from './ShiftsList'
 import HospitalContext from './HospitalContext'
 import Schedule from './Schedule'
+import Directions from './Directions'
 import Actions from './Actions'
 import { hospital } from 'queries'
 
@@ -90,8 +91,7 @@ const tabs = {
   },
   directions: {
     label: 'Как добраться',
-    component: () =>
-      $('div', null,'smena')
+    component: Directions
   }
 }
 
