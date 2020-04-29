@@ -2,6 +2,7 @@ import { createElement as $, useState } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
 import { Subscription, Mutation } from '@apollo/react-components'
+import MaskedInput from 'react-input-mask'
 import { Redirect, useHistory } from 'react-router-dom'
 import { me as meQuery, 
   // professions,
@@ -71,7 +72,12 @@ const ProfilePure = data =>  {
                 $(Button, { onClick: () => logoff() && history.push('/')},
                 $(ExitToApp, { fontSize: 'small' })))),
           $(Formik, {
-            initialValues: data,
+            initialValues: {
+              ...data,
+              car: '',
+              licenceplate: ''
+            },
+            validateOnBlur: false,
             validateOnMount: true,
             onSubmit: variables =>
               mutate({ variables: requiredProfileFields(variables) })
@@ -122,6 +128,25 @@ const ProfilePure = data =>  {
                   margin: 'normal',
                   fullWidth: true,
                   variant: 'outlined' }),
+                $(Field, {
+                  component: TextField,
+                  name: 'car',
+                  label: 'Марка машины',
+                  validate: value => value && value.length > 16 && 'Сократите описание',
+                  margin: 'normal',
+                  fullWidth: true,
+                  variant: 'outlined' }),
+                $(Field, {
+                  component: TextField,
+                  name: 'licenceplate',
+                  label: 'Номер машины',
+                  validate: value => value.match('_') && 'Заполните номер целиком, ключая регион',
+                  margin: 'normal',
+                  fullWidth: true,
+                  variant: 'outlined',
+                  InputProps: {
+                    inputComponent: LicensePlate
+                  } }),
                 $(Box, { height: 16 }),
                 isValid
                   ? $(Button, {
@@ -156,6 +181,16 @@ const ShiftsAndRequests = () => {
             $(List, null,
               map(MyShift, data.volunteer_shift))))
 }
+
+const LicensePlate = other =>
+  $(MaskedInput, {
+    ...other,
+    formatChars: {
+      'A': '[АВЕКМНОРСТУХаверкмнорстух]',
+      '9': '[0-9]'
+    },
+    mask: 'A 999 AA 99',
+  })
 
 const ShiftRequest = ({
   uid,
