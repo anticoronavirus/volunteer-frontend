@@ -1,11 +1,14 @@
-import { createElement as $, Fragment, useState } from 'react'
+import { createElement as $, useContext, useState } from 'react'
 import map from 'lodash/fp/map'
+import HospitalContext from './HospitalContext'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 
 const Requests = () => {
+
+  const { hospitalId } = useContext(HospitalContext)
 
   const { data = {
     requests: [{
