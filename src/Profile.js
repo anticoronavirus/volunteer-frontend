@@ -91,6 +91,7 @@ const ProfilePure = data =>  {
                   label: 'Фамилия',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined' }),
                 $(Field, {
                   component: TextField,
@@ -99,6 +100,7 @@ const ProfilePure = data =>  {
                   label: 'Имя',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined' }),
                 $(Field, {
                   component: TextField,
@@ -107,6 +109,7 @@ const ProfilePure = data =>  {
                   label: 'Отчество',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined' }),
                 // $(Field, {
                 //   component: FormikButtonGroup,
@@ -118,6 +121,7 @@ const ProfilePure = data =>  {
                   label: 'Специализация',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   placeholder: 'Например студент-онколог',
                   variant: 'outlined' }),
                 $(Field, {
@@ -127,6 +131,7 @@ const ProfilePure = data =>  {
                   label: 'Электронная почта',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined' }),
                 $(Field, {
                   component: TextField,
@@ -135,6 +140,7 @@ const ProfilePure = data =>  {
                   validate: value => value && value.length > 16 && 'Сократите описание',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined' }),
                 $(Field, {
                   component: TextField,
@@ -143,6 +149,7 @@ const ProfilePure = data =>  {
                   validate: value => value !== '_ ___ __ __' && value.match('_') && 'Заполните номер целиком, ключая регион',
                   margin: 'normal',
                   fullWidth: true,
+                  helperText: ' ',
                   variant: 'outlined',
                   InputProps: {
                     inputComponent: LicensePlate
