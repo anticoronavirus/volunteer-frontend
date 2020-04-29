@@ -39,7 +39,7 @@ const App = () => {
       $(WithFooter, null,
         $(Switch, null,
           $(Route, { path: '/pages/:page', component: Pages }),
-          $(Route, { path: '/profile', component: Profile }),
+          $(Route, { path: '/profile/:page?', component: Profile }),
           // eslint-disable-next-line
           !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
             $(Redirect, { to: '/profile' }),
