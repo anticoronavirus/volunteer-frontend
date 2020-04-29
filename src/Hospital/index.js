@@ -110,7 +110,8 @@ const Hospital = ({
                 hospital_id: match.params.uid,
                 isManagedByMe,
                 periods: data.hospital.periods }},
-              $(Shifts, { hospitalId: match.params.uid, isManagedByMe }))))
+              $(Shifts, { hospitalId: match.params.uid, isManagedByMe })))
+              )
 }
 
 const headers = map(value => ({ value, type: 'string' }), [
