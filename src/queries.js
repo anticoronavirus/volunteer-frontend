@@ -25,25 +25,29 @@ query hospital($uid: uuid!) {
     name
     address
     directions
-    periods {
-      uid
-      start
-      end
-      period_demands {
-        uid
-        demand
-        profession {
-          uid
-          name
-        }
-      }
-    }
   }
   me {
     uid
     phone
     managedHospitals (where: { hospital: { uid: { _eq: $uid }}}) {
       coophone
+    }
+  }
+}`
+
+export const hospitalPeriods = gql`
+query hospitalPeriods($hospitalId: uuid!) {
+  periods: period(where: { hospital_id: { _eq: $hospitalId } }) {
+    uid
+    start
+    end
+    period_demands {
+      uid
+      demand
+      profession {
+        uid
+        name
+      }
     }
   }
 }`

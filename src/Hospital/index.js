@@ -11,6 +11,7 @@ import Requests from './Requests'
 import ShiftsList from './ShiftsList'
 import HospitalContext from './HospitalContext'
 import Schedule from './Schedule'
+import Actions from './Actions'
 import { hospital } from 'queries'
 
 import Tabs from '@material-ui/core/Tabs'
@@ -49,6 +50,8 @@ const Hospital = ({
           $(Typography, { variant: 'subtitle2', align: 'center' }, loading
             ? $(CustomSkeleton, { width: '20ex'})
             : data.hospital.name)),
+        isManagedByMe && data &&
+          $(Actions, { hospitalId: match.params.uid, shortname: data.hospital.shrotname }),
         $(Tabs, {
           variant: 'scrollable',
           value: match.params.page || '',

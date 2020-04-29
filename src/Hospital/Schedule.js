@@ -3,7 +3,8 @@ import map from 'lodash/fp/map'
 import sortBy from 'lodash/fp/sortBy'
 import { Mutation, Query } from '@apollo/react-components'
 import { AddHospitalShift, EditHospitalShift } from './ShiftDialog'
-import { removeShift } from 'queries'
+import { removeShift, hospitalPeriods } from 'queries'
+import HospitalContext from './HospitalContext'
 
 import Box from '@material-ui/core/Box'
 import List from '@material-ui/core/List'
@@ -16,21 +17,28 @@ import IconButton from '@material-ui/core/IconButton'
 import Delete from '@material-ui/icons/Delete'
 // import { styled } from '@material-ui/core/styles'
 
-const Schedule = ({ loading = true, data, isManagedByMe = true }) =>
-  loading
-    ? LoadingPeriods
-    : $(List, null,
-        $(ListSubheader, { disableSticky: true },
-          data.hospital.periods.length
-            ? 'Доступные смены'
-            : 'Нет доступных смен'),
-        map(
-          isManagedByMe
-            ? HospitalShiftManaged
-            : HospitalShift,
-          sortBy('start', data.hospital.periods)),
-        data && isManagedByMe &&
-          $(AddHospitalShift, { uid: data.hospital.uid, hospital: data.hospital }))
+const Schedule = () =>
+  $(HospitalContext.Consumer, null, ScheduleWithContext)
+
+const ScheduleWithContext = ({
+  hospitalId,
+  isManagedByMe
+}) =>
+  $(Query, { query: hospitalPeriods, variables: { hospitalId } }, ({ data, loading }) =>
+    loading
+      ? LoadingPeriods
+      : $(List, null,
+          $(ListSubheader, { disableSticky: true },
+            data.periods.length
+              ? 'Доступные смены'
+              : 'Нет доступных смен'),
+          map(
+            isManagedByMe
+              ? HospitalShiftManaged
+              : HospitalShift,
+            sortBy('start', data.periods)),
+          data && isManagedByMe &&
+            $(AddHospitalShift, { uid: hospitalId })))
 
 const LoadingPeriods =
   $(List, null,
@@ -45,11 +53,8 @@ const LoadingPeriods =
     $(ListItem, null,
       $(ListItemText, {
         primary: $(Skeleton, { variant: 'text', width: '13ex', height: 24 }),
-        secondary: $(Skeleton, { variant: 'text', width: '13ex', height: 20 }),
-      })))
+        secondary: $(Skeleton, { variant: 'text', width: '13ex', height: 20 })})))
 
-
-      
 const HospitalShift = ({
   uid,
   start,
