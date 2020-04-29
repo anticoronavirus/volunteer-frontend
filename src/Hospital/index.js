@@ -61,19 +61,20 @@ const Hospital = ({
             $(Tab, { id: value, key: value, value, label }),
             tabsArray)))),
     $(Box, isDesktop ? { display: 'flex', justifyContent: 'center', marginTop: 2 } : { marginTop: 2 },
-      $(Paper, null, 
-        $(HospitalContext.Provider, {
-          value: {
-            hospitalId: match.params.uid,
-            isManagedByMe,
-            // periods: data.hospital.periods
-          }},
-          $(Switch, null,
-            map(([value, { component }]) =>
-              $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
-                $(component)),
-              tabsArray),
-            $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
+      $(Box, isDesktop && { minWidth: 480 },
+        $(Paper, null, 
+          $(HospitalContext.Provider, {
+            value: {
+              hospitalId: match.params.uid,
+              isManagedByMe,
+              // periods: data.hospital.periods
+            }},
+            $(Switch, null,
+              map(([value, { component }]) =>
+                $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
+                  $(component)),
+                tabsArray),
+              $(Redirect, { to: `/hospitals/${match.params.uid}` })))))))
 }
 
 const tabs = {

@@ -1,10 +1,18 @@
-import { createElement as $, useContext, useState } from 'react'
+import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import HospitalContext from './HospitalContext'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormLabel from '@material-ui/core/FormLabel'
+import Checkbox from '@material-ui/core/Checkbox'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import Delete from '@material-ui/icons/Delete'
+import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
 
@@ -16,7 +24,16 @@ const Requests = () => {
       volunteer: {
         uid: 'test',
         name: 'geh'
-      }
+      },
+      requirements: [{
+        uid: 'rest',
+        name: 'geh',
+        confirmed: true
+      },{
+        uid: 'rest',
+        name: 'mleh',
+        confirmed: false
+      }]
     }]
   }} = {}
   
@@ -29,9 +46,26 @@ const Request = ({
   volunteer,
   requirements
 }) =>
-  $(ListItem, null,
+  $(ListItem, { key: uid, alignItems: 'flex-start'},
+    $(ListItemAvatar, null,
+      $(Avatar)),
     $(ListItemText, {
-      primary: volunteer.name
-    }))
+      primary: volunteer.name,
+      secondary: $(Fragment, null,
+        $(FormLabel, null, 'Санитар'),
+        $(FormGroup, null,
+          map(Requirement, requirements)))}),
+    $(ListItemSecondaryAction, null,
+      $(Delete)))
+
+const Requirement = ({
+  uid,
+  name,
+  confirmed
+}) =>
+  $(FormControlLabel, {
+    control: $(Checkbox, { checked: confirmed }),
+    label: name
+  })
 
 export default Requests
