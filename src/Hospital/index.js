@@ -10,6 +10,7 @@ import { useIsDesktop } from 'utils'
 import Requests from './Requests'
 import ShiftsList from './ShiftsList'
 import HospitalContext from './HospitalContext'
+import Schedule from './Schedule'
 import { hospital } from 'queries'
 
 import Tabs from '@material-ui/core/Tabs'
@@ -61,7 +62,7 @@ const Hospital = ({
         $(HospitalContext.Provider, {
           value: {
             hospitalId: match.params.uid,
-            // isManagedByMe,
+            isManagedByMe,
             // periods: data.hospital.periods
           }},
           $(Switch, null,
@@ -79,8 +80,7 @@ const tabs = {
   },
   schedule: {
     label: 'Расписание',
-    component: () =>
-      $('div', null,'schedule')
+    component: Schedule
   },
   requests: {
     label: 'Заявки',
