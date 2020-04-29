@@ -40,13 +40,13 @@ const Hospital = ({
 
   return $(Box, null,
     $(Paper, null, 
-      $(Box, { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
+      $(Box, isDesktop && { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
         $(Box, { padding: 3 },
           $(Typography, { variant: 'h4', align: 'center' }, loading
             ? $(CustomSkeleton, { width: '6ex'})
             : data.hospital.shortname),
           $(Typography, { variant: 'subtitle2', align: 'center' }, loading
-            ? $(CustomSkeleton, { width: '50ex'})
+            ? $(CustomSkeleton, { width: '20ex'})
             : data.hospital.name)),
         $(Tabs, {
           variant: 'scrollable',
@@ -56,7 +56,7 @@ const Hospital = ({
           map(([value, { label }]) =>
             $(Tab, { id: value, key: value, value, label }),
             tabsArray)))),
-    $(Box, { display: 'flex', justifyContent: 'center', marginTop: 2 },
+    $(Box, isDesktop ? { display: 'flex', justifyContent: 'center', marginTop: 2 } : { marginTop: 2 },
       $(Paper, null, 
         $(HospitalContext.Provider, {
           value: {
