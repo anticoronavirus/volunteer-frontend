@@ -42,6 +42,7 @@ query hospitalPeriods($hospitalId: uuid!) {
     start
     end
     profession_id
+    demand
     profession {
       uid
       name

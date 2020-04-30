@@ -59,12 +59,13 @@ const HospitalShift = ({
   uid,
   start,
   end,
-  period_demands
+  demand,
+  profession
 }) =>
   $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      secondary: map(Demand, period_demands).join(', ')}))
+      secondary: `${profession.name}: ${demand}`}))
 
 const HospitalShiftManaged = data => 
   $(HospitalShiftManagedWithState, data)
@@ -83,13 +84,10 @@ const HospitalShiftManagedWithState = ({
       $(ListItem, { button: true, onClick: () => setOpen(true) },
         $(ListItemText, {
           primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-          secondary: map(Demand, [{ name: profession.name, demand }]).join(', ')}),
+          secondary: `${profession.name}: ${demand}`}),
         $(ListItemSecondaryAction, null,
           $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
             $(Delete, { fontSize: 'small'}))))))
 }
-
-const Demand = ({ demand, profession: { name } }) =>
-  `${name}: ${demand}`
 
 export default Schedule
