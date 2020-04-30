@@ -66,7 +66,7 @@ query professions($where: hospital_profession_requirement_bool_exp) {
   requirements: requirement {
     uid
     name
-    required: hospital_profession_requirement(where: $where) {
+    required: hospital_profession_requirements(where: $where) {
       uid  
     }
   }

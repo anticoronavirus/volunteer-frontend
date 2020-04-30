@@ -169,8 +169,9 @@ export const HospitalShift = ({
     $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Обязательные условия'),
       $(Box, { padding: '0 24px' },
-        $(FormGroup, null,
-          map(Requirement, [{ uid: 'test', name: 'rest', required: [1] }, { uid: 'gest', name: 'plest' }])))),
+        requirementsResult.data &&
+          $(FormGroup, null,
+            map(Requirement, requirementsResult.data.requirements)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && professionId &&
