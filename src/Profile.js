@@ -201,6 +201,7 @@ const ProfileForm = data => {
                 onClick: submitForm,
                 variant: 'outlined',
                 fullWidth: true,
+                disabled: !dirty
               }, 'Сохранить')
             : $(Box, { padding: '8px 0' }, $(Typography, { variant: 'caption' }, 'Пожалуйста, заполните все поля')))))
 }

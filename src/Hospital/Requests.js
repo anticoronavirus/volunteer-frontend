@@ -50,8 +50,12 @@ const Requests = () => {
   // }} = {}
   
   return $(List, null,
-    data &&
-      map(Request, data.requests))
+    !data ? null :
+      data.requests.length === 0
+        ? $(ListItem, null,
+            $(ListItemText, {
+              primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
+        : map(Request, data.requests))
 }
 
 const Request = ({
