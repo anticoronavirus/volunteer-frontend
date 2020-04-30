@@ -8,7 +8,7 @@ import find from 'lodash/fp/find'
 // import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
 // import entries from 'lodash/fp/entries'
-// import Biohazard from 'components/Biohazard'
+import Biohazard from 'components/Biohazard'
 // import { useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
 import { useQuery } from '@apollo/react-hooks'
@@ -21,6 +21,7 @@ import {
 } from 'queries'
 
 import Box from '@material-ui/core/Box'
+import Skeleton from '@material-ui/lab/Skeleton'
 import ListItem from '@material-ui/core/ListItem'
 // import Select from '@material-ui/core/Select'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
@@ -58,9 +59,10 @@ export const AddHospitalShift = () => {
       })))
 }
 
-export const EditHospitalShift = props => $(HospitalShift, props)
+export const EditHospitalShift = props => $(HospitalShift, { isEditing: true, ...props })
 
 export const HospitalShift = ({
+  isEditing,
   open,
   onClose,
   ...values
@@ -96,7 +98,9 @@ export const HospitalShift = ({
     : null
   
   return $(Dialog, { open, onClose, fullScreen: !fullScreen },
-    $(DialogTitle, null, 'Добавление смены'),
+    $(DialogTitle, null, isEditing
+        ? 'Редактирование смены'
+        : 'Добавление смены'),
     $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Начало смены'),
     $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
@@ -120,17 +124,19 @@ export const HospitalShift = ({
           onChange: (event, value) => setEnd(value) },
           map(RangeButton, range(start + 4, start + 4 + 24))),
         $(Box, { minWidth: 24 }))),
-    end !== undefined && professionsResult.data &&
+    end !== undefined &&
     $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Профессия'),
       $(Box, { overflow: 'scroll', display: 'flex' },
         $(Box, { minWidth: 24 }),
-        $(ToggleButtonGroup, {
-          size: 'small',
-          exclusive: true,
-          value: professionId,
-          onChange: (event, value) => setProfessionId(value) },
-          map(Profession, professionsResult.data.professions)),
+        !professionsResult.data
+          ? $(Skeleton, { width: '100%', height: 40, variant: 'rect' })
+          : $(ToggleButtonGroup, {
+              size: 'small',
+              exclusive: true,
+              value: professionId,
+              onChange: (event, value) => setProfessionId(value) },
+              map(Profession, professionsResult.data.professions)),
         $(Box, { minWidth: 24 }))),
     professionId &&
     $(Box, { marginTop: 3 },
@@ -176,12 +182,13 @@ const Requirement = ({
 
 const Profession = ({
   uid,
-  name
+  name,
+  dangerous
 }) =>
   $(Unbreakab1e, {
     key: uid,
     value: uid
-  }, name)
+  }, dangerous && $(Biohazard), name)
 
 const Unbreakab1e = styled(ToggleButton)({
   whiteSpace: 'nowrap'
