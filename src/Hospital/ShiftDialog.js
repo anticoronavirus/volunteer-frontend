@@ -24,6 +24,7 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import TextField from '@material-ui/core/TextField'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import FormGroup from '@material-ui/core/FormGroup'
@@ -46,9 +47,10 @@ export const HospitalShift = ({
 }) => {
 
   const fullScreen = useIsDesktop()
-  const [start, setStart] = useState(values.start)
-  const [end, setEnd] = useState(values.end)
+  const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
+  const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
   const [professionId, setProfessionId] = useState(values.professionId)
+  const [demand, setDemand] = useState(values.demand || 1)
   const startRef = useRef(null)
   const { data } = useQuery(professionsQuery)
   // const endRef = useRef(null)
@@ -100,9 +102,18 @@ export const HospitalShift = ({
         $(Box, { minWidth: 24 }))),
     professionId &&
     $(Box, { marginTop: 3 },
+      $(Caption, { variant: 'caption' }, 'Количество'),
+      $(Box, { padding: '0 24px' },
+        $(ButtonGroup, { fullWidth: true },
+          $(Button, { onClick: () => setDemand(demand + 1) }, '+'),
+          $(Button, { disabled: true }, demand),
+          $(Button, { onClick: () => demand > 1 && setDemand(demand - 1) }, '-')))),
+    professionId &&
+    $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Описание'),
       $(Box, { padding: '0 24px' },
         $(TextField, {
+          size: 'small',
           variant: 'outlined',
           fullWidth: true,
           multiline: true,
