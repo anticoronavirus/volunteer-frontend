@@ -1,11 +1,12 @@
 import { createElement as $, useState, Fragment } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
-import { filteredShiftData, periodDemandsByHospital } from 'queries'
+import { filteredShiftData, filteredHospitalProfessions } from 'queries'
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
 import { useSnackbar } from 'notistack'
+import { useIsDesktop } from 'utils'
 
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -36,13 +37,12 @@ const AddVolunteerShiftDialog = ({
     skip: !open
   })
 
-  const theme = useTheme()
-  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isDekstop = useIsDesktop()
 
   // $(Query, { query: filteredHospitals, variables: { start, end } }, ({ data }) =>
   return $(Dialog, {
     open,
-    fullScreen,
+    fullScreen: !isDekstop,
     onClose },
     $(DialogTitle, null, $(Box, { marginLeft: -1 }, 'Добавиться в смену')),
     professionWithRequirements
@@ -60,20 +60,14 @@ const AddVolunteerShiftDialog = ({
               $(ListSubheader, null, 'Выберите задачу'),
             data && hospitalId &&
               // FIXME add loading
-              $(Query, { query: periodDemandsByHospital, variables: { start, end, hospitalId }}, ({ data }) =>
-                map(({ uid, profession, notabene }) => // FIXME non notabene
+              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }}, ({ data }) =>
+                map(profession => // FIXME non notabene
                   TaskOption({
-                    onClick: () => notabene
-                      ? setProfessionWithRequirements({
-                          uid,
-                          profession,
-                          requirements: [
-                            { uid: 'test', name: 'Медицинская книжка' },
-                            { uid: 'test', name: 'Диаскин-тест' },
-                            { uid: 'test', name: 'Трудовой договор с больницей' }]})
-                      : onAdd(hospitalId, uid),
+                    onClick: () => profession.requirements.length > 1
+                      ? setProfessionWithRequirements(profession)
+                      : onAdd(hospitalId, profession.uid),
                     ...profession}),
-                  data && data.period_demand)))),
+                  data && data.professions)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       professionWithRequirements &&

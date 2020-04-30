@@ -45,8 +45,22 @@ import HospitalContext from './HospitalContext'
 // import yellow from '@material-ui/core/colors/yellow'
 // import Warning from '@material-ui/icons/Warning'
 
+export const AddHospitalShift = () => {
+
+  const [open, setOpen] = useState(false)
+
+  return $(Fragment, null,
+    $(HospitalShift, { open, onClose: () => setOpen(false) } ),
+    $(ListItem, { button: true, onClick: () => setOpen(true)},
+      $(ListItemIcon, null, $(Add)),
+      $(ListItemText, {
+        primary: 'Добавить смену'
+      })))
+}
+
+export const EditHospitalShift = props => $(HospitalShift, props)
+
 export const HospitalShift = ({
-  uid,
   open,
   onClose,
   ...values
@@ -178,21 +192,6 @@ const Caption = styled(Typography)({
   padding: '0 24px',
   marginBottom: 8
 })
-
-export const AddHospitalShift = () => {
-
-  const [open, setOpen] = useState(false)
-
-  return $(Fragment, null,
-    $(HospitalShift, { open, onClose: () => setOpen(false) } ),
-    $(ListItem, { button: true, onClick: () => setOpen(true)},
-      $(ListItemIcon, null, $(Add)),
-      $(ListItemText, {
-        primary: 'Добавить смену'
-      })))
-}
-
-export const EditHospitalShift = HospitalShift
 
 const RangeButton = value =>
   $(ToggleButton, {

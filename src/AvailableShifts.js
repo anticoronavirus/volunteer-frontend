@@ -114,14 +114,8 @@ const Cell = ({
         returning: [{
           uid: Math.random().toString(),
           confirmed: false, 
-          period_demand: {
-            period: {
-              hospital: {
-                uid: Math.random().toString(),
-                shortname: '',
-              __typename: 'hospital'
-              }
-            }
+          hospital: {
+            uid: hospitalId
           },
           __typename: 'volunteer_shift'
           }],
@@ -163,10 +157,10 @@ const Cell = ({
     }
   })
 
-  const addToShiftWithExtraStuff = (hospitalId, period_demand_id) => {
+  const addToShiftWithExtraStuff = (hospitalId, professionId) => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: { date, start, end, hospitalId, period_demand_id }})
+    addToShift({ variables: { date, start, end, hospitalId, professionId }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смены для подтверждения'))
       .then(() => setUpdating(false))
   }
@@ -269,7 +263,7 @@ const CellPure = ({
             $(Typography, { variant: 'body2', color: 'inherit', noWrap: true },
               loading
                 ? $(Skeleton, { width: '8ex' })
-                : myShift.period_demand && myShift.period_demand.period.hospital.shortname)))))
+                : myShift.hospital.shortname)))))
 
 // Loading stuff
 

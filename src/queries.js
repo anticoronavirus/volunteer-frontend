@@ -171,7 +171,7 @@ query exportShifts($hospitalId: uuid) {
 export const addVolunteerToShift = gql`  
 mutation addVolunteerToShift(
   $userId: uuid
-  $period_demand_id: uuid
+  $professionId: uuid
   $date: date
   $start: timetz
   $end: timetz
@@ -179,7 +179,7 @@ mutation addVolunteerToShift(
 ) {
   insert_volunteer_shift(objects: [{
     volunteer_id: $userId
-    period_demand_id: $period_demand_id
+    profession_id: $professionId
     date: $date
     start: $start
     end: $end
@@ -188,13 +188,9 @@ mutation addVolunteerToShift(
     returning {
       uid
       confirmed
-      period_demand {
-        period {
-          hospital {
-            uid
-            shortname
-          }
-        }
+      hospital {
+        uid
+        shortname
       }
     }
   }
@@ -221,13 +217,9 @@ fragment shift on vshift {
   shiftRequests(where: { volunteer_id: { _eq: $userId }}) {
     uid
     confirmed
-    period_demand {
-      period {
-        hospital {
-          uid
-          shortname
-        }
-      }
+    hospital {
+      uid
+      shortname
     }
   }
 }
@@ -271,11 +263,9 @@ fragment hospitalShiftFragment on vshift {
     end
     hospital_id
     confirmed
-    period_demand {
+    hospital {
       uid
-      profession {
-        name
-      }
+      name
     }
     volunteer {
       uid
@@ -380,18 +370,42 @@ query filteredHospitals(
     uid
     shortname
     address
-    periods {
+  }
+}`
+
+export const filteredHospitalProfessions = gql`
+  query filteredHospitalProfessions(
+    $hospitalId: uuid!
+    $start: timetz
+    $end: timetz
+  ) {
+    professions: profession(where: {
+      periods: {
+        start: { _eq: $start }
+        end: { _eq: $end }
+        hospital_id: {
+          _eq: $hospitalId
+        }
+      }
+    }) {
       uid
-      # requirements
-      profession {
+      name
+      dangerous
+      description
+      requirements: hospital_profession_requirements(where: {
+        hospital_id: {
+          _eq: $hospitalId
+        }
+      }) {
         uid
-        name
-        dangerous
-        description
+        requirement {
+          uid
+          name
+        }
       }
     }
   }
-}`
+`
 
 export const periodDemandsByHospital = gql`
 query periodDemandsByHospital(
@@ -415,7 +429,7 @@ query periodDemandsByHospital(
       description
       requirements
     }
-}
+  }
 }
 `
 
