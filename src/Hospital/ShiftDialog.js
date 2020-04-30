@@ -15,6 +15,7 @@ import {
   addShift,
   editShift,
   addProfessionRequirement,
+  removeProfessionRequirement,
   // updatePeriodDemand,
   professions as professionsQuery,
   requirements as requirementsQuery,
@@ -194,29 +195,34 @@ const Requirement = (
   required
 }) =>
   $(Mutation, {
-    mutation: addProfessionRequirement,
+    mutation: required.length > 0
+      ? removeProfessionRequirement
+      : addProfessionRequirement,
     optimisticResponse: {
-      insert_hospital_profession_requirement: {
+      toggle: {
         returning: {
           uid: Math.random(),
           requirement: {
             uid,
-            hospital_profession_requirements: [{
-              uid: Math.random()
-            }]
+            required: required.length > 0
+              ? []
+              : [{ uid: Math.random() }]
           }
         }
       }
     },
     variables: {
-      requirementId: uid,
+      ...required.length > 0
+        ? { uid: required[0].uid }
+        : { requirementId: uid },
       hospitalId,
       professionId
-  }}, mutate =>
+    }
+  }, (mutate, { loading }) =>
     $(FormControlLabel, {
       key: uid,
       control: $(Checkbox, {
-        onClick: mutate,
+        onClick: !loading && mutate,
         checked: required && required.length > 0 }),
       label: name }))
 

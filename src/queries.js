@@ -78,7 +78,7 @@ mutation addProfessionRequirement(
   $requirementId: uuid!
   $professionId: uuid
 ) {
-  insert_hospital_profession_requirement(objects: [{
+  toggle: insert_hospital_profession_requirement(objects: [{
     hospital_id: $hospitalId
     requirement_id: $requirementId
     profession_id: $professionId
@@ -87,9 +87,32 @@ mutation addProfessionRequirement(
       uid
       requirement {
         uid
-        hospital_profession_requirements(where: {
+        required: hospital_profession_requirements(where: {
           hospital_id: { _eq: $hospitalId }
           profession_id: { _eq: $professionId  }
+        }) {
+          uid
+        }
+      }
+    }
+  }
+}
+`
+
+export const removeProfessionRequirement = gql`
+mutation removeProfessionRequirement(
+  $hospitalId: uuid! 
+  $professionId: uuid!
+  $uid: uuid!
+) {
+  toggle: delete_hospital_profession_requirement(where: { uid: { _eq: $uid } }) {
+    returning {
+      uid
+      requirement {
+        uid
+        required: hospital_profession_requirements(where: {
+          hospital_id: { _eq: $hospitalId }
+          profession_id: { _eq: $professionId }
         }) {
           uid
         }
