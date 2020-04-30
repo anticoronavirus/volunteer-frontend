@@ -10,6 +10,8 @@ export const me = gql`{
     email
     comment
     profession
+    car
+    licenceplate
     managedHospital {
       uid
       shortname
@@ -127,23 +129,11 @@ mutation removeProfessionRequirement(
 
 export const updateVolunteer = gql`
 mutation UpsertVolunteer(
-  $uid: uuid
-  $fname: String
-  $mname: String
-  $lname: String
-  $email: String
-  $comment: String
-  $profession: String
+  $uid: uuid!
+  $data: volunteer_set_input!
 ) {
   update_volunteer(
-    _set: {
-      fname: $fname
-      mname: $mname
-      lname: $lname
-      email: $email
-      comment: $comment
-      profession: $profession
-    }
+    _set: $data
     where: {
       uid: { _eq: $uid }
     }) {
@@ -188,12 +178,8 @@ export const exportShifts = gql`
 query exportShifts($hospitalId: uuid) {
   volunteer_shift(
     where: {
-      volunteer: {
-        provisioned_documents: {
-          uid: {
-            _neq: null
-          }
-        }
+      confirmed: {
+        _eq: true
       }
       hospital_id: {
         _eq: $hospitalId
@@ -217,6 +203,36 @@ query exportShifts($hospitalId: uuid) {
       provisioned_documents {
         uid
       }
+    }
+  }
+}`
+
+export const exportCars = gql`
+query exportCars($hospitalId: uuid) {
+  volunteer_shift(
+    where: {
+      confirmed: {
+        _eq: true
+      }
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      volunteer: {
+        licenceplate: {
+          _neq: null
+        }
+      }
+    },
+    order_by: {
+      date: desc
+      start: desc
+  }) {
+    volunteer {
+      fname
+      mname
+      lname
+      car
+      licenceplate
     }
   }
 }`

@@ -14,6 +14,7 @@ import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
 import { requiredProfileFields, formatDate } from 'utils'
 import map from 'lodash/fp/map'
+import omit from 'lodash/fp/omit'
 import entries from 'lodash/fp/entries'
 
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -115,15 +116,11 @@ const ProfileForm = data => {
 
   return $(Box, { padding: 2 },
     $(Formik, {
-      initialValues: {
-        ...data,
-        car: '',
-        licenceplate: ''
-      },
+      initialValues: omit(['managedHospital', '__typename'], data),
       // validateOnBlur: false,
       validateOnMount: true,
-      onSubmit: variables =>
-        mutate({ variables: requiredProfileFields(variables) })
+      onSubmit: data =>
+        mutate({ variables: { data }})
           .then(() => history.push('/'))
         },
       ({ submitForm, isValid, dirty }) =>
@@ -190,7 +187,7 @@ const ProfileForm = data => {
             component: TextField,
             name: 'licenceplate',
             label: 'Номер машины',
-            validate: value => value !== '_ ___ __ __' && value.match('_') && 'Заполните номер целиком, ключая регион',
+            validate: value => value && value !== '_ ___ __ __' && value.match('_') && 'Заполните номер целиком, ключая регион',
             margin: 'normal',
             fullWidth: true,
             helperText: ' ',
