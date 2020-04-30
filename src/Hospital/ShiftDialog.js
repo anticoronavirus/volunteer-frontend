@@ -1,4 +1,4 @@
-import { createElement as $, Fragment, useState, useRef, useEffect } from 'react'
+import { createElement as $, Fragment, useContext, useState, useRef, useEffect } from 'react'
 import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
@@ -12,17 +12,23 @@ import range from 'lodash/fp/range'
 // import { useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
 import { useQuery } from '@apollo/react-hooks'
-import { addShift, updatePeriodDemand, professions as professionsQuery, periodFragment } from 'queries'
+import {
+  addShift,
+  // updatePeriodDemand,
+  professions as professionsQuery,
+  requirements as requirementsQuery,
+  // periodFragment
+} from 'queries'
 
 import Box from '@material-ui/core/Box'
 import ListItem from '@material-ui/core/ListItem'
-import Select from '@material-ui/core/Select'
+// import Select from '@material-ui/core/Select'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import TextField from '@material-ui/core/TextField'
-import DialogContent from '@material-ui/core/DialogContent'
+// import DialogContent from '@material-ui/core/DialogContent'
 import DialogActions from '@material-ui/core/DialogActions'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
@@ -33,8 +39,8 @@ import Checkbox from '@material-ui/core/Checkbox'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
-import { useMediaQuery, useTheme } from '@material-ui/core'
 import { styled } from '@material-ui/core/styles'
+import HospitalContext from './HospitalContext'
 
 // import yellow from '@material-ui/core/colors/yellow'
 // import Warning from '@material-ui/icons/Warning'
@@ -45,16 +51,15 @@ export const HospitalShift = ({
   onClose,
   ...values
 }) => {
-
-  const fullScreen = useIsDesktop()
+  
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
-  const [professionId, setProfessionId] = useState(values.professionId)
+  const [professionId, setProfessionId] = useState(values.profession_id)
   const [demand, setDemand] = useState(values.demand || 1)
-  const startRef = useRef(null)
-  const { data } = useQuery(professionsQuery)
-  // const endRef = useRef(null)
 
+  const fullScreen = useIsDesktop()
+  const startRef = useRef(null)
+  // const endRef = useRef(null)
   useEffect(() => {
     startRef && startRef.current &&
       startRef.current.scrollTo((start * 38) + 24, 0)
@@ -63,7 +68,18 @@ export const HospitalShift = ({
     return noop
   }, [start, startRef])
 
-  const profession = professionId ? find({ uid: professionId }, data.professions) : null
+  const { hospitalId } = useContext(HospitalContext)
+  const professionsResult = useQuery(professionsQuery, { skip: !open })
+  const requirementsResult = useQuery(requirementsQuery, { skip: !open || !professionId, variables: {
+    where: {
+      hospital_id: { _eq: hospitalId  },
+      profession_id: { _eq: professionId  }
+    }
+  }})
+
+  const profession = professionId && professionsResult.data
+    ? find({ uid: professionId }, professionsResult.data.professions)
+    : null
   
   return $(Dialog, { open, onClose, fullScreen: !fullScreen },
     $(DialogTitle, null, 'Добавление смены'),
@@ -90,7 +106,7 @@ export const HospitalShift = ({
           onChange: (event, value) => setEnd(value) },
           map(RangeButton, range(start + 4, start + 4 + 24))),
         $(Box, { minWidth: 24 }))),
-    end !== undefined && data &&
+    end !== undefined && professionsResult.data &&
     $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Профессия'),
       $(Box, { overflow: 'scroll', display: 'flex' },
@@ -100,7 +116,7 @@ export const HospitalShift = ({
           exclusive: true,
           value: professionId,
           onChange: (event, value) => setProfessionId(value) },
-          map(Profession, data.professions)),
+          map(Profession, professionsResult.data.professions)),
         $(Box, { minWidth: 24 }))),
     professionId &&
     $(Box, { marginTop: 3 },
@@ -139,6 +155,7 @@ const Requirement = ({
   required
 }) =>
   $(FormControlLabel, {
+    key: uid,
     control: $(Checkbox, { checked: required && required.length > 0 }),
     label: name
   })

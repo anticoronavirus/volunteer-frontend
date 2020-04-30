@@ -41,6 +41,7 @@ query hospitalPeriods($hospitalId: uuid!) {
     uid
     start
     end
+    profession_id
     period_demands {
       uid
       demand
@@ -60,6 +61,17 @@ query professions($where: profession_bool_exp) {
     description
     requirements
     dangerous
+  }
+}`
+
+export const requirements = gql`
+query professions($where: hospital_profession_requirement_bool_exp) {
+  requirements: requirement {
+    uid
+    name
+    required: hospital_profession_requirement(where: $where) {
+      uid  
+    }
   }
 }`
 

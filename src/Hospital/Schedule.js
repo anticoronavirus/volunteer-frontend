@@ -73,11 +73,13 @@ const HospitalShiftManagedWithState = ({
   uid,
   start,
   end,
-  period_demands
+  demand,
+  period_demands,
+  profession_id
 }) => {
   const [open, setOpen] = useState(false)
-  return $(Fragment, null,
-    $(EditHospitalShift, { uid, start, end, period_demands, open, onClose: () => setOpen(false) }),
+  return $(Fragment, { key: uid },
+    $(EditHospitalShift, { uid, start, end, period_demands, demand, profession_id, open, onClose: () => setOpen(false) }),
     $(Mutation, { key: uid, mutation: removeShift }, mutate =>
       $(ListItem, { button: true, onClick: () => setOpen(true) },
         $(ListItemText, {
