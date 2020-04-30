@@ -196,13 +196,15 @@ const Requirement = (
   $(Mutation, {
     mutation: addProfessionRequirement,
     optimisticResponse: {
-      returning: {
-        uid: Math.random(),
-        requirement: {
-          uid,
-          hospital_profession_requirements: [{
-            uid: Math.random()
-          }]
+      insert_hospital_profession_requirement: {
+        returning: {
+          uid: Math.random(),
+          requirement: {
+            uid,
+            hospital_profession_requirements: [{
+              uid: Math.random()
+            }]
+          }
         }
       }
     },
