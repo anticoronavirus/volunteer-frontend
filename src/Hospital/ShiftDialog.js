@@ -54,7 +54,7 @@ export const HospitalShift = ({
   
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
-  const [professionId, setProfessionId] = useState(values.profession_id)
+  const [professionId, setProfessionId] = useState(values.profession.uid)
   const [demand, setDemand] = useState(values.demand || 1)
 
   const fullScreen = useIsDesktop()

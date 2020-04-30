@@ -74,17 +74,16 @@ const HospitalShiftManagedWithState = ({
   start,
   end,
   demand,
-  period_demands,
-  profession_id
+  profession
 }) => {
   const [open, setOpen] = useState(false)
   return $(Fragment, { key: uid },
-    $(EditHospitalShift, { uid, start, end, period_demands, demand, profession_id, open, onClose: () => setOpen(false) }),
+    $(EditHospitalShift, { uid, start, end, demand, profession, open, onClose: () => setOpen(false) }),
     $(Mutation, { key: uid, mutation: removeShift }, mutate =>
       $(ListItem, { button: true, onClick: () => setOpen(true) },
         $(ListItemText, {
           primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-          secondary: map(Demand, period_demands).join(', ')}),
+          secondary: map(Demand, [{ name: profession.name, demand }]).join(', ')}),
         $(ListItemSecondaryAction, null,
           $(IconButton, { onClick: () => mutate({ variables: { uid }}) },
             $(Delete, { fontSize: 'small'}))))))

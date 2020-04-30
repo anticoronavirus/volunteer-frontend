@@ -42,13 +42,9 @@ query hospitalPeriods($hospitalId: uuid!) {
     start
     end
     profession_id
-    period_demands {
+    profession {
       uid
-      demand
-      profession {
-        uid
-        name
-      }
+      name
     }
   }
 }`
