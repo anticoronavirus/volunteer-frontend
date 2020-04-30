@@ -206,9 +206,9 @@ export const HospitalShift = ({
 
 const LoadingRequirement = () =>
   $(Box, { padding: '8px 0', display: 'flex'},
-    $(Skeleton, { width: 20, height: 32 }),
+    $(Skeleton, { width: 20, height: 21 }),
     $(Box, { width: 16 }),
-    $(Skeleton, { width: '20ex', height: 32 }))
+    $(Skeleton, { width: '20ex', height: 21 }))
 
 const Requirement = (
   hospitalId,
