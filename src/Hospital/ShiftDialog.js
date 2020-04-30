@@ -62,6 +62,8 @@ export const HospitalShift = ({
     // endRef.current.scrollTo((end - start) * 38, 0)
     return noop
   }, [start, startRef])
+
+  const profession = professionId ? find({ uid: professionId }, data.professions) : null
   
   return $(Dialog, { open, onClose, fullScreen: !fullScreen },
     $(DialogTitle, null, 'Добавление смены'),
@@ -117,14 +119,14 @@ export const HospitalShift = ({
           variant: 'outlined',
           fullWidth: true,
           multiline: true,
-          placeholder: find({ uid: professionId }, data.professions).description
+          placeholder: profession && profession.description
         }))),
     professionId &&
     $(Box, { marginTop: 3 },
       $(Caption, { variant: 'caption' }, 'Обязательные условия'),
       $(Box, { padding: '0 24px' },
         $(FormGroup, null,
-          map(Requirement, [{ uid: 'test', name: 'rest' }, { uid: 'gest', name: 'plest' }])))),
+          map(Requirement, [{ uid: 'test', name: 'rest', required: [1] }, { uid: 'gest', name: 'plest' }])))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && professionId &&
@@ -137,7 +139,7 @@ const Requirement = ({
   required
 }) =>
   $(FormControlLabel, {
-    control: $(Checkbox, { checked: true }),
+    control: $(Checkbox, { checked: required && required.length > 0 }),
     label: name
   })
 
