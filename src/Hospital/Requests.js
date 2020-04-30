@@ -29,7 +29,8 @@ const Requests = () => {
       // volunteer_id ->
       volunteer: {
         uid: 'test',
-        name: 'geh'
+        name: 'geh',
+        phone: '+79652661058'
       },
       // hospital_id + profession_id ->
       requirements: [{
@@ -51,6 +52,7 @@ const Requests = () => {
 const Request = ({
   uid,
   volunteer,
+  profession,
   requirements
 }) =>
   $(ListItem, { key: uid, alignItems: 'flex-start'},
@@ -59,7 +61,7 @@ const Request = ({
     $(ListItemText, {
       primary: volunteer.name,
       secondary: $(Fragment, null,
-        $(FormLabel, null, 'Санитар'),
+        $(FormLabel, null, `${profession.name} · ${volunteer.phone}`),
         $(FormGroup, null,
           map(Requirement, requirements)))}),
     $(ListItemSecondaryAction, null,
