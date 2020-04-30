@@ -1,6 +1,7 @@
 import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import HospitalContext from './HospitalContext'
+import { professionRequests } from 'queries'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -13,40 +14,44 @@ import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Delete from '@material-ui/icons/Delete'
 import Avatar from '@material-ui/core/Avatar'
+import { useQuery } from '@apollo/react-hooks'
 
 const Requests = () => {
 
   const { hospitalId } = useContext(HospitalContext)
 
-  const { data = {
-    requests: [{
-      uid: 'test',
-      // profession_id ->
-      profession: {
-        uid: 'test',
-        name: 'Санитар'
-      },
-      // volunteer_id ->
-      volunteer: {
-        uid: 'test',
-        name: 'geh',
-        phone: '+79652661058'
-      },
-      // hospital_id + profession_id ->
-      requirements: [{
-        uid: 'rest',
-        name: 'geh',
-        confirmed: true
-      },{
-        uid: 'rest',
-        name: 'mleh',
-        confirmed: false
-      }]
-    }]
-  }} = {}
+  const { data } = useQuery(professionRequests, { variables: { hospitalId }})
+
+  // const { data = {
+  //   requests: [{
+  //     uid: 'test',
+  //     // profession_id ->
+  //     profession: {
+  //       uid: 'test',
+  //       name: 'Санитар'
+  //     },
+  //     // volunteer_id ->
+  //     volunteer: {
+  //       uid: 'test',
+  //       name: 'geh',
+  //       phone: '+79652661058'
+  //     },
+  //     // hospital_id + profession_id ->
+  //     requirements: [{
+  //       uid: 'rest',
+  //       name: 'geh',
+  //       confirmed: true
+  //     },{
+  //       uid: 'rest',
+  //       name: 'mleh',
+  //       confirmed: false
+  //     }]
+  //   }]
+  // }} = {}
   
   return $(List, null,
-    map(Request, data.requests))
+    data &&
+      map(Request, data.requests))
 }
 
 const Request = ({
@@ -69,12 +74,12 @@ const Request = ({
 
 const Requirement = ({
   uid,
-  name,
+  requirement,
   confirmed
 }) =>
   $(FormControlLabel, {
     control: $(Checkbox, { checked: confirmed }),
-    label: name
+    label: requirement.name
   })
 
 export default Requests

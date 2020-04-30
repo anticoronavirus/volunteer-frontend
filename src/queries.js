@@ -426,6 +426,32 @@ query filteredHospitals(
   }
 }`
 
+export const professionRequests = gql`
+query professionRequests($hospitalId: uuid!) {
+  requests: profession_request(where: {
+    hospital_id: { _eq: $hospitalId }
+  }) {
+    uid
+    profession {
+      uid
+      name
+    }
+    volunteer {
+      uid
+      fname
+      lname
+      phone
+    }
+    requirements {
+      uid
+      requirement {
+        uid
+        name
+      }
+    }
+  }
+}`
+
 export const filteredHospitalProfessions = gql`
   query filteredHospitalProfessions(
     $hospitalId: uuid!
@@ -585,18 +611,6 @@ mutation updatePeriodDemand($uid: uuid! $periodDemands: [period_demand_insert_in
   }
 }
 `
-
-export const periodFragment = gql`
-fragment period on period {
-  period_demands {
-    uid
-    demand
-    profession {
-      uid
-      name
-    }
-  }
-}`
 
 export const confirm = gql`
 mutation confirmVolunteer($uid: uuid! $confirmed: Boolean) {

@@ -170,7 +170,7 @@ const Cell = ({
       ? history.push('/login')
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
-        : !hospitalId && !taskId
+        : !hospitalId || !taskId
           ? setOpen(true)
           : addToShiftWithExtraStuff(hospitalId, taskId)
 
