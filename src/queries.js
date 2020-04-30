@@ -62,15 +62,42 @@ query professions($where: profession_bool_exp) {
 }`
 
 export const requirements = gql`
-query professions($where: hospital_profession_requirement_bool_exp) {
+query requirements($where: hospital_profession_requirement_bool_exp) {
   requirements: requirement {
     uid
     name
     required: hospital_profession_requirements(where: $where) {
-      uid  
+      uid
     }
   }
 }`
+
+export const addProfessionRequirement = gql`
+mutation addProfessionRequirement(
+  $hospitalId: uuid! 
+  $requirementId: uuid!
+  $professionId: uuid
+) {
+  insert_hospital_profession_requirement(objects: [{
+    hospital_id: $hospitalId
+    requirement_id: $requirementId
+    profession_id: $professionId
+  }]) {
+    returning {
+      uid
+      requirement {
+        uid
+        hospital_profession_requirements(where: {
+          hospital_id: { _eq: $hospitalId }
+          profession_id: { _eq: $professionId  }
+        }) {
+          uid
+        }
+      }
+    }
+  }
+}
+`
 
 export const updateVolunteer = gql`
 mutation UpsertVolunteer(

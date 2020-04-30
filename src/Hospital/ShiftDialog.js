@@ -9,12 +9,12 @@ import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 // import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
-import { useMutation } from '@apollo/react-hooks'
-// import { Query } from '@apollo/react-components'
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { Mutation } from '@apollo/react-components'
 import {
   addShift,
   editShift,
+  addProfessionRequirement,
   // updatePeriodDemand,
   professions as professionsQuery,
   requirements as requirementsQuery,
@@ -97,7 +97,7 @@ export const HospitalShift = ({
   const requirementsResult = useQuery(requirementsQuery, { skip: !open || !professionId, variables: {
     where: {
       hospital_id: { _eq: hospitalId  },
-      profession_id: { _eq: professionId  }
+      profession_id: { _eq: professionId }
     }
   }})
 
@@ -171,7 +171,7 @@ export const HospitalShift = ({
       $(Box, { padding: '0 24px' },
         requirementsResult.data &&
           $(FormGroup, null,
-            map(Requirement, requirementsResult.data.requirements)))),
+            map(Requirement(hospitalId, professionId), requirementsResult.data.requirements)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && professionId &&
@@ -185,16 +185,38 @@ export const HospitalShift = ({
           : 'Добавить')))
 }
 
-const Requirement = ({
+const Requirement = (
+  hospitalId,
+  professionId,
+) => ({
   uid,
   name,
   required
 }) =>
-  $(FormControlLabel, {
-    key: uid,
-    control: $(Checkbox, { checked: required && required.length > 0 }),
-    label: name
-  })
+  $(Mutation, {
+    mutation: addProfessionRequirement,
+    optimisticResponse: {
+      returning: {
+        uid: Math.random(),
+        requirement: {
+          uid,
+          hospital_profession_requirements: [{
+            uid: Math.random()
+          }]
+        }
+      }
+    },
+    variables: {
+      requirementId: uid,
+      hospitalId,
+      professionId
+  }}, mutate =>
+    $(FormControlLabel, {
+      key: uid,
+      control: $(Checkbox, {
+        onClick: mutate,
+        checked: required && required.length > 0 }),
+      label: name }))
 
 const Profession = ({
   uid,
