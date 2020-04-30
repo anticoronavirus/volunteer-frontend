@@ -7,24 +7,26 @@ import { useApolloClient } from '@apollo/react-hooks'
 import generateXlsx from 'zipcelx'
 import { exportShifts } from 'queries'
 
+import Box from '@material-ui/core/Box'
 import ButtonGroup from '@material-ui/core/ButtonGroup'
 import Button from '@material-ui/core/Button'
 import CloudDownload from '@material-ui/icons/CloudDownload'
 
 const Actions = ({ hospitalId, shortname }) => {
   const client = useApolloClient()
-  return $(ButtonGroup, null,
-    $(Button, { onClick: () =>
-        client.query({ query: exportShifts, variables: { hospitalId } })
-          .then(result => generateXlsx({
-            filename: `Заявки волонтёров ${shortname}`,
-            sheet: {
-              data: [
-                headers,
-                ...map(formatShift, result.data.volunteer_shift)]
-            }
-          })) },
-      $(CloudDownload, { fontSize: 'small' })))
+  return $(Box, { display: 'flex', justifyContent: 'center' },
+    $(ButtonGroup, null,
+      $(Button, { onClick: () =>
+          client.query({ query: exportShifts, variables: { hospitalId } })
+            .then(result => generateXlsx({
+              filename: `Заявки волонтёров ${shortname}`,
+              sheet: {
+                data: [
+                  headers,
+                  ...map(formatShift, result.data.volunteer_shift)]
+              }
+            })) },
+        $(CloudDownload, { fontSize: 'small' }))))
 }
 
 const headers = map(value => ({ value, type: 'string' }), [

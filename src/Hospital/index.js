@@ -14,6 +14,7 @@ import Schedule from './Schedule'
 import Directions from './Directions'
 import Actions from './Actions'
 import { hospital } from 'queries'
+import Back from 'components/Back'
 
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
@@ -40,7 +41,8 @@ const Hospital = ({
   const isDesktop = useIsDesktop()
 
   return $(Box, null,
-    $(Paper, null, 
+    $(Paper, null,
+      $(Back, { marginTop: 0 }),
       $(Box, isDesktop && { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
         $(Box, { padding: 3 },
           $(Typography, { variant: 'h4', align: 'center' }, loading
