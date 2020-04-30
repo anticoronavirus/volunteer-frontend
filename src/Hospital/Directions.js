@@ -35,7 +35,7 @@ const Directions = () => {
       ? null
       : $(Box, { flexGrow: 1 },
           isManagedByMe &&
-            $(Box, { padding: 2 }, 
+            $(Box, { padding: 2, paddingBottom: 0 }, 
               $(IconButton, {
                 size: 'small',
                 onClick: event => event.stopPropagation() || setEditing(!editing)},
@@ -50,10 +50,9 @@ const Directions = () => {
                   value: source
                 })
               : source
-                ? $(Markdown, { source })
+                ? $(Box, { paddingTop:  '19px', paddingBottom: '5px' }, $(Markdown, { source }))
                 : $(Helper, { variant: 'body1' },
                     'Добавьте данные нажав на иконку редактирования'),
-            $(Box, { height: 24 }),
             isManagedByMe && source !== data.hospital.directions &&
               $(StyledBox, null, 
                 $(Button, {
@@ -65,12 +64,13 @@ const Directions = () => {
 }
 
 const StyledBox = styled(Box)({
+  marginTop: '16px',
   position: 'sticky',
   bottom: 0
 })
 
 const Helper = styled(Typography)({
-  padding: '4px 0',
+  paddingTop: 24,
 })
 
 
