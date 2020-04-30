@@ -37,15 +37,18 @@ query hospital($uid: uuid!) {
 
 export const hospitalPeriods = gql`
 query hospitalPeriods($hospitalId: uuid!) {
-  periods: period(where: { hospital_id: { _eq: $hospitalId } }) {
+  hospital: hospital_by_pk(uid: $hospitalId) {
     uid
-    start
-    end
-    profession_id
-    demand
-    profession {
+    periods {
       uid
-      name
+      start
+      end
+      profession_id
+      demand
+      profession {
+        uid
+        name
+      }
     }
   }
 }`
@@ -512,6 +515,7 @@ mutation addShift($shift: period_insert_input!) {
           start
           end
           demand
+          profession_id
           profession {
             uid
             name
@@ -554,6 +558,9 @@ mutation removeShift($uid: uuid!) {
           start
           end
           demand
+          profession {
+            uid
+          }
         }
       }
     }

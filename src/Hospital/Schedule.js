@@ -29,14 +29,14 @@ const ScheduleWithContext = ({
       ? LoadingPeriods
       : $(List, null,
           $(ListSubheader, { disableSticky: true },
-            data.periods.length
+            data.hospital.periods.length
               ? 'Доступные смены'
               : 'Нет доступных смен'),
           map(
             isManagedByMe
               ? HospitalShiftManaged
               : HospitalShift,
-            sortBy('start', data.periods)),
+            sortBy('start', data.hospital.periods)),
           data && isManagedByMe &&
             $(AddHospitalShift, { uid: hospitalId })))
 

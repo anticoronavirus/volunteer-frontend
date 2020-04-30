@@ -48,12 +48,29 @@ import HospitalContext from './HospitalContext'
 // import yellow from '@material-ui/core/colors/yellow'
 // import Warning from '@material-ui/icons/Warning'
 
-export const AddHospitalShift = () => {
+export const AddHospitalShift = ({
+  uid
+}) => {
 
   const [open, setOpen] = useState(false)
+  const [mutate] = useMutation(addShift)
 
   return $(Fragment, null,
-    $(HospitalShift, { open, onClose: () => setOpen(false) } ),
+    $(HospitalShift, {
+      open,
+      onClose: () => setOpen(false),
+      onSubmit: data => {
+        mutate({
+          variables: {
+            shift: {
+              hospital_id: uid,
+              ...data
+            }
+          }
+        })
+        setOpen(false)
+      }
+    }),
     $(ListItem, { button: true, onClick: () => setOpen(true)},
       $(ListItemIcon, null, $(Add)),
       $(ListItemText, {
@@ -64,7 +81,10 @@ export const EditHospitalShift = props => {
   const [mutate] = useMutation(editShift, { variables: { uid: props.uid }})
   return $(HospitalShift, {
     isEditing: true,
-    onSubmit: data => mutate({ variables: { data }}),
+    onSubmit: data => {
+      mutate({ variables: { data }})
+      props.onClose()
+    },
     ...props
   })
 }
@@ -195,6 +215,7 @@ const Requirement = (
   required
 }) =>
   $(Mutation, {
+    key: uid,
     mutation: required.length > 0
       ? removeProfessionRequirement
       : addProfessionRequirement,
@@ -222,7 +243,7 @@ const Requirement = (
     $(FormControlLabel, {
       key: uid,
       control: $(Checkbox, {
-        onClick: !loading && mutate,
+        onClick: loading ? noop : mutate,
         checked: required && required.length > 0 }),
       label: name }))
 
