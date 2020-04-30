@@ -356,7 +356,7 @@ export const hospitals = gql`{
   }
 }`
 
-export const filteredShiftData = gql`
+export const filteredHospitals = gql`
 query filteredHospitals(
   $start: timetz
   $end: timetz

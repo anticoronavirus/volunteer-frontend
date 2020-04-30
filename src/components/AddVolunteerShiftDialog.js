@@ -1,7 +1,7 @@
 import { createElement as $, useState, Fragment } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Query } from '@apollo/react-components'
-import { filteredShiftData, filteredHospitalProfessions } from 'queries'
+import { filteredHospitals, filteredHospitalProfessions } from 'queries'
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
@@ -36,7 +36,7 @@ const AddVolunteerShiftDialog = ({
   const [professionWithRequirements, setProfessionWithRequirements] = useState(null)
   const { enqueueSnackbar } = useSnackbar()
 
-  const { data } = useQuery(filteredShiftData, {
+  const { data } = useQuery(filteredHospitals, {
     variables: { start, end },
     skip: !open
   })
@@ -68,14 +68,16 @@ const AddVolunteerShiftDialog = ({
               $(ListSubheader, null, 'Выберите задачу'),
             data && hospitalId &&
               // FIXME add loading
-              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }}, ({ data }) =>
-                map(profession => // FIXME non notabene
-                  TaskOption({
-                    onClick: () => profession.requirements.length > 1
-                      ? setProfessionWithRequirements(profession)
-                      : onAdd(hospitalId, profession.uid),
-                    ...profession}),
-                  data && data.professions)))),
+              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }}, ({ data, loading }) =>
+                loading
+                  ? $(Box, { padding: 2 }, $(CircularProgress))
+                  : map(profession =>
+                      TaskOption({
+                        onClick: () => profession.requirements.length > 1
+                          ? setProfessionWithRequirements(profession)
+                          : onAdd(hospitalId, profession.uid),
+                        ...profession}),
+                      data.professions)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       professionWithRequirements &&
