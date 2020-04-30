@@ -51,8 +51,9 @@ const Hospital = ({
           $(Typography, { variant: 'subtitle2', align: 'center' }, loading
             ? $(CustomSkeleton, { width: '20ex'})
             : data.hospital.name)),
-        isManagedByMe && data &&
-          $(Actions, { hospitalId: match.params.uid, shortname: data.hospital.shrotname }),
+        isManagedByMe
+          ? data && $(Actions, { hospitalId: match.params.uid, shortname: data.hospital.shrotname })
+          : $(Box, { height: 32 }),
         $(Tabs, {
           variant: 'scrollable',
           value: match.params.page || '',

@@ -29,6 +29,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ListItemText from '@material-ui/core/ListItemText'
 import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import TextField from '@material-ui/core/TextField'
 // import DialogContent from '@material-ui/core/DialogContent'
@@ -126,73 +127,70 @@ export const HospitalShift = ({
     ? find({ uid: professionId }, professionsResult.data.professions)
     : null
   
-  return $(Dialog, { open, onClose, fullScreen: !fullScreen },
+  return $(Dialog, {
+    open,
+    onClose,
+    scroll: 'paper',
+    fullScreen: !fullScreen
+  },
     $(DialogTitle, null, isEditing
         ? 'Редактирование смены'
         : 'Добавление смены'),
-    $(Box, { marginTop: 3 },
+    $(DialogContent, { dividers: true }, 
       $(Caption, { variant: 'caption' }, 'Начало смены'),
-    $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
-      $(Box, { minWidth: 24 }),
-      $(ToggleButtonGroup, {
-        size: 'small',
-        exclusive: true,
-        value: start,
-        onChange: (event, value) => setStart(value) },
-        map(RangeButton, range(0, 23))),
-      $(Box, { minWidth: 24 }))),
-    start !== undefined &&
-    $(Box, { marginTop: 3 },
-      $(Caption, { variant: 'caption' }, 'Конец смены'),
-      $(Box, { overflow: 'scroll', display: 'flex' },
-        $(Box, { minWidth: 24 }),
+      $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
         $(ToggleButtonGroup, {
           size: 'small',
           exclusive: true,
-          value: end,
-          onChange: (event, value) => setEnd(value) },
-          map(RangeButton, range(start + 4, start + 4 + 24))),
-        $(Box, { minWidth: 24 }))),
-    end !== undefined &&
-    $(Box, { marginTop: 3 },
-      $(Caption, { variant: 'caption' }, 'Профессия'),
-      $(Box, { overflow: 'scroll', display: 'flex' },
-        $(Box, { minWidth: 24 }),
-        !professionsResult.data
-          ? $(Skeleton, { width: '100%', height: 40, variant: 'rect' })
-          : $(ToggleButtonGroup, {
-              size: 'small',
-              exclusive: true,
-              value: professionId,
-              onChange: (event, value) => setProfessionId(value) },
-              map(Profession, professionsResult.data.professions)),
-        $(Box, { minWidth: 24 }))),
-    professionId &&
-    $(Box, { marginTop: 3 },
-      $(Caption, { variant: 'caption' }, 'Количество'),
-      $(Box, { padding: '0 24px' },
+          value: start,
+          onChange: (event, value) => setStart(value) },
+          map(RangeButton, range(0, 23)))),
+      start !== undefined &&
+      $(Box, { marginTop: 3 },
+        $(Caption, { variant: 'caption' }, 'Конец смены'),
+        $(Box, { overflow: 'scroll', display: 'flex' },
+          $(ToggleButtonGroup, {
+            size: 'small',
+            exclusive: true,
+            value: end,
+            onChange: (event, value) => setEnd(value) },
+            map(RangeButton, range(start + 4, start + 4 + 24))))),
+      end !== undefined &&
+      $(Box, { marginTop: 3 },
+        $(Caption, { variant: 'caption' }, 'Профессия'),
+        $(Box, { overflow: 'scroll', display: 'flex' },
+          !professionsResult.data
+            ? $(Skeleton, { width: '100%', height: 40, variant: 'rect' })
+            : $(ToggleButtonGroup, {
+                size: 'small',
+                exclusive: true,
+                value: professionId,
+                onChange: (event, value) => setProfessionId(value) },
+                map(Profession, professionsResult.data.professions)))),
+      professionId &&
+      $(Box, { marginTop: 3 },
+        $(Caption, { variant: 'caption' }, 'Количество'),
         $(ButtonGroup, { fullWidth: true },
           $(Button, { onClick: () => setDemand(demand + 1) }, '+'),
           $(Button, { disabled: true }, demand),
-          $(Button, { onClick: () => demand > 1 && setDemand(demand - 1) }, '-')))),
-    professionId &&
-    $(Box, { marginTop: 3 },
-      $(Caption, { variant: 'caption' }, 'Описание'),
-      $(Box, { padding: '0 24px' },
+          $(Button, { onClick: () => demand > 1 && setDemand(demand - 1) }, '-'))),
+      professionId &&
+      $(Box, { marginTop: 3 },
+        $(Caption, { variant: 'caption' }, 'Описание'),
         $(TextField, {
           size: 'small',
           variant: 'outlined',
           fullWidth: true,
           multiline: true,
           placeholder: profession && profession.description
-        }))),
-    professionId &&
-    $(Box, { marginTop: 3 },
-      $(Caption, { variant: 'caption' }, 'Обязательные условия'),
-      $(Box, { padding: '0 24px' },
-        requirementsResult.data &&
-          $(FormGroup, null,
-            map(Requirement(hospitalId, professionId), requirementsResult.data.requirements)))),
+        })),
+      professionId &&
+      $(Box, { marginTop: 3 },
+        $(Caption, { variant: 'caption' }, 'Обязательные условия'),
+        requirementsResult.loading || !requirementsResult.data
+          ? map(LoadingRequirement, new Array(10))
+          : $(FormGroup, null,
+              map(Requirement(hospitalId, professionId), requirementsResult.data.requirements)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && professionId &&
@@ -205,6 +203,12 @@ export const HospitalShift = ({
           ? 'Сохранить'
           : 'Добавить')))
 }
+
+const LoadingRequirement = () =>
+  $(Box, { padding: '8px 0', display: 'flex'},
+    $(Skeleton, { width: 20, height: 32 }),
+    $(Box, { width: 16 }),
+    $(Skeleton, { width: '20ex', height: 32 }))
 
 const Requirement = (
   hospitalId,
@@ -263,7 +267,7 @@ const Unbreakab1e = styled(ToggleButton)({
 
 const Caption = styled(Typography)({
   display: 'block',
-  padding: '0 24px',
+  // padding: '0 24px',
   marginBottom: 8
 })
 
