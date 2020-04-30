@@ -363,24 +363,17 @@ query filteredHospitals(
     uid
     shortname
     address
+    periods {
+      uid
+      # requirements
+      profession {
+        uid
+        name
+        dangerous
+        description
+      }
+    }
   }
-  # period_demand (where: {
-  #   demand: { _gte: 0 }
-  #   period: {
-  #     hospital_id: { _eq: $hospitalId }
-  #     start: { _eq: $start }
-  #     end: { _eq: $end }
-  #   }
-  # }) {
-  #   uid
-  #   profession {
-  #     uid
-  #     name
-  #     dangerous
-  #     description
-  #     requirements
-  #   }
-  # }
 }`
 
 export const periodDemandsByHospital = gql`

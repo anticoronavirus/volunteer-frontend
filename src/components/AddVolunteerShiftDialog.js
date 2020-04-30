@@ -33,6 +33,7 @@ const AddVolunteerShiftDialog = ({
 
   const { data } = useQuery(filteredShiftData, {
     variables: { start, end },
+    skip: !open
   })
 
   const theme = useTheme()
