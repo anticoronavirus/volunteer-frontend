@@ -181,6 +181,7 @@ const Cell = ({
         start,
         end,
         open,
+        userId,
         onClose: () => setOpen(false),
         onAdd: addToShiftWithExtraStuff
       }),

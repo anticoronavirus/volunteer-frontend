@@ -266,6 +266,23 @@ mutation addVolunteerToShift(
 }
 `
 
+export const addProfessionRequest = gql`
+mutation addProfessionRequest(
+  $hospitalId: uuid!
+  $userId: uuid!
+  $professionId: uuid!
+  ) {
+    insert_profession_request(objects: [{
+      hospital_id: $hospitalId
+      volunteer_id: $userId
+      profession_id: $professionId
+    }]) {
+      returning {
+        uid
+      }
+    }
+}`
+
 export const removeVolunteerFromShift = gql`
 mutation removeVolunteerFromShift($uid: uuid) {
   delete_volunteer_shift(where: { uid: { _eq: $uid }}) {

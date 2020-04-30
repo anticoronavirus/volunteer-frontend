@@ -1,7 +1,11 @@
 import { createElement as $, useState, Fragment } from 'react'
 import { useQuery } from '@apollo/react-hooks'
-import { Query } from '@apollo/react-components'
-import { filteredHospitals, filteredHospitalProfessions } from 'queries'
+import { Query, Mutation } from '@apollo/react-components'
+import {
+  filteredHospitals,
+  filteredHospitalProfessions,
+  addProfessionRequest
+} from 'queries'
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
@@ -27,6 +31,7 @@ const AddVolunteerShiftDialog = ({
   start,
   end,
   onClose,
+  userId,
   hospitalscount,
   open
 }) => {
@@ -73,7 +78,7 @@ const AddVolunteerShiftDialog = ({
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
                       TaskOption({
-                        onClick: () => profession.requirements.length > 1
+                        onClick: () => profession.requirements.length > 0
                           ? setProfessionWithRequirements(profession)
                           : onAdd(hospitalId, profession.uid),
                         ...profession}),
@@ -81,10 +86,18 @@ const AddVolunteerShiftDialog = ({
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       professionWithRequirements &&
-        $(Button, { onClick: () => {
-          enqueueSnackbar('Вы можете отследить статус заявки в своём профиле')
-          onClose()
-        } }, 'Оставить заявку ')))
+        $(Mutation, {
+          mutation: addProfessionRequest,
+          variables: {
+            hospitalId,
+            userId,
+            professionId: professionWithRequirements.uid
+          }}, mutate =>
+          $(Button, { onClick: () => {
+            mutate()
+            enqueueSnackbar('Вы можете отследить статус заявки в своём профиле')
+            onClose()
+          } }, 'Оставить заявку '))))
 }
 
 const ConfirmRequest = ({
@@ -100,8 +113,8 @@ const ConfirmRequest = ({
 
 const Requirement = ({
   uid,
-  name
+  requirement
 }) =>
-  $('li', { key: uid }, name)
+  $('li', { key: uid }, requirement.name)
 
 export default AddVolunteerShiftDialog
