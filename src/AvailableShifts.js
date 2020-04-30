@@ -102,7 +102,7 @@ const Cell = ({
 
   const history = useHistory()
   const [hospitalId] = useQueryParam('hospital', StringParam)
-  // const [taskId] = useQueryParam('task', StringParam)
+  const [taskId] = useQueryParam('task', StringParam)
   const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
@@ -170,13 +170,12 @@ const Cell = ({
       ? history.push('/login')
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
-        : setOpen(true)
-        // !hospitalId
-        //   ? setOpen(true)
-        //   : addToShiftWithExtraStuff()
+        : !hospitalId && !taskId
+          ? setOpen(true)
+          : addToShiftWithExtraStuff(hospitalId, taskId)
 
   return $(Fragment, null,
-    open &&
+    !(hospitalId && taskId) && open &&
       $(AddVolunteerShiftDialog, {
         hospitalscount,
         start,
