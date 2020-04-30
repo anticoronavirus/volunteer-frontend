@@ -461,12 +461,31 @@ mutation addShift($shift: period_insert_input!) {
           uid
           start
           end
-          period_demands {
+          demand
+          profession {
             uid
-            demand
-            profession {
-              name
-            }
+            name
+          }
+        }
+      }
+    }
+  }
+}`
+
+export const editShift = gql`
+mutation addShift($uid: uuid! $data: period_set_input) {
+  update_period(_set: $data where: { uid: { _eq: $uid } }) {
+    returning {
+      hospital {
+        uid
+        periods {
+          uid
+          start
+          end
+          demand
+          profession {
+            uid
+            name
           }
         }
       }

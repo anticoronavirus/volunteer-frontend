@@ -9,11 +9,12 @@ import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 // import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
-// import { useMutation } from '@apollo/react-hooks'
+import { useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
 import { useQuery } from '@apollo/react-hooks'
 import {
   addShift,
+  editShift,
   // updatePeriodDemand,
   professions as professionsQuery,
   requirements as requirementsQuery,
@@ -55,16 +56,23 @@ export const AddHospitalShift = () => {
     $(ListItem, { button: true, onClick: () => setOpen(true)},
       $(ListItemIcon, null, $(Add)),
       $(ListItemText, {
-        primary: 'Добавить смену'
-      })))
+        primary: 'Добавить смену'})))
 }
 
-export const EditHospitalShift = props => $(HospitalShift, { isEditing: true, ...props })
+export const EditHospitalShift = props => {
+  const [mutate] = useMutation(editShift, { variables: { uid: props.uid }})
+  return $(HospitalShift, {
+    isEditing: true,
+    onSubmit: data => mutate({ variables: { data }}),
+    ...props
+  })
+}
 
 export const HospitalShift = ({
   isEditing,
   open,
   onClose,
+  onSubmit,
   ...values
 }) => {
   
@@ -166,7 +174,14 @@ export const HospitalShift = ({
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && professionId &&
-        $(Button, { onClick: console.log }, 'Добавить')))
+        $(Button, { onClick: () => onSubmit({
+          start: `${start}:00+0300`,
+          end: `${end}:00+0300`,
+          demand,
+          profession_id: professionId
+        }) }, isEditing
+          ? 'Сохранить'
+          : 'Добавить')))
 }
 
 const Requirement = ({
