@@ -21,33 +21,6 @@ const Requests = () => {
   const { hospitalId } = useContext(HospitalContext)
 
   const { data } = useQuery(professionRequests, { variables: { hospitalId }})
-
-  // const { data = {
-  //   requests: [{
-  //     uid: 'test',
-  //     // profession_id ->
-  //     profession: {
-  //       uid: 'test',
-  //       name: 'Санитар'
-  //     },
-  //     // volunteer_id ->
-  //     volunteer: {
-  //       uid: 'test',
-  //       name: 'geh',
-  //       phone: '+79652661058'
-  //     },
-  //     // hospital_id + profession_id ->
-  //     requirements: [{
-  //       uid: 'rest',
-  //       name: 'geh',
-  //       confirmed: true
-  //     },{
-  //       uid: 'rest',
-  //       name: 'mleh',
-  //       confirmed: false
-  //     }]
-  //   }]
-  // }} = {}
   
   return $(List, null,
     !data ? null :

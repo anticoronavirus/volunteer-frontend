@@ -62,7 +62,7 @@ const Hospital = ({
             $(Tab, { id: value, key: value, value, label }),
             tabsArray)))),
     $(Box, isDesktop ? { display: 'flex', justifyContent: 'center', marginTop: 2 } : { marginTop: 2 },
-      $(Box, isDesktop && { minWidth: 480 },
+      $(Box, isDesktop && { minWidth: 480, maxWidth: 640 },
         $(Paper, null, 
           $(HospitalContext.Provider, {
             value: {
