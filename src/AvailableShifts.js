@@ -266,7 +266,7 @@ const CellPure = ({
               : $(Check),
           $(Box, { width: '1ex'}),
           myShift &&
-            $(Typography, { variant: 'body2', color: 'inherit' },
+            $(Typography, { variant: 'body2', color: 'inherit', noWrap: true },
               loading
                 ? $(Skeleton, { width: '8ex' })
                 : myShift.period_demand && myShift.period_demand.period.hospital.shortname)))))
