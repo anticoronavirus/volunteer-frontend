@@ -132,7 +132,23 @@ export const volunteerShiftCount = gql`{
 
 export const exportShifts = gql`
 query exportShifts($hospitalId: uuid) {
-  volunteer_shift(where: { hospital_id: { _eq: $hospitalId }}) {
+  volunteer_shift(
+    where: {
+      volunteer: {
+        provisioned_documents: {
+          uid: {
+            _neq: null
+          }
+        }
+      }
+      hospital_id: {
+        _eq: $hospitalId
+      }
+    },
+    order_by: {
+      date: desc
+      start: desc
+  }) {
     date
     start
     end
