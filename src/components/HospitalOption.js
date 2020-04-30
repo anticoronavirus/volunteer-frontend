@@ -6,8 +6,14 @@ import ListItemText from '@material-ui/core/ListItemText'
 // import Typography from '@material-ui/core/Typography'
 // import Box from '@material-ui/core/Box'
 
-const HospitalOption = ({ onClick, ...hospital }) =>
-  $(ListItem, { button: true, key: hospital.uid || '', value: hospital.uid, onClick },
+const HospitalOption = ({ onClick, selected, ...hospital }) =>
+  $(ListItem, {
+    button: true,
+    key: hospital.uid || '',
+    value: hospital.uid,
+    onClick,
+    selected
+  },
     $(ListItemText, {
       primary: hospital.shortname,
       secondary: hospital.address && hospital.address.split(', ').slice(2).join(', ') }))

@@ -7,6 +7,10 @@ import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
 import { useSnackbar } from 'notistack'
 import { useIsDesktop } from 'utils'
+import {
+  useQueryParam,
+  StringParam,
+} from 'use-query-params'
 
 import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
@@ -17,7 +21,6 @@ import Box from '@material-ui/core/Box'
 import Dialog from '@material-ui/core/Dialog'
 import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogActions from '@material-ui/core/DialogActions'
-import { useMediaQuery, useTheme } from '@material-ui/core'
 
 const AddVolunteerShiftDialog = ({
   onAdd,
@@ -27,8 +30,9 @@ const AddVolunteerShiftDialog = ({
   hospitalscount,
   open
 }) => {
-
-  const [hospitalId, setHospitalId] = useState(null)
+  
+  const [queryParamHospitalId] = useQueryParam('hospital', StringParam)
+  const [hospitalId, setHospitalId] = useState(queryParamHospitalId)
   const [professionWithRequirements, setProfessionWithRequirements] = useState(null)
   const { enqueueSnackbar } = useSnackbar()
 
@@ -49,12 +53,16 @@ const AddVolunteerShiftDialog = ({
       ? $(ConfirmRequest, professionWithRequirements)
       : $(Fragment, null,
           !data && $(Box, { padding: 2 }, $(CircularProgress)),
+          $(Box, { width: 480 }), // Required for the dialog to be full width
           $(List, null,
             data &&
               $(ListSubheader, null, data.hospitals.length > 1  ? 'Выбрать больницу' : 'Больница'),
             data &&
               map(hospital =>
-                HospitalOption({ onClick: () => setHospitalId(hospital.uid), ...hospital }),
+                HospitalOption({
+                  onClick: () => setHospitalId(hospital.uid),
+                  selected: hospital.uid === hospitalId,
+                  ...hospital }),
               data.hospitals),
             data && hospitalId &&
               $(ListSubheader, null, 'Выберите задачу'),
