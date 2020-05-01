@@ -173,7 +173,7 @@ export const HospitalShift = ({
         $(Caption, { variant: 'caption' }, 'Количество'),
         $(ButtonGroup, { fullWidth: true },
           $(Button, { onClick: () => setDemand(demand + 1) }, '+'),
-          $(Button, { disabled: true }, demand),
+          $(DemandButton, { disabled: true }, demand),
           $(Button, { onClick: () => demand > 1 && setDemand(demand - 1) }, '-'))),
       profession &&
       $(Box, { marginTop: 3 },
@@ -207,6 +207,12 @@ export const HospitalShift = ({
           ? 'Сохранить'
           : 'Добавить')))
 }
+
+const DemandButton = styled(Button)(({ theme }) => ({
+  '&.Mui-disabled': {
+    color: theme.palette.text.primary
+  }
+}))
 
 const LoadingRequirement = () =>
   $(Box, { padding: '8px 0', display: 'flex'},
