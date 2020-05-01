@@ -80,11 +80,13 @@ const AddVolunteerShiftDialog = ({
                 ({ data, loading }) => loading
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
-                      profession.requirements.length > 0
+                    profession.requirements.length === 0 || every(({ satisfied }) => satisfied.length > 0, profession.requirements)
+                      ? TaskOption({
+                          onClick: () => onAdd(hospitalId, profession.uid),
+                          ...profession})
+                      : profession.profession_requests.length === 0
                         ? TaskOption({
-                            onClick: () => every(({ satisfied }) => satisfied.length > 0, profession.requirements)
-                              ? onAdd(hospitalId, profession.uid)
-                              : setProfessionWithRequirements(profession),
+                            onClick: () => setProfessionWithRequirements(profession),
                             ...profession})
                         : $(ListItem, { key: profession.uid },
                             $(ListItemText, {
