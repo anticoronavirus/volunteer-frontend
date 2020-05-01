@@ -1,4 +1,4 @@
-import { createElement as $, useState, Fragment } from 'react'
+import { createElement as $, useState, Fragment, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import { Query, Mutation } from '@apollo/react-components'
 import {
@@ -9,6 +9,7 @@ import {
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
+import noop from 'lodash/fp/noop'
 import every from 'lodash/fp/every'
 import { useSnackbar } from 'notistack'
 import { useIsDesktop } from 'utils'
@@ -48,6 +49,12 @@ const AddVolunteerShiftDialog = ({
     variables: { start, end },
     skip: !open
   })
+
+  useEffect(() => {
+    hospitalscount && data &&
+      setHospitalId(data.hospitals[0].uid)
+      return noop
+  }, [data, hospitalscount])
 
   const isDekstop = useIsDesktop()
 
