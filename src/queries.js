@@ -475,6 +475,34 @@ query filteredHospitals(
   }
 }`
 
+export const profileProfessionRequests = gql`
+query profileProfessionRequests($uid: uuid!) {
+  requests: profession_request(where: {
+    volunteer_id: { _eq: $uid }
+  }) {
+    uid
+    hospital {
+      uid
+      shortname
+    }
+    requirements {
+      uid
+      satisfied(where: { volunteer_id: { _eq: $uid } }) {
+        uid
+      }
+      requirement {
+        uid
+        name
+      }
+    }
+    profession {
+      uid
+      name
+    }
+  }
+}
+`
+
 export const professionRequests = gql`
 query professionRequests($hospitalId: uuid!) {
   requests: profession_request(where: {

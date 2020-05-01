@@ -1,12 +1,16 @@
 import { createElement as $, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 // import { Query } from '@apollo/react-components'
-import { Subscription, Mutation } from '@apollo/react-components'
+import { Subscription, Mutation, Query } from '@apollo/react-components'
 import MaskedInput from 'react-input-mask'
 import { Redirect, useHistory, useParams, Switch, Route } from 'react-router-dom'
 import { me as meQuery, 
   // professions,
-updateVolunteer, myShifts, removeVolunteerFromShift } from 'queries'
+  profileProfessionRequests,
+  updateVolunteer,
+  myShifts,
+  removeVolunteerFromShift
+} from 'queries'
 import Back from 'components/Back'
 // import Biohazard from 'components/Biohazard'
 import { Formik, Form, Field } from 'formik'
@@ -220,9 +224,10 @@ const tabs = {
   },
   requests: {
     label: 'Заявки',
-    component: () =>
-      $(List, null,
-        map(ShiftRequest, [{ uid: 'test' }]))
+    component: ({ uid }) =>
+      $(Query, { query: profileProfessionRequests, variables: { uid } }, ({ data }) =>
+        $(List, null,
+          map(ShiftRequest, data ? data.requests : [])))
   }
 }
 
@@ -242,32 +247,22 @@ const LicensePlate = other =>
 
 const ShiftRequest = ({
   uid,
-  hospital = { name: 'ГКБ №64' },
-  profession = { name: 'Санитар' },
-  requirements = [{
-    name: 'Медицинская книжка',
-    confirmed: true
-  },{
-    name: 'Трудовой договор',
-    confirmed: false
-  }]
+  hospital,
+  profession,
+  requirements
 }) =>
   $(ListItem, { key: uid },
     $(ListItemText, {
-      primary: `${profession.name} в ${hospital.name}`,
+      primary: `${profession.name} в ${hospital.shortname}`,
       secondary: $(Box, null,
         map(Requirement, requirements))}))
 
-const Requirement = ({ name, confirmed }) =>
+const Requirement = ({ requirement, satisfied }) =>
   $(Box, { display: 'flex', alignItems: 'center', margin: '8px 0' },
-    $(confirmed ? CheckCircle : RemoveCircleOutline, { fontSize: 'small' }), $(Box, { marginLeft: 1 }, name))
-
-// const Profession = ({ uid, name, dangerous }) =>
-//   $(ListItem, null,
-//     $(ListItemText, {
-//       primary: name,
-//       secondary: 'test'
-//     }))
+    $(satisfied.length
+      ? CheckCircle
+      : RemoveCircleOutline, { fontSize: 'small' }),
+      $(Box, { marginLeft: 1 }, requirement.name))
 
 const Shifts = ({
   uid,
