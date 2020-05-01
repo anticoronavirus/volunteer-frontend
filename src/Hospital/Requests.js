@@ -1,7 +1,8 @@
 import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import HospitalContext from './HospitalContext'
-import { professionRequests } from 'queries'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { professionRequests, addConfirmation } from 'queries'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -14,7 +15,6 @@ import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import Delete from '@material-ui/icons/Delete'
 import Avatar from '@material-ui/core/Avatar'
-import { useQuery } from '@apollo/react-hooks'
 
 const Requests = () => {
 
@@ -28,16 +28,24 @@ const Requests = () => {
         ? $(ListItem, null,
             $(ListItemText, {
               primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-        : map(Request, data.requests))
+        : map(request => $(Request, request), data.requests))
 }
 
 const Request = ({
   uid,
   volunteer,
   profession,
+  confirmedRequirements,
   requirements
-}) =>
-  $(ListItem, { key: uid, alignItems: 'flex-start'},
+}) => {
+
+  const { hospitalId } = useContext(HospitalContext)
+  const [confirm] = useMutation(addConfirmation, { variables: {
+    volunteer_id: volunteer.uid,
+    hospital_id: hospitalId
+  }})
+
+  return $(ListItem, { key: uid, alignItems: 'flex-start'},
     $(ListItemAvatar, null,
       $(Avatar)),
     $(ListItemText, {
@@ -45,18 +53,19 @@ const Request = ({
       secondary: $(Fragment, null,
         $(FormLabel, null, `${profession.name} · ${volunteer.phone}`),
         $(FormGroup, null,
-          map(Requirement, requirements)))}),
+          map(({
+            uid,
+            requirement,
+          }) =>
+            $(FormControlLabel, {
+              key: uid,
+              label: requirement.name,
+              control: $(Checkbox, {
+                onClick: () => confirm({ variables: { requirement_id: requirement.uid }}),
+                checked: false })}),
+          requirements)))}),
     $(ListItemSecondaryAction, null,
       $(Delete)))
-
-const Requirement = ({
-  uid,
-  requirement,
-  confirmed
-}) =>
-  $(FormControlLabel, {
-    control: $(Checkbox, { checked: confirmed }),
-    label: requirement.name
-  })
+}
 
 export default Requests

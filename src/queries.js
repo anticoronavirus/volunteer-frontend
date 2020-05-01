@@ -519,12 +519,33 @@ query professionRequests($hospitalId: uuid!) {
       lname
       phone
     }
+    confirmedRequirements {
+      uid
+      requirement_id
+    }
     requirements {
       uid
       requirement {
         uid
         name
       }
+    }
+  }
+}`
+
+export const addConfirmation = gql`
+mutation addConfirmation(
+  $hospital_id: uuid
+  $volunteer_id: uuid
+  $requirement_id: uuid
+) {
+  insert_volunteer_hospital_requirement(objects: [{
+    hospital_id: $hospital_id
+    volunteer_id: $volunteer_id
+    requirement_id: $requirement_id
+  }]) {
+    returning {
+      uid
     }
   }
 }`
