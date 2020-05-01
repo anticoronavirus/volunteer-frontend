@@ -1,6 +1,7 @@
 import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
 import filter from 'lodash/fp/filter'
+import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
 import HospitalContext from './HospitalContext'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
@@ -47,7 +48,7 @@ const Request = ({
     id: uid,
     fragment: requestFragment,
   }
-  const [confirm] = useMutation(addConfirmation, {
+  const [confirm, confirmOptions] = useMutation(addConfirmation, {
     update: (store, result) =>
       client.writeFragment({
         ...fragment,
@@ -63,7 +64,9 @@ const Request = ({
       hospital_id: hospitalId
     }})
 
-  const [remove] = useMutation(removeConfirmation)
+  const [remove, removeOptions] = useMutation(removeConfirmation)
+
+  const loading = confirmOptions.loading || removeOptions.loading
 
   return $(ListItem, { key: uid, alignItems: 'flex-start'},
     $(ListItemAvatar, null,
@@ -82,9 +85,20 @@ const Request = ({
               key: uid,
               label: requirement.name,
               control: $(Checkbox, {
-                onClick: () => !confirmed
-                  ? confirm({ variables: { requirement_id: requirement.uid }})
+                onClick: loading ? noop : () => !confirmed
+                  ? confirm({
+                      optimisticResponse: {
+                        insert_volunteer_hospital_requirement: {
+                          returning: [{ uid: Math.random(), requirement_id: requirement.uid }]
+                        }
+                      },
+                      variables: { requirement_id: requirement.uid }})
                   : remove({
+                      optimisticResponse: {
+                        delete_volunteer_hospital_requirement: {
+                          affected_rows: 1
+                        }
+                      },
                       update: () =>
                         client.writeFragment({
                           ...fragment,
