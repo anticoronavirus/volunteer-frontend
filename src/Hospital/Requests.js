@@ -8,13 +8,13 @@ import { professionRequests, addConfirmation, removeConfirmation } from 'queries
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormLabel from '@material-ui/core/FormLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import Delete from '@material-ui/icons/Delete'
+// import Delete from '@material-ui/icons/Delete'
 import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
@@ -52,7 +52,7 @@ const Request = ({
     $(ListItemAvatar, null,
       $(Avatar)),
     $(ListItemText, {
-      primary: volunteer.name,
+      primary: `${volunteer.fname} ${volunteer.lname}`,
       secondary: $(Fragment, null,
         $(FormLabel, null, `${profession.name} · ${volunteer.phone}`),
         $(FormGroup, null,
@@ -71,8 +71,9 @@ const Request = ({
                 checked: !!confirmed })})
               },
           requirements)))}),
-    $(ListItemSecondaryAction, null,
-      $(Delete)))
+    // $(ListItemSecondaryAction, null,
+    //   $(Delete))
+      )
 }
 
 export default Requests

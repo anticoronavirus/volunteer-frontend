@@ -1,6 +1,5 @@
 import { createElement as $, useState, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
-import get from 'lodash/fp/get'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
@@ -14,7 +13,6 @@ import {
   confirm,
   removeVolunteerShift,
   addToBlackList,
-  hospitalPeriods
 } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
