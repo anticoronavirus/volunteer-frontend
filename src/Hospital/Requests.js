@@ -1,9 +1,10 @@
 import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import filter from 'lodash/fp/filter'
 import find from 'lodash/fp/find'
 import HospitalContext from './HospitalContext'
-import { useMutation, useQuery } from '@apollo/react-hooks'
-import { professionRequests, addConfirmation, removeConfirmation } from 'queries'
+import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
+import { professionRequests, addConfirmation, removeConfirmation, requestFragment } from 'queries'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -41,10 +42,26 @@ const Request = ({
 }) => {
 
   const { hospitalId } = useContext(HospitalContext)
-  const [confirm] = useMutation(addConfirmation, { variables: {
-    volunteer_id: volunteer.uid,
-    hospital_id: hospitalId
-  }})
+  const client = useApolloClient()
+  const fragment = {
+    id: uid,
+    fragment: requestFragment,
+  }
+  const [confirm] = useMutation(addConfirmation, {
+    update: (store, result) =>
+      client.writeFragment({
+        ...fragment,
+        data: {
+          confirmedRequirements: [
+            ...confirmedRequirements,
+            result.data.insert_volunteer_hospital_requirement.returning[0]
+          ]
+        }
+      }),
+    variables: {
+      volunteer_id: volunteer.uid,
+      hospital_id: hospitalId
+    }})
 
   const [remove] = useMutation(removeConfirmation)
 
@@ -67,7 +84,17 @@ const Request = ({
               control: $(Checkbox, {
                 onClick: () => !confirmed
                   ? confirm({ variables: { requirement_id: requirement.uid }})
-                  : remove({ variables: { uid: confirmed.uid }}),
+                  : remove({
+                      update: () =>
+                        client.writeFragment({
+                          ...fragment,
+                          data: {
+                            confirmedRequirements: filter(
+                              data => data.requirement_id !== requirement.uid,
+                              confirmedRequirements)
+                          }
+                        }),
+                      variables: { uid: confirmed.uid }}),
                 checked: !!confirmed })})
               },
           requirements)))}),

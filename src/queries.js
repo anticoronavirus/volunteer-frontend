@@ -312,6 +312,14 @@ fragment shift on vshift {
 }
 `
 
+export const requestFragment = gql`
+fragment request on profession_request {
+  uid
+  confirmedRequirements {
+    uid
+  }
+}`
+
 export const directions = gql`
 query directions($hospitalId: uuid!) {
   hospital: hospital_by_pk(uid: $hospitalId) {
@@ -546,6 +554,7 @@ mutation addConfirmation(
   }]) {
     returning {
       uid
+      requirement_id
     }
   }
 }`
