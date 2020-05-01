@@ -102,6 +102,7 @@ export const HospitalShift = ({
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
   const [professionId, setProfessionId] = useState(values.profession && values.profession.uid)
   const [demand, setDemand] = useState(values.demand || 1)
+  const [notabene, setNotabene] = useState(values.notabene || '')
 
   const fullScreen = useIsDesktop()
   const startRef = useRef(null)
@@ -167,14 +168,14 @@ export const HospitalShift = ({
                 value: professionId,
                 onChange: (event, value) => setProfessionId(value) },
                 map(Profession, professionsResult.data.professions)))),
-      professionId &&
+      profession &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Количество'),
         $(ButtonGroup, { fullWidth: true },
           $(Button, { onClick: () => setDemand(demand + 1) }, '+'),
           $(Button, { disabled: true }, demand),
           $(Button, { onClick: () => demand > 1 && setDemand(demand - 1) }, '-'))),
-      professionId &&
+      profession &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Описание'),
         $(TextField, {
@@ -182,9 +183,11 @@ export const HospitalShift = ({
           variant: 'outlined',
           fullWidth: true,
           multiline: true,
-          placeholder: profession && profession.description
+          value: notabene,
+          onChange: event => setNotabene(event.target.value),
+          placeholder: profession.description
         })),
-      professionId &&
+      profession &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Обязательные условия'),
         requirementsResult.loading || !requirementsResult.data
@@ -198,6 +201,7 @@ export const HospitalShift = ({
           start: `${start}:00+0300`,
           end: `${end}:00+0300`,
           demand,
+          notabene,
           profession_id: professionId
         }) }, isEditing
           ? 'Сохранить'

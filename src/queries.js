@@ -47,6 +47,7 @@ query hospitalPeriods($hospitalId: uuid!) {
       end
       profession_id
       demand
+      notabene
       profession {
         uid
         name
@@ -602,6 +603,7 @@ mutation addShift($shift: period_insert_input!) {
           start
           end
           demand
+          notabene
           profession_id
           profession {
             uid
@@ -624,6 +626,7 @@ mutation addShift($uid: uuid! $data: period_set_input) {
           start
           end
           demand
+          notabene
           profession {
             uid
             name
