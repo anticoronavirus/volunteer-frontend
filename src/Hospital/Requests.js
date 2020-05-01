@@ -1,8 +1,9 @@
 import { createElement as $, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
+import find from 'lodash/fp/find'
 import HospitalContext from './HospitalContext'
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { professionRequests, addConfirmation } from 'queries'
+import { professionRequests, addConfirmation, removeConfirmation } from 'queries'
 
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -45,6 +46,8 @@ const Request = ({
     hospital_id: hospitalId
   }})
 
+  const [remove] = useMutation(removeConfirmation)
+
   return $(ListItem, { key: uid, alignItems: 'flex-start'},
     $(ListItemAvatar, null,
       $(Avatar)),
@@ -56,13 +59,17 @@ const Request = ({
           map(({
             uid,
             requirement,
-          }) =>
-            $(FormControlLabel, {
+          }) => {
+            const confirmed = find({ requirement_id: requirement.uid }, confirmedRequirements)
+            return $(FormControlLabel, {
               key: uid,
               label: requirement.name,
               control: $(Checkbox, {
-                onClick: () => confirm({ variables: { requirement_id: requirement.uid }}),
-                checked: false })}),
+                onClick: () => !confirmed
+                  ? confirm({ variables: { requirement_id: requirement.uid }})
+                  : remove({ variables: { uid: confirmed.uid }}),
+                checked: !!confirmed })})
+              },
           requirements)))}),
     $(ListItemSecondaryAction, null,
       $(Delete)))

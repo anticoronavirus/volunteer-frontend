@@ -550,6 +550,17 @@ mutation addConfirmation(
   }
 }`
 
+export const removeConfirmation = gql`
+mutation removeConfirmation(
+  $uid: uuid
+) {
+  delete_volunteer_hospital_requirement(where: {
+    uid: { _eq: $uid }
+  }) {
+    affected_rows
+  }
+}`
+
 export const filteredHospitalProfessions = gql`
   query filteredHospitalProfessions(
     $hospitalId: uuid!
