@@ -471,6 +471,7 @@ query filteredHospitals(
   $start: timetz
   $end: timetz
 ) {
+  me { uid }
   hospitals: hospital(where: {
     shortname: { _neq: "Коммунарка" } ## FIXME
     periods: { 
@@ -575,7 +576,7 @@ export const filteredHospitalProfessions = gql`
     $hospitalId: uuid!
     $start: timetz
     $end: timetz
-    $userId: uuid
+    $userId: uuid!
   ) {
     professions: profession(where: {
       periods: {

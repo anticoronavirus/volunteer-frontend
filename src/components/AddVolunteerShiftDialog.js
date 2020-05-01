@@ -83,7 +83,7 @@ const AddVolunteerShiftDialog = ({
               $(ListSubheader, null, 'Выберите задачу'),
             data && hospitalId &&
               // FIXME add loading
-              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }},
+              $(Query, { query: filteredHospitalProfessions, variables: { userId: data.me[0].uid, start, end, hospitalId }},
                 ({ data, loading }) => loading && !data
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
