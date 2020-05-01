@@ -347,6 +347,8 @@ fragment hospitalShiftFragment on vshift {
   }) {
     uid
     demand
+    start
+    end
     profession {
       uid
       name
@@ -585,7 +587,13 @@ export const login = gql`
 
 export const addShift = gql`
 mutation addShift($shift: period_insert_input!) {
-  insert_period(objects: [$shift]) {
+  insert_period(
+    objects: [$shift]
+    on_conflict: {
+      constraint: period_start_end_hospital_id_profession_id_key
+      update_columns: [demand]
+    }
+  ) {
     returning {
       hospital {
         uid

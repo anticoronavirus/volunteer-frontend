@@ -99,7 +99,6 @@ const Section = ({
     map(period => TaskShifts({
       demand: period.demand,
       name: period.profession.name,
-      test: console.log(period),
       shifts: filter(shiftRequest =>
         shiftRequest.profession_id === period.profession.uid,
         shiftRequests)
