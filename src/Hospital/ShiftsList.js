@@ -1,6 +1,6 @@
 import { createElement as $, useState, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
-import find from 'lodash/fp/find'
+import get from 'lodash/fp/get'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
@@ -13,7 +13,8 @@ import {
   hospitalShiftsQuery,
   confirm,
   removeVolunteerShift,
-  addToBlackList
+  addToBlackList,
+  hospitalPeriods
 } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
@@ -84,28 +85,26 @@ const Section = ({
   start,
   end,
   demand,
+  periods,
   placesavailable,
   shiftRequests,
   loading
 }) =>
-  $(HospitalContext.Consumer, { key: date + start + end }, ({ periods }) => {
-    const period = find({ start, end}, periods)
-    
-    return $(SectionLI, { key: `${date}-${start}-${end}` },
-      $(SubheaderWithData, {
-        loading,
-        title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-        right: !loading && `${demand - placesavailable}/${demand}`
-      }),
-      shiftRequests && period && period.period_demands &&
-        map(periodDemand => TaskShifts({
-          demand: periodDemand.demand,
-          name: periodDemand.profession.name,
-          shifts: filter(shiftRequest =>
-            shiftRequest.period_demand && shiftRequest.period_demand.profession.name === periodDemand.profession.name,
-            shiftRequests)
-        }), period.period_demands),
-      $(Divider))})
+  $(SectionLI, { key: `${date}-${start}-${end}` },
+    $(SubheaderWithData, {
+      loading,
+      title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+      right: !loading && `${demand - placesavailable}/${demand}`
+    }),
+    map(period => TaskShifts({
+      demand: period.demand,
+      name: period.profession.name,
+      test: console.log(period),
+      shifts: filter(shiftRequest =>
+        shiftRequest.profession_id === period.profession.uid,
+        shiftRequests)
+    }), periods),
+    $(Divider))
   
 
 const SubheaderWithData = ({ title, right, loading, position }) =>

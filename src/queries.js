@@ -342,17 +342,30 @@ fragment hospitalShiftFragment on vshift {
   end
   placesavailable
   demand
-  shiftRequests(where: { hospital_id: { _eq: $hospitalId }}) {
+  periods(where: {
+    hospital_id: { _eq: $hospitalId }
+  }) {
+    uid
+    demand
+    profession {
+      uid
+      name
+    }
+  }
+  shiftRequests(where: {
+    hospital_id: { _eq: $hospitalId }
+    profession: {
+      periods: {
+        hospital_id: { _eq: $hospitalId }
+      }
+    }
+  }) {
     uid
     date
     start
     end
-    hospital_id
     confirmed
-    hospital {
-      uid
-      name
-    }
+    profession_id
     volunteer {
       uid
       fname
