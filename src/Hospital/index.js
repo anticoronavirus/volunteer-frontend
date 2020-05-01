@@ -45,10 +45,10 @@ const Hospital = ({
       $(Back, { marginTop: 0 }),
       $(Box, isDesktop && { display: 'flex', alignItems: 'center', flexDirection: 'column' }, 
         $(Box, { padding: 3 },
-          $(Typography, { variant: 'h4', align: 'center' }, loading
+          $(Typography, { variant: 'h4', align: 'center' }, loading && !data
             ? $(CustomSkeleton, { width: '6ex'})
             : data.hospital.shortname),
-          $(Typography, { variant: 'subtitle2', align: 'center' }, loading
+          $(Typography, { variant: 'subtitle2', align: 'center' }, loading && !data
             ? $(CustomSkeleton, { width: '20ex'})
             : data.hospital.name)),
         isManagedByMe

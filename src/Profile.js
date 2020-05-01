@@ -50,7 +50,7 @@ const Profile = () => {
 
   return !loading && !data.me[0]
     ? $(Redirect, { to: '/' })
-    : loading
+    : loading && !data
       ? $(Box, { padding: 2 }, $(CircularProgress))
       : $(ProfilePure, data.me[0])
 }

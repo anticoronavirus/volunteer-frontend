@@ -77,7 +77,7 @@ const AddVolunteerShiftDialog = ({
             data && hospitalId &&
               // FIXME add loading
               $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }},
-                ({ data, loading }) => loading
+                ({ data, loading }) => loading && !data
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
                     profession.requirements.length === 0 || every(({ satisfied }) => satisfied.length > 0, profession.requirements)

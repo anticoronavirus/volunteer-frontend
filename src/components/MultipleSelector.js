@@ -36,7 +36,7 @@ const MultipleSelector = ({
       $(Select, {
         value,
         // fullWidth: true,
-        disabled: loading,
+        disabled: loading && !data,
         displayEmpty: true,
         onChange: (event, { props }) => onChange(props.value),
           // includes(props.value, value)
