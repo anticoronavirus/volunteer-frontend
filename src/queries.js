@@ -490,26 +490,33 @@ export const filteredHospitalProfessions = gql`
     $hospitalId: uuid!
     $start: timetz
     $end: timetz
+    $userId: uuid
   ) {
     professions: profession(where: {
       periods: {
         start: { _eq: $start }
         end: { _eq: $end }
-        hospital_id: {
-          _eq: $hospitalId
-        }
+        hospital_id: { _eq: $hospitalId }
       }
     }) {
       uid
       name
       dangerous
       description
-      requirements: hospital_profession_requirements(where: {
-        hospital_id: {
-          _eq: $hospitalId
-        }
+      profession_requests(where: {
+        volunteer_id: { _eq: $userId }
       }) {
         uid
+      }
+      requirements: hospital_profession_requirements(where: {
+        hospital_id: { _eq: $hospitalId }
+      }) {
+        uid
+        satisfied(where: {
+          volunteer_id: { _eq: $userId }
+        }) {
+          uid
+        }
         requirement {
           uid
           name

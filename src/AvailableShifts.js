@@ -109,19 +109,6 @@ const Cell = ({
 
   const [addToShift] = useMutation(addVolunteerToShift, {
     variables: { userId },
-    optimisticResponse: {
-      insert_volunteer_shift: {
-        returning: [{
-          uid: Math.random().toString(),
-          confirmed: false, 
-          hospital: {
-            uid: hospitalId
-          },
-          __typename: 'volunteer_shift'
-          }],
-        __typename: 'volunteer_shift_mutation_response'
-      }
-    },
     update: (cache, result) => {
       const data = cache.readFragment(fragment)
       cache.writeFragment({
@@ -160,7 +147,21 @@ const Cell = ({
   const addToShiftWithExtraStuff = (hospitalId, professionId) => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: { date, start, end, hospitalId, professionId }})
+    addToShift({
+      variables: { date, start, end, hospitalId, professionId },
+      optimisticResponse: {
+        insert_volunteer_shift: {
+          returning: [{
+            uid: Math.random().toString(),
+            confirmed: false, 
+            hospital: {
+              uid: hospitalId
+            },
+            __typename: 'volunteer_shift'
+            }],
+          __typename: 'volunteer_shift_mutation_response'
+        }
+      }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смены для подтверждения'))
       .then(() => setUpdating(false))
   }

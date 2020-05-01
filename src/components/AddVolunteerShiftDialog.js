@@ -20,6 +20,8 @@ import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Box from '@material-ui/core/Box'
 import Dialog from '@material-ui/core/Dialog'
@@ -77,11 +79,16 @@ const AddVolunteerShiftDialog = ({
                 loading
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
-                      TaskOption({
-                        onClick: () => profession.requirements.length > 0
-                          ? setProfessionWithRequirements(profession)
-                          : onAdd(hospitalId, profession.uid),
-                        ...profession}),
+                      profession.profession_requests.length > 0
+                        ? $(ListItem, { key: profession.uid },
+                            $(ListItemText, {
+                              primary: profession.name,
+                              secondary: 'Вы уже подали заявку на эту задачу в эту больницу' }))
+                        : TaskOption({
+                            onClick: () => profession.requirements.length > 0
+                              ? setProfessionWithRequirements(profession)
+                              : onAdd(hospitalId, profession.uid),
+                            ...profession}),
                       data.professions)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
