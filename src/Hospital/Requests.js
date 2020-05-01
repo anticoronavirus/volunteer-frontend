@@ -31,7 +31,7 @@ const Requests = () => {
         ? $(ListItem, null,
             $(ListItemText, {
               primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-        : map(request => $(Request, request), data.requests))
+        : map(request => $(Request, { key: request.uid, ...request}), data.requests))
 }
 
 const Request = ({
