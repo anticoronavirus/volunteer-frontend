@@ -597,9 +597,7 @@ export const filteredHospitalProfessions = gql`
         hospital_id: { _eq: $hospitalId }
       }) {
         uid
-        satisfied(where: {
-          volunteer_id: { _eq: $userId }
-        }) {
+        satisfied(where: { volunteer_id: { _eq: $userId }}) {
           uid
         }
         requirement {

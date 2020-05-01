@@ -9,6 +9,7 @@ import {
 import HospitalOption from 'components/HospitalOption'
 import TaskOption from 'components/TaskOption'
 import map from 'lodash/fp/map'
+import every from 'lodash/fp/every'
 import { useSnackbar } from 'notistack'
 import { useIsDesktop } from 'utils'
 import {
@@ -75,20 +76,20 @@ const AddVolunteerShiftDialog = ({
               $(ListSubheader, null, 'Выберите задачу'),
             data && hospitalId &&
               // FIXME add loading
-              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }}, ({ data, loading }) =>
-                loading
+              $(Query, { query: filteredHospitalProfessions, variables: { start, end, hospitalId }},
+                ({ data, loading }) => loading
                   ? $(Box, { padding: 2 }, $(CircularProgress))
                   : map(profession =>
-                      profession.profession_requests.length > 0
-                        ? $(ListItem, { key: profession.uid },
+                      profession.requirements.length > 0
+                        ? TaskOption({
+                            onClick: () => every(({ satisfied }) => satisfied.length > 0, profession.requirements)
+                              ? onAdd(hospitalId, profession.uid)
+                              : setProfessionWithRequirements(profession),
+                            ...profession})
+                        : $(ListItem, { key: profession.uid },
                             $(ListItemText, {
                               primary: profession.name,
-                              secondary: 'Вы уже подали заявку на эту задачу в эту больницу' }))
-                        : TaskOption({
-                            onClick: () => profession.requirements.length > 0
-                              ? setProfessionWithRequirements(profession)
-                              : onAdd(hospitalId, profession.uid),
-                            ...profession}),
+                              secondary: 'Вы уже подали заявку на эту задачу в эту больницу' })),
                       data.professions)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
