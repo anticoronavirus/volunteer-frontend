@@ -216,6 +216,19 @@ query page($name: String) {
   }
 }`
 
+export const updatePage = gql`
+mutation updatePage($name: String $content: String) {
+  insert_page(objects: [{
+    name: $name
+    content: $content
+  }]) {
+    returning {
+      uid
+      content
+    }
+  }
+}`
+
 export const exportCars = gql`
 query exportCars($hospitalId: uuid) {
   volunteer_shift(

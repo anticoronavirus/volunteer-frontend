@@ -1,11 +1,11 @@
 import { createElement as $ } from 'react'
 import Back from 'components/Back'
+import MarkdownWithPreview from 'components/MarkdownWithPreview'
 import { Redirect } from 'react-router-dom'
 import { useIsDesktop } from 'utils'
-import { useQuery } from '@apollo/react-hooks'
-import { page } from 'queries'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { page, updatePage } from 'queries'
 
-import Typography from '@material-ui/core/Typography'
 import Paper from '@material-ui/core/Paper'
 import Box from '@material-ui/core/Box'
 
@@ -15,69 +15,39 @@ const Pages = ({
 
   const isDekstop = useIsDesktop()
   const { data } = useQuery(page, { variables: { name: match.params.page }})
+  const [update] = useMutation(updatePage, {
+    update: (store, { data }) =>
+      store.writeQuery({
+        query: page,
+        variables: { name: match.params.page },
+        data: {
+          page: data.insert_page.returning
+        }
+      }),
+    variables: { name: match.params.page }})
 
-  return $(Box, !isDekstop && { display: 'flex', padding: 2 },
-  $(Back),
-  !texts[match.params.page]
-    && $(Redirect, { to: '/'}),
-  $(Box, { margin: 'auto', marginTop: 2, maxWidth: '80ex' },
-  $(Paper, null,
-    $(Box, { padding: 2 },
-      $(Typography, { variant: 'body1', style: { whiteSpace: 'pre-line'}},
-        texts[match.params.page]))))) // FIXME move to database
-}
-
-
-const texts = {
-  hospitals: `
-Уважаемые сотрудники больниц города Москвы!
-Данный сайт разработан командой Memedic на волонтерских началах, чтобы сделать процесс записи волонтеров в Москве удобным и организованным. 
-Наша команда готова предоставить аккаунты любой больнице, принимающей пациентов с коронавирусной инфекцией. 
-В аккаунте больницы Вы сможете задать для Вашей больницы расписание волонтерских смен и необходимое число волонтеров, а также отслеживать в режиме онлайн записавшихся и их контактные данные.
-Данные волонтеров на сайте полностью защищены.
-`,
-  volunteers: `
-Уважаемые волонтеры!
-
-Цель проекта. Сейчас врачам требуется помощь в уходе за больными, работе с документацией, уборке территории и помещений, доставке передач, в прачечных и на складе. Этот сайт создан командой Memedic, чтобы все неравнодушные люди могли стать волонтерами в больницах Москвы, оказывающих помощь пациентам зараженным коронавирусной инфекцией. 
-
-Кто может стать волонтером? 
-
-Может стать любой человек старше 18 лет, не входящий в группу риска (люди старше 50 лет или с тяжелыми хроническими заболеваниями).
-
-Волонтеры с медицинским образованием помогают в качестве санитаров и помощников врачей таким образом, чтобы медики могли больше времени уделять пациентам.
-
-Добровольцы без медицинского образования становятся санитарам, помогают в работе с документами, а также на приеме передач, в прачечной, на складе, на ресепшене, тем самым разгружая сотрудников больницы.
-
-Как мне записаться? 
-Для того чтобы стать волонтером Вам необходимо: 
-1. Войти на сайт 
-  2. Заполнить в своем профиле необходимые данные 
-3. Посмотреть актуальные расписания больниц и выбрать удобные Вам смены (одним кликом на ячейку смены, вторым кликом вы можете убрать запись на смену)  
-4. Дождаться подтверждения координатора из больницы (координатор больницы свяжется с Вами по телефону, а также подтвердит в вашем профиле смену)   
-
-Обращаем ваше внимание для того, чтобы стать волонтером-санитаром предварительно нужно пройти инструктаж и сдать анализы. 
-Для этого нужно:
-1. Подать заявку на сайте, кликнув на расписание со сменой “Санитар”. 
-2. Координатор больницы свяжется с вами, чтобы сообщить дату проведения анализов и инструктажа. 
-3. После сдачи анализов и инструктажа вам откроется доступ к расписанию на смены в больницу. 
-
-Как проходит волонтерство? (Опишите шаги после регистрации)
-
-1.	Вы выбираете удобное вам медицинское учреждение в нашем расписании.
-2.	Записываетесь на любую удобную дату.
-3.	Вам звонят и вы приходите и помогаете.
-
-Что нужно иметь при себе? 
-1.	Паспорт
-2.	Сменная одежда, если Вы являетесь волонтером-санитаром. 
-
-Как обеспечивается ваша безопасность? 
-Больницы предоставляют все необходимые СИЗ для работы волонтером.
-
-По всем вопросам вы можете писать на email: help@memedic.ru
-  
-`
+  return $(Box, isDekstop && { display: 'flex', padding: 2 },
+    $(Back),
+    data && data.page.length === 0 &&
+      $(Redirect, { to: '/'}),
+    $(Box, { margin: 'auto', marginTop: 2, minWidth: '70ex' },
+    $(Paper, null,
+      data && data.page[0] &&
+        $(Box, { padding: 2 },
+          $(MarkdownWithPreview, {
+            onChange: content => update({
+              variables: { content },
+              optimisticResponse: {
+                insert_page: {
+                  returning: [{
+                    uid: Math.random,
+                    content,
+                    __typename: 'page'
+                  }]
+                }
+              }
+            }),
+            content: data.page[0].content})))))
 }
 
 export default Pages
