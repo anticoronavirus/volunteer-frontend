@@ -30,12 +30,14 @@ const Pages = ({
     $(Back),
     data && data.page.length === 0 &&
       $(Redirect, { to: '/'}),
-    $(Box, { margin: 'auto', marginTop: 2, width: '70ex' },
+    $(Box, isDekstop && { margin: 'auto', marginTop: 2, width: '70ex' },
     $(Paper, null,
       data && data.page[0] &&
         $(Box, { padding: 2 },
           $(MarkdownWithPreview, {
-            onChange: content => update({
+            onChange: !data.me[0] || data.me[0].managedHospitals_aggregate.aggregate.count === 0
+              ? null
+              : content => update({
               variables: { content },
               optimisticResponse: {
                 insert_page: {

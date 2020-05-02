@@ -210,6 +210,13 @@ query exportShifts($hospitalId: uuid) {
 
 export const page = gql`
 query page($name: String) {
+  me {
+    managedHospitals_aggregate {
+      aggregate {
+        count
+      }
+    }
+  }
   page(where: { name: { _eq: $name }} order_by: { created_at: desc } limit: 1) {
     uid
     content
