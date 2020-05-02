@@ -30,7 +30,7 @@ const Pages = ({
     $(Back),
     data && data.page.length === 0 &&
       $(Redirect, { to: '/'}),
-    $(Box, { margin: 'auto', marginTop: 2, minWidth: '70ex', maxWidth: '80ex' },
+    $(Box, { margin: 'auto', marginTop: 2, width: '70ex' },
     $(Paper, null,
       data && data.page[0] &&
         $(Box, { padding: 2 },

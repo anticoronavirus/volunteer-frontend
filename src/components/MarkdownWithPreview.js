@@ -20,11 +20,18 @@ const MarkdownWithPreview = ({
   const [source, setSource] = useState(content)
   return $(Box, null,
     onChange &&
-      $(Box, { position: 'sticky', display: 'flex', justifyContent: 'flex-end' },
-        $(ButtonGroup, null, 
-          $(Button, {
-            onClick: () => onChange(source),
-            disabled: source === content }, 'Сохранить'),
+      $(Box, {
+        position: 'sticky',
+        top: 16,
+        zIndex: 2,
+        height: 36.4,
+        display: 'flex',
+        justifyContent: 'flex-end'
+      },
+        $(StyledButtonGroup, { color: 'primary', variant: 'contained' }, 
+          source !== content &&
+            $(Button, {
+              onClick: () => onChange(source)}, 'Сохранить'),
           $(Button, { onClick: () => setEditing(!editing) },
             editing
               ? $(RemoveRedEye, { fontSize: 'small' })
@@ -40,5 +47,9 @@ const MarkdownWithPreview = ({
           value: source })
       : $(Markdown, { source }))
 }
+
+const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+  backgroundColor: theme.palette.background.paper
+}))
 
 export default MarkdownWithPreview
