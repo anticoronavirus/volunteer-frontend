@@ -102,32 +102,13 @@ const Cell = ({
 
   const history = useHistory()
   const [hospitalId] = useQueryParam('hospital', StringParam)
-  // const [taskId] = useQueryParam('task', StringParam)
+  const [taskId] = useQueryParam('task', StringParam)
   const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
 
   const [addToShift] = useMutation(addVolunteerToShift, {
     variables: { userId },
-    optimisticResponse: {
-      insert_volunteer_shift: {
-        returning: [{
-          uid: Math.random().toString(),
-          confirmed: false, 
-          period_demand: {
-            period: {
-              hospital: {
-                uid: Math.random().toString(),
-                shortname: '',
-              __typename: 'hospital'
-              }
-            }
-          },
-          __typename: 'volunteer_shift'
-          }],
-        __typename: 'volunteer_shift_mutation_response'
-      }
-    },
     update: (cache, result) => {
       const data = cache.readFragment(fragment)
       cache.writeFragment({
@@ -163,10 +144,24 @@ const Cell = ({
     }
   })
 
-  const addToShiftWithExtraStuff = (hospitalId, period_demand_id) => {
+  const addToShiftWithExtraStuff = (hospitalId, professionId) => {
     setOpen(false)
     setUpdating(true)
-    addToShift({ variables: { date, start, end, hospitalId, period_demand_id }})
+    addToShift({
+      variables: { date, start, end, hospitalId, professionId },
+      optimisticResponse: {
+        insert_volunteer_shift: {
+          returning: [{
+            uid: Math.random().toString(),
+            confirmed: false, 
+            hospital: {
+              uid: hospitalId
+            },
+            __typename: 'volunteer_shift'
+            }],
+          __typename: 'volunteer_shift_mutation_response'
+        }
+      }})
       .then(() => enqueueSnackbar('Спасибо! Координатор позвонит за день до смены для подтверждения'))
       .then(() => setUpdating(false))
   }
@@ -176,18 +171,18 @@ const Cell = ({
       ? history.push('/login')
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
-        : setOpen(true)
-        // !hospitalId
-        //   ? setOpen(true)
-        //   : addToShiftWithExtraStuff()
+        : !hospitalId || !taskId
+          ? setOpen(true)
+          : addToShiftWithExtraStuff(hospitalId, taskId)
 
   return $(Fragment, null,
-    open &&
+    !(hospitalId && taskId) && open &&
       $(AddVolunteerShiftDialog, {
         hospitalscount,
         start,
         end,
         open,
+        userId,
         onClose: () => setOpen(false),
         onAdd: addToShiftWithExtraStuff
       }),
@@ -266,10 +261,10 @@ const CellPure = ({
               : $(Check),
           $(Box, { width: '1ex'}),
           myShift &&
-            $(Typography, { variant: 'body2', color: 'inherit' },
+            $(Typography, { variant: 'body2', color: 'inherit', noWrap: true },
               loading
                 ? $(Skeleton, { width: '8ex' })
-                : myShift.period_demand && myShift.period_demand.period.hospital.shortname)))))
+                : myShift.hospital.shortname)))))
 
 // Loading stuff
 

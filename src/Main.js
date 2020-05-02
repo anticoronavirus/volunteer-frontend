@@ -40,7 +40,7 @@ const Main = ({ history }) => {
     },
       $(Typography, { variant: notMobile ? 'h4' : 'h6' }, 'Запись волонтёров в больницы Москвы'),
       $(Box, { height: 8, flexGrow: 1 }),
-      loading
+      loading && !data
         ? $(Skeleton, { width: '15ex', height: 24 })
         : $(Box, { flexShrink: 0 },
           data && data.me.length

@@ -1,6 +1,5 @@
-import { createElement as $, useState, Fragment } from 'react'
+import { createElement as $, useState, useContext, Fragment } from 'react'
 import map from 'lodash/fp/map'
-import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
 import filter from 'lodash/fp/filter'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
@@ -13,7 +12,7 @@ import {
   hospitalShiftsQuery,
   confirm,
   removeVolunteerShift,
-  addToBlackList
+  addToBlackList,
 } from 'queries'
 import Hint from 'components/Hint'
 import gql from 'graphql-tag'
@@ -46,10 +45,13 @@ import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
 
-const Shifts = ({ hospitalId, isManagedByMe }) => {
+const Shifts = () => {
+
+  const { hospitalId, isManagedByMe } = useContext(HospitalContext)
   const options = { variables: { hospitalId }}
   const { data } = useQuery(hospitalShiftsQuery, options)
   useSubscription(hospitalShiftsSubscription, options)
+  
   return $(Paper, null,
     isManagedByMe &&
       $(Query, { query: volunteerShiftCount }, ({ data }) =>
@@ -81,28 +83,25 @@ const Section = ({
   start,
   end,
   demand,
+  periods,
   placesavailable,
   shiftRequests,
   loading
 }) =>
-  $(HospitalContext.Consumer, null, ({ periods }) => {
-    const period = find({ start, end}, periods)
-    
-    return $(SectionLI, { key: `${date}-${start}-${end}` },
-      $(SubheaderWithData, {
-        loading,
-        title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-        right: !loading && `${demand - placesavailable}/${demand}`
-      }),
-      shiftRequests && period && period.period_demands &&
-        map(periodDemand => TaskShifts({
-          demand: periodDemand.demand,
-          name: periodDemand.profession.name,
-          shifts: filter(shiftRequest =>
-            shiftRequest.period_demand && shiftRequest.period_demand.profession.name === periodDemand.profession.name,
-            shiftRequests)
-        }), period.period_demands),
-      $(Divider))})
+  $(SectionLI, { key: `${date}-${start}-${end}` },
+    $(SubheaderWithData, {
+      loading,
+      title: !loading && `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
+      right: !loading && `${demand - placesavailable}/${demand}`
+    }),
+    map(period => TaskShifts({
+      demand: period.demand,
+      name: period.profession.name,
+      shifts: filter(shiftRequest =>
+        shiftRequest.profession_id === period.profession.uid,
+        shiftRequests)
+    }), periods),
+    $(Divider))
   
 
 const SubheaderWithData = ({ title, right, loading, position }) =>
@@ -124,7 +123,7 @@ const ZIndexedListSubheader = styled(ListSubheader)(
   top: 48 * position,
 }))
 
-const SectionLI = styled('li')(({ theme }) => ({
+const SectionLI = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
 }))
 
@@ -218,7 +217,7 @@ const VolunteerShift = ({
                     store.readQuery({
                       query: hospitalShiftsQuery,
                       variables: { hospitalId: hospital_id }}).shifts)}}),
-            optimisitcResponse: {
+            optimisticResponse: {
               delete_volunteer_shift: {
                 affected_rows: 1,
                 __typename: "volunteer_shift_mutation_response"

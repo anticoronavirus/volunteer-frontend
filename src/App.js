@@ -30,21 +30,21 @@ const App = () => {
           type: prefersDarkMode ? 'dark' : 'light',
         },
       }),
-    [prefersDarkMode],
-  )
+    [prefersDarkMode])
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
+    !loading &&
     $(SnackbarProvider, { maxSnack: 3 },
       $(WithFooter, null,
         $(Switch, null,
           $(Route, { path: '/pages/:page', component: Pages }),
-          $(Route, { path: '/profile', component: Profile }),
+          $(Route, { path: '/profile/:page?', component: Profile }),
           // eslint-disable-next-line
           !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
             $(Redirect, { to: '/profile' }),
           $(Route, { path: '/login', component: Login }),
-          $(Route, { path: '/hospitals/:uid', component: Hospital }),
+          $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
           $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
