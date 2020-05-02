@@ -9,10 +9,12 @@ const Markdown = ({ source }) =>
   
 const renderers = {
   heading: ({ level, children }) =>
-    $(Typography, { variant: `h${level}` }, children),
+    $(Typography, { variant: `h${level + 2}`, paragraph: true }, children),
   paragraph: ({ children }) =>
-    $(Typography, { variant: `body1` }, children),
-  image: props => $(Image, props)
+    $(Typography, { variant: `body1`, paragraph: true }, children),
+  image: props => $(Image, props),
+  listItem: ({ children }) =>
+    $(Typography, { variant: `body1`, component: 'li' }, children)
 }
 
 const Image = styled('img')({
