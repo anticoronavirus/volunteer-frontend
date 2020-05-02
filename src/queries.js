@@ -220,7 +220,7 @@ query exportCars($hospitalId: uuid) {
       }
       volunteer: {
         licenceplate: {
-          _neq: null
+          _neq: ""
         }
       }
     },
