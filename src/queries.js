@@ -229,9 +229,9 @@ query exportCars($hospitalId: uuid) {
       start: desc
   }) {
     volunteer {
+      lname
       fname
       mname
-      lname
       car
       licenceplate
     }

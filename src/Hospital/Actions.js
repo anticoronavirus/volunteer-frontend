@@ -83,7 +83,7 @@ const customFormats = {
 }
 
 const formatCar = ({ volunteer }) =>
-  map(formatCarValue, entries(volunteer))
+  map(formatCarValue, entries(omit('__typename', volunteer)))
 
 const formatCarValue = ([key, value]) => ({
   value,
