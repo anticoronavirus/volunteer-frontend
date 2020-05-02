@@ -208,6 +208,14 @@ query exportShifts($hospitalId: uuid) {
   }
 }`
 
+export const page = gql`
+query page($name: String) {
+  page(where: { name: { _eq: $name }} order_by: { created_at: desc } limit: 1) {
+    uid
+    content
+  }
+}`
+
 export const exportCars = gql`
 query exportCars($hospitalId: uuid) {
   volunteer_shift(
