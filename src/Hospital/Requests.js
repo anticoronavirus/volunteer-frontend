@@ -72,7 +72,7 @@ const Request = ({
     $(ListItemAvatar, null,
       $(Avatar)),
     $(ListItemText, {
-      primary: `${volunteer.fname} ${volunteer.lname}`,
+      primary: `${volunteer.lname} ${volunteer.fname}`,
       secondary: $(Fragment, null,
         $(FormLabel, null, `${profession.name} · ${volunteer.phone}`),
         $(FormGroup, null,
