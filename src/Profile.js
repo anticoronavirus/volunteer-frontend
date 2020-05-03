@@ -191,7 +191,7 @@ const ProfileForm = data => {
             component: TextField,
             name: 'licenceplate',
             label: 'Номер машины',
-            validate: value => value && value !== '_ ___ __ __' && value.match('_') && 'Заполните номер целиком, ключая регион',
+            validate: value => value && value.trim().length < 11 && 'Заполните номер целиком, ключая регион',
             margin: 'normal',
             fullWidth: true,
             helperText: ' ',
@@ -240,9 +240,11 @@ const LicensePlate = other =>
     },
     formatChars: {
       'A': '[АВЕКМНОРСТУХаверкмнорстух]',
-      '9': '[0-9]'
+      '9': '[0-9]',
+      '?': '[0-9 ]',
     },
-    mask: 'A 999 AA 99',
+    maskChar: null,
+    mask: 'A 999 AA 99?',
   })
 
 const ShiftRequest = ({
