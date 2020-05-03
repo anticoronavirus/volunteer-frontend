@@ -78,7 +78,7 @@ const Main = ({ history }) => {
           query: professions,
           variables: {
             where: {
-              period_demands: {
+              periods: {
                 uid: {
                   _neq: null
                 }
