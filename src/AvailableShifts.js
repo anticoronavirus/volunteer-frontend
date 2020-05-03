@@ -171,12 +171,13 @@ const Cell = ({
       ? history.push('/login')
       : shiftRequests.length
         ? setUpdating(true) || removeFromShift().then(() => setUpdating(false))
-        : !hospitalId || !taskId
-          ? setOpen(true)
-          : addToShiftWithExtraStuff(hospitalId, taskId)
+        : 
+        // !hospitalId || !taskId
+          setOpen(true)
+          // : addToShiftWithExtraStuff(hospitalId, taskId)
 
   return $(Fragment, null,
-    !(hospitalId && taskId) && open &&
+    open &&
       $(AddVolunteerShiftDialog, {
         hospitalscount,
         start,
