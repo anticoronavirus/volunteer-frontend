@@ -201,14 +201,14 @@ const VolunteerShift = ({
     $(ListItemSecondaryAction, null,
       loading
         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
-        : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospital_id }) => {
+        : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospitalId }) => {
           const removeVolunteerShiftMutation = {
             mutation: removeVolunteerShift,
             variables: { uid },
             update: store =>
               store.writeQuery({
                 query: hospitalShiftsQuery,
-                variables: { hospitalId: hospital_id },
+                variables: { hospitalId },
                 data: {
                   shifts: map(shift => ({
                       ...shift,
@@ -216,7 +216,7 @@ const VolunteerShift = ({
                     }),
                     store.readQuery({
                       query: hospitalShiftsQuery,
-                      variables: { hospitalId: hospital_id }}).shifts)}}),
+                      variables: { hospitalId }}).shifts)}}),
             optimisticResponse: {
               delete_volunteer_shift: {
                 affected_rows: 1,
@@ -229,7 +229,7 @@ const VolunteerShift = ({
               uid,
               phone,
               volunteer_id,
-              hospital_id,
+              hospitalId,
               removeVolunteerShiftMutation,
               hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
             : $(Mutation, removeVolunteerShiftMutation, mutate =>
@@ -257,7 +257,7 @@ const AdditionalControls = ({
   uid,
   phone,
   volunteer_id,
-  hospital_id,
+  hospitalId,
   removeVolunteerShiftMutation,
   hasDocumentsProvisioned
 }) => {
@@ -288,7 +288,7 @@ const AdditionalControls = ({
           $(ListItemIcon, null, $(RemoveCircle, { fontSize: 'small' })),
           $(Typography, { variant: 'inherit' }, 'В черный список'))),
       !hasDocumentsProvisioned &&
-        $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId: hospital_id  } }, mutate =>  
+        $(Mutation, { mutation: documentsProvisioned, variables: { volunteerId: volunteer_id, hospitalId  } }, mutate =>  
           $(MenuItem, { disabled, onClick: withLoading(mutate) },
             $(ListItemIcon, null, $(NoteAdd, { fontSize: 'small' })),
             $(Typography, { variant: 'inherit' }, 'Документы предоставлены')))))
