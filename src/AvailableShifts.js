@@ -102,7 +102,7 @@ const Cell = ({
 
   const history = useHistory()
   const [hospitalId] = useQueryParam('hospital', StringParam)
-  const [taskId] = useQueryParam('task', StringParam)
+  // const [taskId] = useQueryParam('task', StringParam)
   const [open, setOpen] = useState(false)
   const [updating, setUpdating] = useState(false)
   const { enqueueSnackbar } = useSnackbar()
