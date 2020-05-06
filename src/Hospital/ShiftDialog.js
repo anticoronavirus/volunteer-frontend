@@ -97,16 +97,17 @@ export const HospitalShift = ({
   onSubmit,
   ...values
 }) => {
-  
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
   const [professionId, setProfessionId] = useState(values.profession && values.profession.uid)
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
+  const startRange = [0, 23]
+  const endRange = [start + 4, start + 4 + 24]
 
   const fullScreen = useIsDesktop()
   const startRef = useRef(null)
-  // const endRef = useRef(null)
+  const endRef = useRef(null)
   useEffect(() => {
     startRef && startRef.current &&
       startRef.current.scrollTo((start * 38) + 24, 0)
@@ -127,7 +128,7 @@ export const HospitalShift = ({
   const profession = professionId && professionsResult.data
     ? find({ uid: professionId }, professionsResult.data.professions)
     : null
-  
+
   return $(Dialog, {
     open,
     onClose,
@@ -137,25 +138,39 @@ export const HospitalShift = ({
     $(DialogTitle, null, isEditing
         ? 'Редактирование смены'
         : 'Добавление смены'),
-    $(DialogContent, { dividers: true }, 
+    $(DialogContent, { dividers: true },
       $(Caption, { variant: 'caption' }, 'Начало смены'),
       $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
         $(ToggleButtonGroup, {
           size: 'small',
           exclusive: true,
           value: start,
-          onChange: (event, value) => setStart(value) },
-          map(RangeButton, range(0, 23)))),
+          onChange: (_, value) => {
+            scrollToChildButton(
+              startRef.current,
+              diffInHours(startRange[0], value) + 1
+            )
+            setStart(value)
+          }
+        },
+          map(RangeButton, range(...startRange)))),
       start !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Конец смены'),
-        $(Box, { overflow: 'scroll', display: 'flex' },
+        $(Box, { overflow: 'scroll', display: 'flex', ref: endRef },
           $(ToggleButtonGroup, {
             size: 'small',
             exclusive: true,
             value: end,
-            onChange: (event, value) => setEnd(value) },
-            map(RangeButton, range(start + 4, start + 4 + 24))))),
+            onChange: (_, value) => {
+              scrollToChildButton(
+                endRef.current,
+                diffInHours(endRange[0], value) + 1
+              )
+              setEnd(value)
+            }
+          },
+            map(RangeButton, range(...endRange))))),
       end !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Профессия'),
@@ -284,7 +299,29 @@ const Caption = styled(Typography)({
 const RangeButton = value =>
   $(ToggleButton, {
     key: value,
+    onClick: (event => {
+      console.log(event.target)
+    }),
     value: value < 24 ? value : value - 24 },
     `${value < 24 ? value : value - 24}:00`)
+
+const diffInHours = (start, end) =>
+  end - start > 0
+    ? end - start
+    : end - start + 24
+
+const scrollToChildButton = (parent, childIndex) => {
+  const child = parent.querySelector(`button:nth-child(${childIndex})`)
+  if (!child) return
+
+  const left = child.offsetLeft
+  const width = child.offsetWidth
+
+  parent.scrollTo({
+    top: 0,
+    left: left - width/2,
+    behavior: 'smooth'
+  })
+}
 
 export default AddHospitalShift
