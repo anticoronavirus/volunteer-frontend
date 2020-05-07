@@ -6,7 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 
-const TaskOption = ({ onClick, ...task}) =>
+const TaskOption = ({ onClick, ...task }) =>
   $(ListItem, { button: true, key: task.uid || '', value: task.uid, onClick },
     $(ListItemText, {
       // disableTypography: true,
@@ -16,6 +16,6 @@ const TaskOption = ({ onClick, ...task}) =>
         //   $(Typography, { component: 'span', variant: 'caption' }, task.requirements),
         // task.requirements &&
         //   $(Typography, { component: 'span' }, ' · '),
-        $(Typography, { component: 'span', variant: 'caption' }, task.description))}))
+        $(Typography, { component: 'span', variant: 'caption' }, task.periods ? task.periods[0].notabene : task.description))}))
 
 export default TaskOption
