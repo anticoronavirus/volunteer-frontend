@@ -3,6 +3,7 @@ import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
+import findIndex from 'lodash/fp/findIndex'
 // import set from 'lodash/fp/set'
 // import reduce from 'lodash/fp/reduce'
 // import isEmpty from 'lodash/fp/isEmpty'
@@ -90,6 +91,8 @@ export const EditHospitalShift = props => {
   })
 }
 
+const startRange = [0, 23]
+
 export const HospitalShift = ({
   isEditing,
   open,
@@ -102,20 +105,11 @@ export const HospitalShift = ({
   const [professionId, setProfessionId] = useState(values.profession && values.profession.uid)
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
-  const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
-
   const fullScreen = useIsDesktop()
   const startRef = useRef(null)
   const endRef = useRef(null)
-  useEffect(() => {
-    startRef && startRef.current &&
-      startRef.current.scrollTo((start * 38) + 24, 0)
-    // endRef && endRef.current &&
-    // endRef.current.scrollTo((end - start) * 38, 0)
-    return noop
-  }, [start, startRef])
-
+  const professionsRef = useRef(null)
   const { hospitalId } = useContext(HospitalContext)
   const professionsResult = useQuery(professionsQuery, { skip: !open })
   const requirementsResult = useQuery(requirementsQuery, { skip: !open || !professionId, variables: {
@@ -129,6 +123,27 @@ export const HospitalShift = ({
     ? find({ uid: professionId }, professionsResult.data.professions)
     : null
 
+  useEffect(() => {
+    start && startRef.current && scrollToChildButton(
+      startRef.current,
+      diffInHours(startRange[0], start)
+    )
+  }, [start])
+
+  useEffect(() => {
+    end && endRef.current && scrollToChildButton(
+      endRef.current,
+      diffInHours(endRange[0], end)
+    )
+  }, [end, endRange])
+
+  useEffect(() => {
+    profession && professionsResult.data && scrollToChildButton(
+      professionsRef.current,
+      professionsResult.data.professions.indexOf(profession)
+    )
+  }, [profession, professionsResult.data])
+
   return $(Dialog, {
     open,
     onClose,
@@ -140,48 +155,35 @@ export const HospitalShift = ({
         : 'Добавление смены'),
     $(DialogContent, { dividers: true },
       $(Caption, { variant: 'caption' }, 'Начало смены'),
-      $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
+      $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: startRef },
         $(ToggleButtonGroup, {
           size: 'small',
           exclusive: true,
           value: start,
-          onChange: (_, value) => {
-            scrollToChildButton(
-              startRef.current,
-              diffInHours(startRange[0], value) + 1
-            )
-            setStart(value)
-          }
+          onChange: (_, value) => setStart(value)
         },
           map(RangeButton, range(...startRange)))),
       start !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Конец смены'),
-        $(Box, { overflow: 'scroll', display: 'flex', ref: endRef },
+        $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: endRef },
           $(ToggleButtonGroup, {
             size: 'small',
             exclusive: true,
             value: end,
-            onChange: (_, value) => {
-              scrollToChildButton(
-                endRef.current,
-                diffInHours(endRange[0], value) + 1
-              )
-              setEnd(value)
-            }
-          },
+            onChange: (_, value) => setEnd(value) },
             map(RangeButton, range(...endRange))))),
       end !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Профессия'),
-        $(Box, { overflow: 'scroll', display: 'flex' },
+        $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: professionsRef },
           !professionsResult.data
             ? $(Skeleton, { width: '100%', height: 40, variant: 'rect' })
             : $(ToggleButtonGroup, {
                 size: 'small',
                 exclusive: true,
                 value: professionId,
-                onChange: (event, value) => setProfessionId(value) },
+                onChange: (_, value) => setProfessionId(value) },
                 map(Profession, professionsResult.data.professions)))),
       profession &&
       $(Box, { marginTop: 3 },
@@ -299,27 +301,22 @@ const Caption = styled(Typography)({
 const RangeButton = value =>
   $(ToggleButton, {
     key: value,
-    onClick: (event => {
-      console.log(event.target)
-    }),
     value: value < 24 ? value : value - 24 },
     `${value < 24 ? value : value - 24}:00`)
 
 const diffInHours = (start, end) =>
-  end - start > 0
+  end - start >= 0
     ? end - start
     : end - start + 24
 
 const scrollToChildButton = (parent, childIndex) => {
-  const child = parent.querySelector(`button:nth-child(${childIndex})`)
-  if (!child) return
-
-  const left = child.offsetLeft
-  const width = child.offsetWidth
+  const {
+    offsetLeft,
+  } = parent.querySelector(`button:nth-child(${childIndex + 1})`)
 
   parent.scrollTo({
     top: 0,
-    left: left - width/2,
+    left: offsetLeft,
     behavior: 'smooth'
   })
 }
