@@ -122,7 +122,7 @@ export const HospitalShift = ({
     : null
 
   const startRef = useScrollTo(start)
-  const endRef = useScrollTo(end)
+  const endRef = useScrollTo(end, start)
   const professionsRef = useScrollTo(professionId)
 
   return $(Dialog, {
@@ -285,7 +285,7 @@ const RangeButton = value =>
     value: value < 24 ? value : value - 24 },
     `${value < 24 ? value : value - 24}:00`)
 
-const useScrollTo = value => {
+const useScrollTo = (value, dependsOn) => {
   const ref = useRef(null)
   const child = value && ref.current && ref.current.querySelector(`button[value="${value}"]`)
   useEffect(() => {
@@ -294,7 +294,7 @@ const useScrollTo = value => {
       left: child.offsetLeft,
       behavior: 'smooth'
     })
-  }, [child])
+  }, [child, dependsOn])
   return ref
 }
 
