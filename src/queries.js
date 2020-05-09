@@ -622,6 +622,16 @@ export const filteredHospitalProfessions = gql`
       }) {
         uid
       }
+      periods (
+        where: {
+          start: { _eq: $start }
+          end: { _eq: $end }
+          hospital_id: { _eq: $hospitalId }
+        }
+      ) {
+        uid
+        notabene
+      }
       requirements: hospital_profession_requirements(where: {
         hospital_id: { _eq: $hospitalId }
       }) {

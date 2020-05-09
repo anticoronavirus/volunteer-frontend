@@ -1,12 +1,12 @@
 import { createElement as $ } from 'react'
 import Biohazard from './Biohazard'
-
+import get from 'lodash/fp/get'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import Typography from '@material-ui/core/Typography'
 import Box from '@material-ui/core/Box'
 
-const TaskOption = ({ onClick, ...task}) =>
+const TaskOption = ({ onClick, ...task }) =>
   $(ListItem, { button: true, key: task.uid || '', value: task.uid, onClick },
     $(ListItemText, {
       // disableTypography: true,
@@ -16,6 +16,7 @@ const TaskOption = ({ onClick, ...task}) =>
         //   $(Typography, { component: 'span', variant: 'caption' }, task.requirements),
         // task.requirements &&
         //   $(Typography, { component: 'span' }, ' · '),
-        $(Typography, { component: 'span', variant: 'caption' }, task.description))}))
+        $(Typography, { component: 'span', variant: 'caption' },
+          get(['periods', 0, 'notabene'], task) || task.description))}))
 
 export default TaskOption
