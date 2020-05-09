@@ -3,6 +3,7 @@ import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
+import findIndex from 'lodash/fp/findIndex'
 // import set from 'lodash/fp/set'
 // import reduce from 'lodash/fp/reduce'
 // import isEmpty from 'lodash/fp/isEmpty'
@@ -90,6 +91,8 @@ export const EditHospitalShift = props => {
   })
 }
 
+const startRange = [0, 23]
+
 export const HospitalShift = ({
   isEditing,
   open,
@@ -97,23 +100,13 @@ export const HospitalShift = ({
   onSubmit,
   ...values
 }) => {
-  
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
   const [professionId, setProfessionId] = useState(values.profession && values.profession.uid)
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
-
+  const endRange = [start + 4, start + 4 + 24]
   const fullScreen = useIsDesktop()
-  const startRef = useRef(null)
-  // const endRef = useRef(null)
-  useEffect(() => {
-    startRef && startRef.current &&
-      startRef.current.scrollTo((start * 38) + 24, 0)
-    // endRef && endRef.current &&
-    // endRef.current.scrollTo((end - start) * 38, 0)
-    return noop
-  }, [start, startRef])
 
   const { hospitalId } = useContext(HospitalContext)
   const professionsResult = useQuery(professionsQuery, { skip: !open })
@@ -127,7 +120,11 @@ export const HospitalShift = ({
   const profession = professionId && professionsResult.data
     ? find({ uid: professionId }, professionsResult.data.professions)
     : null
-  
+
+  const startRef = useScrollTo(start)
+  const endRef = useScrollTo(end, start)
+  const professionsRef = useScrollTo(professionId)
+
   return $(Dialog, {
     open,
     onClose,
@@ -137,36 +134,37 @@ export const HospitalShift = ({
     $(DialogTitle, null, isEditing
         ? 'Редактирование смены'
         : 'Добавление смены'),
-    $(DialogContent, { dividers: true }, 
+    $(DialogContent, { dividers: true },
       $(Caption, { variant: 'caption' }, 'Начало смены'),
-      $(Box, { overflow: 'scroll', display: 'flex', ref: startRef },
+      $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: startRef },
         $(ToggleButtonGroup, {
           size: 'small',
           exclusive: true,
           value: start,
-          onChange: (event, value) => setStart(value) },
-          map(RangeButton, range(0, 23)))),
+          onChange: (_, value) => setStart(value)
+        },
+          map(RangeButton, range(...startRange)))),
       start !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Конец смены'),
-        $(Box, { overflow: 'scroll', display: 'flex' },
+        $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: endRef },
           $(ToggleButtonGroup, {
             size: 'small',
             exclusive: true,
             value: end,
-            onChange: (event, value) => setEnd(value) },
-            map(RangeButton, range(start + 4, start + 4 + 24))))),
+            onChange: (_, value) => setEnd(value) },
+            map(RangeButton, range(...endRange))))),
       end !== undefined &&
       $(Box, { marginTop: 3 },
         $(Caption, { variant: 'caption' }, 'Профессия'),
-        $(Box, { overflow: 'scroll', display: 'flex' },
+        $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref: professionsRef },
           !professionsResult.data
             ? $(Skeleton, { width: '100%', height: 40, variant: 'rect' })
             : $(ToggleButtonGroup, {
                 size: 'small',
                 exclusive: true,
                 value: professionId,
-                onChange: (event, value) => setProfessionId(value) },
+                onChange: (_, value) => setProfessionId(value) },
                 map(Profession, professionsResult.data.professions)))),
       profession &&
       $(Box, { marginTop: 3 },
@@ -286,5 +284,18 @@ const RangeButton = value =>
     key: value,
     value: value < 24 ? value : value - 24 },
     `${value < 24 ? value : value - 24}:00`)
+
+const useScrollTo = (value, dependsOn) => {
+  const ref = useRef(null)
+  const child = value && ref.current && ref.current.querySelector(`button[value="${value}"]`)
+  useEffect(() => {
+    child && ref.current.scrollTo({
+      top: 0,
+      left: child.offsetLeft,
+      behavior: 'smooth'
+    })
+  }, [child, dependsOn])
+  return ref
+}
 
 export default AddHospitalShift

@@ -68,7 +68,7 @@ const HospitalShift = ({
       secondary: `${profession.name}: ${demand}`}))
 
 const HospitalShiftManaged = data => 
-  $(HospitalShiftManagedWithState, data)
+  $(HospitalShiftManagedWithState, { key: data.uid, ...data})
 
 const HospitalShiftManagedWithState = ({
   uid,
