@@ -107,9 +107,7 @@ export const HospitalShift = ({
   const [notabene, setNotabene] = useState(values.notabene || '')
   const endRange = [start + 4, start + 4 + 24]
   const fullScreen = useIsDesktop()
-  const startRef = useRef(null)
-  const endRef = useRef(null)
-  const professionsRef = useRef(null)
+
   const { hospitalId } = useContext(HospitalContext)
   const professionsResult = useQuery(professionsQuery, { skip: !open })
   const requirementsResult = useQuery(requirementsQuery, { skip: !open || !professionId, variables: {
@@ -123,26 +121,9 @@ export const HospitalShift = ({
     ? find({ uid: professionId }, professionsResult.data.professions)
     : null
 
-  useEffect(() => {
-    start && startRef.current && scrollToChildButton(
-      startRef.current,
-      diffInHours(startRange[0], start)
-    )
-  }, [start])
-
-  useEffect(() => {
-    end && endRef.current && scrollToChildButton(
-      endRef.current,
-      diffInHours(endRange[0], end)
-    )
-  }, [end, endRange])
-
-  useEffect(() => {
-    profession && professionsResult.data && scrollToChildButton(
-      professionsRef.current,
-      professionsResult.data.professions.indexOf(profession)
-    )
-  }, [profession, professionsResult.data])
+  const startRef = useScrollTo(start)
+  const endRef = useScrollTo(end)
+  const professionsRef = useScrollTo(professionId)
 
   return $(Dialog, {
     open,
@@ -301,27 +282,20 @@ const Caption = styled(Typography)({
 const RangeButton = value =>
   $(ToggleButton, {
     key: value,
-    onClick: (event => {
-      console.log(event.target)
-    }),
     value: value < 24 ? value : value - 24 },
     `${value < 24 ? value : value - 24}:00`)
 
-const diffInHours = (start, end) =>
-  end - start >= 0
-    ? end - start
-    : end - start + 24
-
-const scrollToChildButton = (parent, childIndex) => {
-  const {
-    offsetLeft,
-  } = parent.querySelector(`button:nth-child(${childIndex + 1})`)
-
-  parent.scrollTo({
-    top: 0,
-    left: offsetLeft,
-    behavior: 'smooth'
-  })
+const useScrollTo = value => {
+  const ref = useRef(null)
+  const child = value && ref.current && ref.current.querySelector(`button[value="${value}"]`)
+  useEffect(() => {
+    child && ref.current.scrollTo({
+      top: 0,
+      left: child.offsetLeft,
+      behavior: 'smooth'
+    })
+  }, [child])
+  return ref
 }
 
 export default AddHospitalShift
