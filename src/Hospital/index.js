@@ -69,7 +69,7 @@ const Hospital = ({
             value: {
               hospitalId: match.params.uid,
               isManagedByMe,
-              // periods: data.hospital.periods
+              hospital: data && data.hospital
             }},
             $(Switch, null,
               map(([value, { component }]) =>

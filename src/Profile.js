@@ -12,6 +12,7 @@ import { me as meQuery,
   removeVolunteerFromShift
 } from 'queries'
 import Back from 'components/Back'
+import ShiftRequest from 'components/ShiftRequest'
 // import Biohazard from 'components/Biohazard'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
@@ -38,8 +39,6 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
-import CheckCircle from '@material-ui/icons/CheckCircle'
-import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 // import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
 // import ToggleButton from '@material-ui/lab/ToggleButton'
@@ -102,16 +101,6 @@ const ProfilePure = data =>  {
                 $(component, data)),
               entries(tabs)),
             $(Redirect, { to: '/profile/' })))))
-        
-    // $(Box, { maxWidth: '60ex' },
-      // $(ShiftsAndRequests)
-      // $(Paper, null,
-      //   $(Query, { query: professions }, ({ data }) =>
-      //     !data
-      //       ? $(CircularProgress)
-      //       : map(Profession, data.professions))),
-      // $(Box, { height: 16 }),
-                // ))
 }
 
 const ProfileForm = data => {
@@ -246,25 +235,6 @@ const LicensePlate = other =>
     maskChar: null,
     mask: 'A 999 AA 99?',
   })
-
-const ShiftRequest = ({
-  uid,
-  hospital,
-  profession,
-  requirements
-}) =>
-  $(ListItem, { key: uid },
-    $(ListItemText, {
-      primary: `${profession.name} в ${hospital.shortname}`,
-      secondary: $(Box, null,
-        map(Requirement, requirements))}))
-
-const Requirement = ({ requirement, satisfied }) =>
-  $(Box, { display: 'flex', alignItems: 'center', margin: '8px 0' },
-    $(satisfied.length
-      ? CheckCircle
-      : RemoveCircleOutline, { fontSize: 'small' }),
-      $(Box, { marginLeft: 1 }, requirement.name))
 
 const Shifts = ({
   uid,

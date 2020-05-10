@@ -3,6 +3,7 @@ import map from 'lodash/fp/map'
 import filter from 'lodash/fp/filter'
 import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
+import ShiftRequest from 'components/ShiftRequest'
 import HospitalContext from './HospitalContext'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
@@ -32,7 +33,7 @@ import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
 
-  const { hospitalId, isManagedByMe } = useContext(HospitalContext)
+  const { hospitalId, hospital, isManagedByMe } = useContext(HospitalContext)
   const [onlyActual, setOnlyActual] = useState(true)
   const { data } = useQuery(professionRequests, { variables: { where: {
     hospital_id: { _eq: hospitalId }
@@ -40,7 +41,7 @@ const Requests = () => {
   
   return $(Fragment, null,
     isManagedByMe &&
-      $(Box, { padding: 2, paddingBottom: 0 },
+      $(Box, { padding: 2 },
         $(FormControlLabel, {
           control: $(Switch, { checked: onlyActual, onClick: () => setOnlyActual(!onlyActual) }),
           label: $(Box, { padding: 1 }, 'Только необработанные')})),
@@ -50,10 +51,16 @@ const Requests = () => {
           ? $(ListItem, null,
               $(ListItemText, {
                 primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-          : map(request => $(Request, { key: request.uid, ...request}), data.requests)))
+          : map(request => $(false
+              ? ManagedRequest
+              : ShiftRequest, {
+                  key: request.uid,
+                  hospital,
+                  ...request }),
+              data.requests)))
 }
 
-const Request = ({
+const ManagedRequest = ({
   uid,
   volunteer,
   profession,
