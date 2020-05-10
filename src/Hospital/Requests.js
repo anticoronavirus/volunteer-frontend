@@ -7,16 +7,18 @@ import HospitalContext from './HospitalContext'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { professionRequests, addConfirmation, removeConfirmation, requestFragment } from 'queries'
 
+import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormLabel from '@material-ui/core/FormLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-// import Delete from '@material-ui/icons/Delete'
+import Delete from '@material-ui/icons/Delete'
+import RestoreFromTrash from '@material-ui/icons/RestoreFromTrash'
 import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
@@ -39,7 +41,8 @@ const Request = ({
   volunteer,
   profession,
   confirmedRequirements,
-  requirements
+  requirements,
+  isRejected
 }) => {
 
   const { hospitalId } = useContext(HospitalContext)
@@ -112,9 +115,17 @@ const Request = ({
                 checked: !!confirmed })})
               },
           requirements)))}),
-    // $(ListItemSecondaryAction, null,
-    //   $(Delete))
-      )
+    $(ToggleRejection, { uid, isRejected }))
 }
+
+const ToggleRejection = ({
+  uid,
+  isRejected
+}) =>
+  $(ListItemSecondaryAction, null,
+    $(IconButton, { onClick: console.log },
+      isRejected
+        ? $(RestoreFromTrash)
+        : $(Delete)))
 
 export default Requests
