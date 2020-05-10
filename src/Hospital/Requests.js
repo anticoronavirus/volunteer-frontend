@@ -1,4 +1,4 @@
-import { createElement as $, useContext, Fragment } from 'react'
+import { createElement as $, useContext, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
 import filter from 'lodash/fp/filter'
 import noop from 'lodash/fp/noop'
@@ -14,7 +14,9 @@ import {
   requestFragment
 } from 'queries'
 
+import Box from '@material-ui/core/Box'
 import IconButton from '@material-ui/core/IconButton'
+import Switch from '@material-ui/core/Switch'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -30,17 +32,25 @@ import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
 
-  const { hospitalId } = useContext(HospitalContext)
-
-  const { data } = useQuery(professionRequests, { variables: { hospitalId }})
+  const { hospitalId, isManagedByMe } = useContext(HospitalContext)
+  const [onlyActual, setOnlyActual] = useState(true)
+  const { data } = useQuery(professionRequests, { variables: { where: {
+    hospital_id: { _eq: hospitalId }
+  }}})
   
-  return $(List, null,
-    !data ? null :
-      data.requests.length === 0
-        ? $(ListItem, null,
-            $(ListItemText, {
-              primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-        : map(request => $(Request, { key: request.uid, ...request}), data.requests))
+  return $(Fragment, null,
+    isManagedByMe &&
+      $(Box, { padding: 2, paddingBottom: 0 },
+        $(FormControlLabel, {
+          control: $(Switch, { checked: onlyActual, onClick: () => setOnlyActual(!onlyActual) }),
+          label: $(Box, { padding: 1 }, 'Только необработанные')})),
+      data && 
+        $(List, null, 
+        data.requests.length === 0
+          ? $(ListItem, null,
+              $(ListItemText, {
+                primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
+          : map(request => $(Request, { key: request.uid, ...request}), data.requests)))
 }
 
 const Request = ({

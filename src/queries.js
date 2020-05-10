@@ -541,10 +541,8 @@ query profileProfessionRequests($uid: uuid!) {
 `
 
 export const professionRequests = gql`
-query professionRequests($hospitalId: uuid!) {
-  requests: profession_request(where: {
-    hospital_id: { _eq: $hospitalId }
-  }) {
+query professionRequests($where: profession_request_bool_exp) {
+  requests: profession_request(where: $where order_by: { created_at: desc }) {
     uid
     profession {
       uid
