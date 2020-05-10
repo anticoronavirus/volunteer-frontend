@@ -815,6 +815,19 @@ mutation updateDirections($hospitalId: uuid! $directions: String!) {
   }
 }`
 
+export const toggleRejection = gql`
+mutation toggleRejection($uid: uuid! $isRejected: Boolean) {
+  update_profession_request(
+    _set: { is_rejected: $isRejected }
+    where: { uid: { _eq: $uid } }
+  ) {
+    returning {
+      uid
+      is_rejected
+    }
+  }
+}`
+
 export const refreshToken = `
  mutation {
    refreshToken {

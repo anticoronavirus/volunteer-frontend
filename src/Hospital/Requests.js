@@ -5,7 +5,14 @@ import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
 import HospitalContext from './HospitalContext'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
-import { professionRequests, addConfirmation, removeConfirmation, requestFragment } from 'queries'
+import { Mutation } from '@apollo/react-components'
+import {
+  toggleRejection,
+  professionRequests,
+  addConfirmation,
+  removeConfirmation,
+  requestFragment
+} from 'queries'
 
 import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
@@ -122,10 +129,13 @@ const ToggleRejection = ({
   uid,
   isRejected
 }) =>
-  $(ListItemSecondaryAction, null,
-    $(IconButton, { onClick: console.log },
-      isRejected
-        ? $(RestoreFromTrash)
-        : $(Delete)))
+  $(Mutation, {
+    mutation: toggleRejection,
+    variables: { uid, isRejected: !isRejected } }, onClick =>
+    $(ListItemSecondaryAction, null,
+      $(IconButton, { onClick },
+        isRejected
+          ? $(RestoreFromTrash)
+          : $(Delete))))
 
 export default Requests
