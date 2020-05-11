@@ -148,13 +148,39 @@ const ToggleRejection = ({
   uid,
   rejected
 }) =>
-  $(Mutation, {
-    mutation: toggleRejection,
-    variables: { uid, rejected: !rejected } }, onClick =>
-    $(ListItemSecondaryAction, null,
-      $(IconButton, { onClick },
-        rejected
-          ? $(RestoreFromTrash)
-          : $(Delete))))
+  $(HospitalContext.Consumer, null, ({ hospitalId }) =>
+    $(Mutation, {
+      mutation: toggleRejection,
+      optimisticResponse: {
+        returning: {
+          uid,
+          rejected: !rejected,
+          __typename: 'profession_request_mutation_response' 
+        }
+      },
+      update: cache => {
+        const data = cache.readQuery({
+          query: professionRequests,
+          variables: {
+            where: {
+              hospital_id: { _eq: hospitalId },
+              rejected: { _eq: rejected }}}})
+        cache.writeQuery({
+          query: professionRequests,
+          data: {
+            ...data,
+            requests: filter(request => request.uid !== uid, data.requests)
+          },
+          variables: {
+            where: {
+              hospital_id: { _eq: hospitalId },
+              rejected: { _eq: rejected }}}})
+      },
+      variables: { uid, rejected: !rejected } }, onClick =>
+      $(ListItemSecondaryAction, null,
+        $(IconButton, { onClick },
+          rejected
+            ? $(RestoreFromTrash)
+            : $(Delete)))))
 
 export default Requests
