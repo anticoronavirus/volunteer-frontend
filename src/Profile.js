@@ -1,11 +1,9 @@
 import { createElement as $, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-// import { Query } from '@apollo/react-components'
 import { Subscription, Mutation, Query } from '@apollo/react-components'
 import MaskedInput from 'react-input-mask'
 import { Redirect, useHistory, useParams, Switch, Route } from 'react-router-dom'
 import { me as meQuery, 
-  // professions,
   profileProfessionRequests,
   updateVolunteer,
   myShifts,
@@ -13,7 +11,6 @@ import { me as meQuery,
 } from 'queries'
 import Back from 'components/Back'
 import ShiftRequest from 'components/ShiftRequest'
-// import Biohazard from 'components/Biohazard'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
@@ -40,8 +37,6 @@ import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
 import { useMediaQuery, useTheme } from '@material-ui/core'
-// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-// import ToggleButton from '@material-ui/lab/ToggleButton'
 
 const Profile = () => {
   
@@ -252,22 +247,6 @@ const Shifts = ({
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: mutate },
         $(Delete, { fontSize: 'small' })))))
-
-// const FormikButtonGroup = ({
-//   form: { setFieldValue, values },
-//   field: { name },
-// }) =>
-//   $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
-//     $(Query, { query: professions }, ({ data }) => 
-//       $(ToggleButtonGroup, {
-//         value: values[name],
-//         exclusive: true,
-//         onChange: (event, value) => setFieldValue(name, value)
-//       }, data &&
-//       map(Profession, data.professions))))
-
-// const Profession = ({ uid, name, dangerous }) =>
-//   $(ToggleButton, { value: uid }, dangerous && $(Biohazard), name)
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 
