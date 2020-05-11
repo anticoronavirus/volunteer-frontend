@@ -544,6 +544,7 @@ export const professionRequests = gql`
 query professionRequests($where: profession_request_bool_exp) {
   requests: profession_request(where: $where order_by: { created_at: desc }) {
     uid
+    rejected
     profession {
       uid
       name
@@ -814,14 +815,14 @@ mutation updateDirections($hospitalId: uuid! $directions: String!) {
 }`
 
 export const toggleRejection = gql`
-mutation toggleRejection($uid: uuid! $isRejected: Boolean) {
+mutation toggleRejection($uid: uuid! $rejected: Boolean) {
   update_profession_request(
-    _set: { is_rejected: $isRejected }
+    _set: { rejected: $rejected }
     where: { uid: { _eq: $uid } }
   ) {
     returning {
       uid
-      is_rejected
+      rejected
     }
   }
 }`

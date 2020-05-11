@@ -34,24 +34,26 @@ import Avatar from '@material-ui/core/Avatar'
 const Requests = () => {
 
   const { hospitalId, hospital, isManagedByMe } = useContext(HospitalContext)
-  const [onlyActual, setOnlyActual] = useState(true)
+  const [showDeleted, setShowDeleted] = useState(false)
   const { data } = useQuery(professionRequests, { variables: { where: {
-    hospital_id: { _eq: hospitalId }
+    hospital_id: { _eq: hospitalId },
+    rejected: { _eq: showDeleted }
   }}})
   
   return $(Fragment, null,
     isManagedByMe &&
       $(Box, { padding: 2 },
         $(FormControlLabel, {
-          control: $(Switch, { checked: onlyActual, onClick: () => setOnlyActual(!onlyActual) }),
-          label: $(Box, { padding: 1 }, 'Только необработанные')})),
-      data && 
+          control: $(Switch, { checked: showDeleted, onClick: () => setShowDeleted(!showDeleted) }),
+          label: $(Box, { padding: 1 }, 'Показать удалённые')})),
+      data && hospital &&
         $(List, null, 
         data.requests.length === 0
           ? $(ListItem, null,
               $(ListItemText, {
-                primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-          : map(request => $(false
+                primary: $(Box, { maxWidth: 400 },
+                  'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.') }))
+          : map(request => $(isManagedByMe
               ? ManagedRequest
               : ShiftRequest, {
                   key: request.uid,
@@ -66,7 +68,7 @@ const ManagedRequest = ({
   profession,
   confirmedRequirements,
   requirements,
-  isRejected
+  rejected
 }) => {
 
   const { hospitalId } = useContext(HospitalContext)
@@ -139,19 +141,19 @@ const ManagedRequest = ({
                 checked: !!confirmed })})
               },
           requirements)))}),
-    $(ToggleRejection, { uid, isRejected }))
+    $(ToggleRejection, { uid, rejected }))
 }
 
 const ToggleRejection = ({
   uid,
-  isRejected
+  rejected
 }) =>
   $(Mutation, {
     mutation: toggleRejection,
-    variables: { uid, isRejected: !isRejected } }, onClick =>
+    variables: { uid, rejected: !rejected } }, onClick =>
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick },
-        isRejected
+        rejected
           ? $(RestoreFromTrash)
           : $(Delete))))
 
