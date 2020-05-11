@@ -37,7 +37,7 @@ const Requests = () => {
   const [showDeleted, setShowDeleted] = useState(false)
   const { data } = useQuery(professionRequests, { variables: { where: {
     hospital_id: { _eq: hospitalId },
-    rejected: showDeleted ? { _eq: true } : { _neq: true }
+    rejected: { _eq: showDeleted }
   }}})
   
   return $(Fragment, null,
@@ -166,7 +166,7 @@ const ToggleRejection = ({
           variables: {
             where: {
               hospital_id: { _eq: hospitalId },
-              rejected: rejected ? { _eq: true } : { _neq: true }}}})
+              rejected: { _eq: rejected }}}})
         cache.writeQuery({
           query: professionRequests,
           data: {
@@ -176,7 +176,7 @@ const ToggleRejection = ({
           variables: {
             where: {
               hospital_id: { _eq: hospitalId },
-              rejected: rejected ? { _eq: true } : { _neq: true }}}})
+              rejected: { _eq: rejected }}}})
       },
       variables: { uid, rejected: !rejected } }, onClick =>
       $(ListItemSecondaryAction, null,
