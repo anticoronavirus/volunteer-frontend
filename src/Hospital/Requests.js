@@ -1,45 +1,74 @@
-import { createElement as $, useContext, Fragment } from 'react'
+import { createElement as $, useContext, Fragment, useState } from 'react'
 import map from 'lodash/fp/map'
 import filter from 'lodash/fp/filter'
 import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
+import ShiftRequest from 'components/ShiftRequest'
 import HospitalContext from './HospitalContext'
 import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
-import { professionRequests, addConfirmation, removeConfirmation, requestFragment } from 'queries'
+import { Mutation } from '@apollo/react-components'
+import {
+  toggleRejection,
+  professionRequests,
+  addConfirmation,
+  removeConfirmation,
+  requestFragment
+} from 'queries'
 
+import Box from '@material-ui/core/Box'
+import IconButton from '@material-ui/core/IconButton'
+import Switch from '@material-ui/core/Switch'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
-// import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormLabel from '@material-ui/core/FormLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-// import Delete from '@material-ui/icons/Delete'
+import Delete from '@material-ui/icons/Delete'
+import RestoreFromTrash from '@material-ui/icons/RestoreFromTrash'
 import Avatar from '@material-ui/core/Avatar'
 
 const Requests = () => {
 
-  const { hospitalId } = useContext(HospitalContext)
-
-  const { data } = useQuery(professionRequests, { variables: { hospitalId }})
+  const { hospitalId, hospital, isManagedByMe } = useContext(HospitalContext)
+  const [showDeleted, setShowDeleted] = useState(false)
+  const { data } = useQuery(professionRequests, { variables: { where: {
+    hospital_id: { _eq: hospitalId },
+    rejected: { _eq: showDeleted }
+  }}})
   
-  return $(List, null,
-    !data ? null :
-      data.requests.length === 0
-        ? $(ListItem, null,
-            $(ListItemText, {
-              primary: 'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.'}))
-        : map(request => $(Request, { key: request.uid, ...request}), data.requests))
+  return $(Fragment, null,
+    isManagedByMe &&
+      $(Box, { padding: 2 },
+        $(FormControlLabel, {
+          control: $(Switch, { checked: showDeleted, onClick: () => setShowDeleted(!showDeleted) }),
+          label: $(Box, { padding: 1 }, 'Показать удалённые')})),
+      data && hospital &&
+        $(List, null, 
+        data.requests.length === 0
+          ? $(ListItem, null,
+              $(ListItemText, {
+                primary: $(Box, { maxWidth: 400 },
+                  'Здесь будут заявки волонтёров на смены, требующие особых условий: мед. книжки, трудовой договор и т. д.') }))
+          : map(request => $(isManagedByMe
+              ? ManagedRequest
+              : ShiftRequest, {
+                  key: request.uid,
+                  hospital,
+                  ...request }),
+              data.requests)))
 }
 
-const Request = ({
+const ManagedRequest = ({
   uid,
   volunteer,
   profession,
   confirmedRequirements,
-  requirements
+  requirements,
+  rejected
 }) => {
 
   const { hospitalId } = useContext(HospitalContext)
@@ -112,9 +141,48 @@ const Request = ({
                 checked: !!confirmed })})
               },
           requirements)))}),
-    // $(ListItemSecondaryAction, null,
-    //   $(Delete))
-      )
+    $(ToggleRejection, { uid, rejected }))
 }
+
+const ToggleRejection = ({
+  uid,
+  rejected
+}) =>
+  $(HospitalContext.Consumer, null, ({ hospitalId }) =>
+    $(Mutation, {
+      mutation: toggleRejection,
+      optimisticResponse: {
+        update_profession_request: {
+          returning: {
+            uid,
+            rejected: !rejected,
+            __typename: 'profession_request_mutation_response' 
+          }
+        }
+      },
+      update: cache => {
+        const data = cache.readQuery({
+          query: professionRequests,
+          variables: {
+            where: {
+              hospital_id: { _eq: hospitalId },
+              rejected: { _eq: rejected }}}})
+        cache.writeQuery({
+          query: professionRequests,
+          data: {
+            ...data,
+            requests: filter(request => request.uid !== uid, data.requests)
+          },
+          variables: {
+            where: {
+              hospital_id: { _eq: hospitalId },
+              rejected: { _eq: rejected }}}})
+      },
+      variables: { uid, rejected: !rejected } }, onClick =>
+      $(ListItemSecondaryAction, null,
+        $(IconButton, { onClick },
+          rejected
+            ? $(RestoreFromTrash)
+            : $(Delete)))))
 
 export default Requests

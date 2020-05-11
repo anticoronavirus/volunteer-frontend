@@ -1,18 +1,16 @@
 import { createElement as $, useEffect } from 'react'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-// import { Query } from '@apollo/react-components'
 import { Subscription, Mutation, Query } from '@apollo/react-components'
 import MaskedInput from 'react-input-mask'
 import { Redirect, useHistory, useParams, Switch, Route } from 'react-router-dom'
 import { me as meQuery, 
-  // professions,
   profileProfessionRequests,
   updateVolunteer,
   myShifts,
   removeVolunteerFromShift
 } from 'queries'
 import Back from 'components/Back'
-// import Biohazard from 'components/Biohazard'
+import ShiftRequest from 'components/ShiftRequest'
 import { Formik, Form, Field } from 'formik'
 import { TextField } from 'formik-material-ui'
 import { logoff } from 'Apollo'
@@ -38,11 +36,7 @@ import Typography from '@material-ui/core/Typography'
 import Tooltip from '@material-ui/core/Tooltip'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import Delete from '@material-ui/icons/Delete'
-import CheckCircle from '@material-ui/icons/CheckCircle'
-import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline'
 import { useMediaQuery, useTheme } from '@material-ui/core'
-// import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-// import ToggleButton from '@material-ui/lab/ToggleButton'
 
 const Profile = () => {
   
@@ -102,16 +96,6 @@ const ProfilePure = data =>  {
                 $(component, data)),
               entries(tabs)),
             $(Redirect, { to: '/profile/' })))))
-        
-    // $(Box, { maxWidth: '60ex' },
-      // $(ShiftsAndRequests)
-      // $(Paper, null,
-      //   $(Query, { query: professions }, ({ data }) =>
-      //     !data
-      //       ? $(CircularProgress)
-      //       : map(Profession, data.professions))),
-      // $(Box, { height: 16 }),
-                // ))
 }
 
 const ProfileForm = data => {
@@ -247,25 +231,6 @@ const LicensePlate = other =>
     mask: 'A 999 AA 99?',
   })
 
-const ShiftRequest = ({
-  uid,
-  hospital,
-  profession,
-  requirements
-}) =>
-  $(ListItem, { key: uid },
-    $(ListItemText, {
-      primary: `${profession.name} в ${hospital.shortname}`,
-      secondary: $(Box, null,
-        map(Requirement, requirements))}))
-
-const Requirement = ({ requirement, satisfied }) =>
-  $(Box, { display: 'flex', alignItems: 'center', margin: '8px 0' },
-    $(satisfied.length
-      ? CheckCircle
-      : RemoveCircleOutline, { fontSize: 'small' }),
-      $(Box, { marginLeft: 1 }, requirement.name))
-
 const Shifts = ({
   uid,
   confirmed,
@@ -282,22 +247,6 @@ const Shifts = ({
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: mutate },
         $(Delete, { fontSize: 'small' })))))
-
-// const FormikButtonGroup = ({
-//   form: { setFieldValue, values },
-//   field: { name },
-// }) =>
-//   $(Box, { margin: '16px -16px', overflow: 'scroll', padding: '0 16px' }, 
-//     $(Query, { query: professions }, ({ data }) => 
-//       $(ToggleButtonGroup, {
-//         value: values[name],
-//         exclusive: true,
-//         onChange: (event, value) => setFieldValue(name, value)
-//       }, data &&
-//       map(Profession, data.professions))))
-
-// const Profession = ({ uid, name, dangerous }) =>
-//   $(ToggleButton, { value: uid }, dangerous && $(Biohazard), name)
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 

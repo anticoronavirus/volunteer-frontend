@@ -3,12 +3,7 @@ import { useIsDesktop } from 'utils'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
 import find from 'lodash/fp/find'
-import findIndex from 'lodash/fp/findIndex'
-// import set from 'lodash/fp/set'
-// import reduce from 'lodash/fp/reduce'
-// import isEmpty from 'lodash/fp/isEmpty'
 import range from 'lodash/fp/range'
-// import entries from 'lodash/fp/entries'
 import Biohazard from 'components/Biohazard'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
@@ -17,10 +12,8 @@ import {
   editShift,
   addProfessionRequirement,
   removeProfessionRequirement,
-  // updatePeriodDemand,
   professions as professionsQuery,
   requirements as requirementsQuery,
-  // periodFragment
 } from 'queries'
 
 import Box from '@material-ui/core/Box'
@@ -46,9 +39,6 @@ import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
 import { styled } from '@material-ui/core/styles'
 import HospitalContext from './HospitalContext'
-
-// import yellow from '@material-ui/core/colors/yellow'
-// import Warning from '@material-ui/icons/Warning'
 
 export const AddHospitalShift = ({
   uid
