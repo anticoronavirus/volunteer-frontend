@@ -8,19 +8,13 @@ export default ({
   text, onChange
 }) =>
   $(Box, { marginTop: 3 },
-    $(Caption, { variant: 'caption' }, 'Описание'),
     $(TextField, {
       size: 'small',
       variant: 'outlined',
+      label: 'Описание',
       fullWidth: true,
       multiline: true,
       value: text,
       onChange: event => onChange(event.target.value),
       placeholder: text
     }))
-
-const Caption = styled(Typography)({
-  display: 'block',
-  // padding: '0 24px',
-  marginBottom: 8
-})
