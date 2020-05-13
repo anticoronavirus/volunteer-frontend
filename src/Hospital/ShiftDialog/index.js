@@ -8,8 +8,10 @@ import Button from '@material-ui/core/Button'
 import Professions from './Professions'
 import Description from './Description'
 import Requirements from './Requirements'
+import SelectTime from './SelectTime'
 import get from 'lodash/get'
 import HospitalContext from '../HospitalContext'
+import Box from '@material-ui/core/Box'
 
 export const HospitalShift = ({
   isEditing,
@@ -25,6 +27,8 @@ export const HospitalShift = ({
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
   const { hospitalId } = useContext(HospitalContext)
+  const startRange = [0, 23]
+  const endRange = [start + 4, start + 4 + 24]
 
   return $(Dialog, {
     open,
@@ -44,8 +48,25 @@ export const HospitalShift = ({
             setNotabene(profession.description)
           }
         })),
-        professionId && $(Description, { text: notabene, onChange: setNotabene }),
-        professionId && $(Requirements, { professionId, hospitalId })
+        professionId && $(Fragment, null,
+          $(Description, { text: notabene, onChange: setNotabene }),
+          $(Requirements, { professionId, hospitalId }),
+          $(Box, { marginTop: 3 },
+            $(SelectTime, {
+              placeholder: 'Начало смены',
+              timeRange: startRange,
+              value: start,
+              onChange: setStart,
+            })),
+          $(Box, { marginTop: 3 },
+            $(SelectTime, {
+              placeholder: 'Конец смены',
+              timeRange: endRange,
+              value: end,
+              onChange: setEnd,
+              dependsOn: start
+            }))
+        )
       ),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
