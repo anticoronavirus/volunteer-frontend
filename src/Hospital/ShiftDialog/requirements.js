@@ -1,8 +1,5 @@
 import { createElement as $, useState} from 'react'
-import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
-import FormControl from '@material-ui/core/FormControl'
-import Select from '@material-ui/core/Select'
 import Chip from '@material-ui/core/Chip'
 import { useQuery } from '@apollo/react-hooks'
 import {
@@ -12,6 +9,7 @@ import map from 'lodash/fp/map'
 import get from 'lodash/fp/get'
 import Box from '@material-ui/core/Box'
 import { styled } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
 
 const Requirements = ({
   hospitalId,
@@ -33,12 +31,16 @@ const Requirements = ({
   }
   return !requirementsResult.loading && requirementsResult.data &&
     $(Box, { marginTop: 3 },
-      $(FormControl, { variant: 'outlined', style: { width: '100%' } },
-        $(InputLabel, null, 'Обязательные условия'),
-        $(Select, {
+      $(TextField, {
+        value: requirements,
+        onChange: handleChange,
+        select: true,
+        label: 'Профессия',
+        variant: 'outlined',
+        styles: { height: 'auto' },
+        fullWidth: true,
+        SelectProps: {
           multiple: true,
-          value: requirements,
-          onChange: handleChange,
           renderValue: selected =>
             $(Chips, null,
               map(requirement =>
@@ -46,10 +48,11 @@ const Requirements = ({
                 selected
             ))
         },
+      },
         map(requirement =>
           $(MenuItem, { key: requirement.uid, value: requirement }, requirement.name),
           requirementsResult.data.requirements
-        ))))
+        )))
 }
 
 Requirements.defaultProps = {
