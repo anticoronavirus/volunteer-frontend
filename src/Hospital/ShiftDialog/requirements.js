@@ -37,7 +37,6 @@ const Requirements = ({
         select: true,
         label: 'Профессия',
         variant: 'outlined',
-        styles: { height: 'auto' },
         fullWidth: true,
         SelectProps: {
           multiple: true,
