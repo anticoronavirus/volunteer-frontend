@@ -39,6 +39,7 @@ import ToggleButton from '@material-ui/lab/ToggleButton'
 import Add from '@material-ui/icons/Add'
 import { styled } from '@material-ui/core/styles'
 import HospitalContext from './HospitalContext'
+import { HospitalShift as NewHospitalShift } from './ShiftDialog/index'
 
 export const AddHospitalShift = ({
   uid
@@ -48,7 +49,7 @@ export const AddHospitalShift = ({
   const [mutate] = useMutation(addShift)
 
   return $(Fragment, null,
-    $(HospitalShift, {
+    $(NewHospitalShift, {
       open,
       onClose: () => setOpen(false),
       onSubmit: data => {
@@ -71,7 +72,7 @@ export const AddHospitalShift = ({
 
 export const EditHospitalShift = props => {
   const [mutate] = useMutation(editShift, { variables: { uid: props.uid }})
-  return $(HospitalShift, {
+  return $(NewHospitalShift, {
     isEditing: true,
     onSubmit: data => {
       mutate({ variables: { data }})
@@ -83,7 +84,7 @@ export const EditHospitalShift = props => {
 
 const startRange = [0, 23]
 
-export const HospitalShift = ({
+export const OldHospitalShift = ({
   isEditing,
   open,
   onClose,
