@@ -35,7 +35,7 @@ const Requirements = ({
         value: requirements,
         onChange: handleChange,
         select: true,
-        label: 'Профессия',
+        label: 'Обязательные условия',
         variant: 'outlined',
         fullWidth: true,
         SelectProps: {
