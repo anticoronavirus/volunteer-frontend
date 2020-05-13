@@ -1,4 +1,4 @@
-import { createElement as $, useState} from 'react'
+import { createElement as $, useState, memo } from 'react'
 import MenuItem from '@material-ui/core/MenuItem'
 import Chip from '@material-ui/core/Chip'
 import { useQuery } from '@apollo/react-hooks'
@@ -6,12 +6,13 @@ import {
   requirements as requirementsQuery
 } from 'queries'
 import map from 'lodash/fp/map'
-import get from 'lodash/fp/get'
+import filter from 'lodash/fp/find'
 import Box from '@material-ui/core/Box'
 import { styled } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 
 const Requirements = ({
+  selected,
   hospitalId,
   professionId,
   onChange
@@ -23,12 +24,14 @@ const Requirements = ({
     }
   }})
 
-  const [requirements, setRequirements] = useState([])
+  const [requirements, setRequirements] = useState(map('uid', selected) || [])
 
   const handleChange = (event) => {
+    console.log(event.target.value)
     setRequirements(event.target.value)
-    onChange(map(get('uid'), event.target.value))
+    onChange(requirementsResult.data.requirements.filter(i => event.target.value.includes(i.uid)))
   }
+
   return !requirementsResult.loading && requirementsResult.data &&
     $(Box, { marginTop: 3 },
       $(TextField, {
@@ -40,7 +43,7 @@ const Requirements = ({
         fullWidth: true,
         SelectProps: {
           multiple: true,
-          renderValue: selected =>
+          renderValue: () =>
             $(Chips, null,
               map(requirement =>
                 $(StyledChip, { key: requirement.uid, label: requirement.name }),
@@ -49,7 +52,7 @@ const Requirements = ({
         },
       },
         map(requirement =>
-          $(MenuItem, { key: requirement.uid, value: requirement }, requirement.name),
+          $(MenuItem, { key: requirement.uid, value: requirement.uid }, requirement.name),
           requirementsResult.data.requirements
         )))
 }
@@ -65,4 +68,4 @@ const Chips = styled('div')({
 
 const StyledChip = styled(Chip)({ margin: 3 })
 
-export default Requirements
+export default memo(Requirements)

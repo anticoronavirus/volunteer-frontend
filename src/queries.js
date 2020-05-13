@@ -48,6 +48,13 @@ query hospitalPeriods($hospitalId: uuid!) {
       profession_id
       demand
       notabene
+      requirements {
+        uid
+        requirement {
+          uid
+          name
+        }
+      }
       profession {
         uid
         name
@@ -80,7 +87,7 @@ query requirements($where: hospital_profession_requirement_bool_exp) {
 
 export const addProfessionRequirement = gql`
 mutation addProfessionRequirement(
-  $hospitalId: uuid! 
+  $hospitalId: uuid!
   $requirementId: uuid!
   $professionId: uuid
 ) {
@@ -107,7 +114,7 @@ mutation addProfessionRequirement(
 
 export const removeProfessionRequirement = gql`
 mutation removeProfessionRequirement(
-  $hospitalId: uuid! 
+  $hospitalId: uuid!
   $professionId: uuid!
   $uid: uuid!
 ) {
@@ -266,7 +273,7 @@ query exportCars($hospitalId: uuid) {
   }
 }`
 
-export const addVolunteerToShift = gql`  
+export const addVolunteerToShift = gql`
 mutation addVolunteerToShift(
   $userId: uuid
   $professionId: uuid
@@ -474,7 +481,7 @@ query hint ($name: String!) {
   hint (where: { name: { _eq: $name }}) {
     uid
     text
-  } 
+  }
 }
 `
 
@@ -502,7 +509,7 @@ query filteredHospitals(
   me { uid }
   hospitals: hospital(where: {
     shortname: { _neq: "Коммунарка" } ## FIXME
-    periods: { 
+    periods: {
       start: { _eq: $start }
       end: { _eq: $end }
   } }) {
@@ -833,4 +840,4 @@ export const refreshToken = `
      accessToken
      expires
    }
- }` 
+ }`

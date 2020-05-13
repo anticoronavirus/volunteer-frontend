@@ -26,6 +26,7 @@ export const HospitalShift = ({
   const [professionId, setProfessionId] = useState(get(values, 'profession.uid', ''))
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
+  const [requirements, setRequirements] = useState(values.requirements && values.requirements.map(i => i.requirement) || [])
   const { hospitalId } = useContext(HospitalContext)
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
@@ -50,7 +51,7 @@ export const HospitalShift = ({
         })),
         professionId && $(Fragment, null,
           $(Description, { text: notabene, onChange: setNotabene }),
-          $(Requirements, { professionId, hospitalId }),
+          $(Requirements, { professionId, hospitalId, selected: requirements, onChange: setRequirements }),
           $(Box, { marginTop: 3 },
             $(SelectTime, {
               placeholder: 'Начало смены',

@@ -1,4 +1,4 @@
-import { createElement as $ } from 'react'
+import { createElement as $, memo } from 'react'
 import { useQuery } from '@apollo/react-hooks'
 import {
   professions as professionsQuery,
@@ -8,7 +8,7 @@ import find from 'lodash/fp/find'
 import TaskOption from 'components/TaskOption'
 import TextField from '@material-ui/core/TextField'
 
-export default ({
+const Professions = ({
   selected,
   onChange
 }) => {
@@ -40,3 +40,5 @@ export default ({
 const Selected = ({ name }) => {
   return $('div', null, name)
 }
+
+export default memo(Professions)
