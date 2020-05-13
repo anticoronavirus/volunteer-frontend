@@ -1,4 +1,4 @@
-import { createElement as $, useRef, useEffect } from 'react'
+import { createElement as $, useRef, useLayoutEffect, useEffect } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
@@ -37,16 +37,14 @@ SelectTime.defaultProps = {
 
 const useScrollTo = (value, dependsOn) => {
   const ref = useRef(null)
-  const child = value && ref.current && ref.current.querySelector(`button[value="${value}"]`)
-
-  useEffect(() => {
+  useLayoutEffect(() => {
+    const child = value && ref.current && ref.current.querySelector(`button[value="${value}"]`)
     child && ref.current.scrollTo({
       top: 0,
       left: child.offsetLeft,
       behavior: 'smooth'
     })
-  }, [child, dependsOn])
-
+  }, [value, dependsOn])
   return ref
 }
 
