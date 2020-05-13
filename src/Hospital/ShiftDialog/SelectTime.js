@@ -16,18 +16,16 @@ const SelectTime = ({
 }) => {
   const ref = useScrollTo(value, dependsOn)
 
-  return (
-    $(Box, null,
-      $(Caption, { variant: 'caption' }, placeholder),
-      $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref },
-        $(ToggleButtonGroup, {
-          size: 'small',
-          exclusive: true,
-          value,
-          onChange: (_, value) => onChange(value)
-        },
-          map(RangeButton, range(...timeRange)))))
-  )
+  return $(Box, null,
+    $(Caption, { variant: 'caption' }, placeholder),
+    $(Box, { overflow: 'scroll', display: 'flex', position: 'relative', ref },
+      $(ToggleButtonGroup, {
+        size: 'small',
+        exclusive: true,
+        value,
+        onChange: (_, value) => onChange(value)
+      },
+        map(RangeButton, range(...timeRange)))))
 }
 
 SelectTime.defaultProps = {
