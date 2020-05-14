@@ -9,7 +9,6 @@ export default ({
 }) =>
   $(Box, { marginTop: 3 },
     $(TextField, {
-      size: 'small',
       variant: 'outlined',
       label: 'Описание',
       fullWidth: true,
