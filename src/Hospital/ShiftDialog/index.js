@@ -12,6 +12,8 @@ import SelectTime from './SelectTime'
 import get from 'lodash/get'
 import HospitalContext from '../HospitalContext'
 import Box from '@material-ui/core/Box'
+import RepeatingDays from './RepeatingDays'
+import SelectInterval from './SelectInterval'
 
 export const HospitalShift = ({
   isEditing,
@@ -30,6 +32,7 @@ export const HospitalShift = ({
   const { hospitalId } = useContext(HospitalContext)
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
+  const [repeatingDays, setRepeatingDays] = useState(['пн', 'ср']) // TODO: use data from server
 
   return $(Dialog, {
     open,
@@ -66,20 +69,39 @@ export const HospitalShift = ({
               value: end,
               onChange: setEnd,
               dependsOn: start
-            }))
+            })),
+          $(Box, { marginTop: 3 },
+            $(RepeatingDays, { value: repeatingDays, onChange: setRepeatingDays })),
+          $(Box, { marginTop: 3 },
+            $(SelectInterval))
         )
       ),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
-      start && end && professionId && 'Сохранить'
-        // $(Button, { onClick: () => onSubmit({
-        //   start: `${start}:00+0300`,
-        //   end: `${end}:00+0300`,
-        //   demand,
-        //   notabene,
-        //   profession_id: professionId
-        // }) }, isEditing
-        //   ? 'Сохранить'
-        //   : 'Добавить')
+      start && end && professionId &&
+        $(Button, { onClick: () => {
+          console.log(
+            {
+              start: `${start}:00+0300`,
+              end: `${end}:00+0300`,
+              demand,
+              notabene,
+              profession_id: professionId,
+              repeatingDays
+            }
+          )
+        } }, isEditing
+          ? 'Сохранить'
+          : 'Добавить')
         ))
 }
+
+/*
+onSubmit({
+  start: `${start}:00+0300`,
+  end: `${end}:00+0300`,
+  demand,
+  notabene,
+  profession_id: professionId
+})
+*/
