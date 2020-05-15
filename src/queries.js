@@ -12,9 +12,11 @@ export const me = gql`{
     profession
     car
     licenceplate
-    managedHospital {
-      uid
-      shortname
+    managedHospitals(limit: 1) {
+      hospital {
+        uid
+        shortname
+      }
     }
   }
 }`
