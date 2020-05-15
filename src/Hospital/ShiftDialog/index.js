@@ -33,7 +33,6 @@ export const HospitalShift = ({
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
   const [repeatingDays, setRepeatingDays] = useState(['пн', 'ср']) // TODO: use data from server
-  const [descriptionPlaceholder, setDescriptionPlaceholder] = useState(get(values, 'profession.description', ''))
 
   return $(Dialog, {
     open,
@@ -48,15 +47,12 @@ export const HospitalShift = ({
       $('div', null,
         $(Professions, {
           selected: profession,
-          onChange: profession => {
-            setProfession(profession)
-            setDescriptionPlaceholder(profession.description)
-          }
+          onChange: setProfession
         })),
         profession && $(Fragment, null,
           $(Description, {
             value: notabene,
-            placeholder: descriptionPlaceholder,
+            placeholder: profession.description,
             onChange: setNotabene }),
           $(Requirements, {
             professionId: profession.id,
