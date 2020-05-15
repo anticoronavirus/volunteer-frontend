@@ -36,10 +36,10 @@ const Requirements = ({
       label: 'Обязательные условия',
       variant: 'outlined',
       fullWidth: true,
-      disabled: loading,
+      disabled: !data && loading,
       SelectProps: {
         multiple: true,
-        ...loading && { IconComponent },
+        ...!data && loading && { IconComponent },
         renderValue: () => map(SelectedRequirement, value)
       },
     },
