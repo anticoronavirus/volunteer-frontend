@@ -13,17 +13,17 @@ const RepeatingDays = ({
     const newPicked = picked.includes(day)
      ? picked.filter(i => i !== day)
      : [...picked, day]
-    
+
     setPicked(newPicked)
     onChange(newPicked)
   }
 
-  return $(Days, null, map(day => 
+  return $(Days, null, map(day =>
     $(StyledDay, {
       key: day,
-      active: picked.includes(day),
+      active: picked.includes(day) ? 1 : 0,
       onClick: () => handleTogglePicked(day)
-    }, day), 
+    }, day),
     days))
 }
 
@@ -35,7 +35,7 @@ const Days = styled('div')({
   display: 'flex'
 })
 
-const StyledDay = styled('button')({ 
+const StyledDay = styled('button')({
   border: 'none',
   color: '#fff',
   height: 30,
@@ -47,7 +47,7 @@ const StyledDay = styled('button')({
   alignItems: 'center',
   justifyContent: 'center',
   borderRadius: '100%',
-  background: ({ active }) => active 
+  background: ({ active }) => active
     ? '#1da1f2'
     : 'rgba(255, 255, 255, 0.12)'
 })
