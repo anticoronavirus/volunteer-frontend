@@ -12,7 +12,7 @@ export default ({
   $(Box, { marginTop: 3 },
     $(TextField, {
       variant: 'outlined',
-      label: 'Описание',
+      ...value && { label: 'Описание' },
       fullWidth: true,
       multiline: true,
       value,
