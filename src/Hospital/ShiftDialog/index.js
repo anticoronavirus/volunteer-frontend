@@ -15,7 +15,7 @@ import Box from '@material-ui/core/Box'
 import RepeatingDays from './RepeatingDays'
 import SelectInterval from './SelectInterval'
 
-const currentDay = () => 2**((new Date().getDay(Date.now()) || 7) - 1)
+const currentDay = 2**((new Date().getDay() || 7) - 1)
 
 export const HospitalShift = ({
   isEditing,
