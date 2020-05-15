@@ -45,7 +45,7 @@ export const AddHospitalShift = ({
   uid
 }) => {
 
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const [mutate] = useMutation(addShift)
 
   return $(Fragment, null,

@@ -32,7 +32,7 @@ export const HospitalShift = ({
   const { hospitalId } = useContext(HospitalContext)
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
-  const [repeatingDays, setRepeatingDays] = useState(['пн', 'ср']) // TODO: use data from server
+  const [repeatOn, setRepeatOn] = useState(values.repeatOn) // TODO: use data from server
 
   return $(Dialog, {
     open,
@@ -75,7 +75,7 @@ export const HospitalShift = ({
               dependsOn: start
             })),
           $(Box, { marginTop: 3 },
-            $(RepeatingDays, { value: repeatingDays, onChange: setRepeatingDays })),
+            $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn })),
           $(Box, { marginTop: 3 },
             $(SelectInterval))
         )
@@ -91,7 +91,7 @@ export const HospitalShift = ({
               demand,
               notabene,
               profession_id: profession.id,
-              repeatingDays
+              repeatOn
             }
           )
         } }, isEditing
