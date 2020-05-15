@@ -25,6 +25,7 @@ const Professions = ({
       label: 'Профессия',
       variant: 'outlined',
       fullWidth: true,
+      disabled: !data && loading,
       SelectProps: {
         ...!data && loading && { IconComponent },
         renderValue: () => $(Selected, selected)
