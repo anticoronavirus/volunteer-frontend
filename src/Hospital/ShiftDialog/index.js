@@ -48,7 +48,7 @@ export const HospitalShift = ({
         $(Professions, {
           selected: profession,
           onChange: setProfession
-        })),
+        }),
         profession && $(Fragment, null,
           $(Description, {
             value: notabene,
@@ -97,7 +97,7 @@ export const HospitalShift = ({
         } }, isEditing
           ? 'Сохранить'
           : 'Добавить')
-        ))
+        )))
 }
 
 /*
