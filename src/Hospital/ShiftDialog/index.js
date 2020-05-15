@@ -15,6 +15,8 @@ import Box from '@material-ui/core/Box'
 import RepeatingDays from './RepeatingDays'
 import SelectInterval from './SelectInterval'
 
+const currentDay = () => 2**((new Date().getDay(Date.now()) || 7) - 1)
+
 export const HospitalShift = ({
   isEditing,
   open,
@@ -32,7 +34,7 @@ export const HospitalShift = ({
   const { hospitalId } = useContext(HospitalContext)
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
-  const [repeatOn, setRepeatOn] = useState(values.repeatOn) // TODO: use data from server
+  const [repeatOn, setRepeatOn] = useState(values.repeatOn || currentDay)
 
   return $(Dialog, {
     open,

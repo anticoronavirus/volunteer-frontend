@@ -1,9 +1,9 @@
 import { createElement as $, useState } from 'react'
 import fpMap from 'lodash/fp/map'
-
 import Box from '@material-ui/core/Box'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import { styled } from '@material-ui/core/styles'
+
 const map = fpMap.convert({ cap: false })
 
 const RepeatingDays = ({
@@ -17,7 +17,7 @@ const RepeatingDays = ({
       selected,
       children,
       onClick: () => onChange(selected
-        ? value - powerOfTwo
+        ? value - powerOfTwo === 0 ? value : value - powerOfTwo
         : value + powerOfTwo)
     })
   }, days))
