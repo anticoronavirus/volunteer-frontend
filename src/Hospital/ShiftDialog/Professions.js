@@ -25,9 +25,8 @@ const Professions = ({
       variant: 'outlined',
       fullWidth: true,
       SelectProps: {
-        renderValue: selected =>
-          $(Selected, { ...find({ uid: selected }, professionsResult.data.professions) })
-        }
+        renderValue: () => $(Selected, selected)
+      }
     },
       map(profession =>
         TaskOption({

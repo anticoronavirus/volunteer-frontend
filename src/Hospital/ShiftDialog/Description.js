@@ -5,7 +5,9 @@ import Box from '@material-ui/core/Box'
 // import { styled } from '@material-ui/core/styles'
 
 export default ({
-  text, onChange
+  value,
+  placeholder,
+  onChange
 }) =>
   $(Box, { marginTop: 3 },
     $(TextField, {
@@ -13,7 +15,7 @@ export default ({
       label: 'Описание',
       fullWidth: true,
       multiline: true,
-      value: text,
+      value,
       onChange: event => onChange(event.target.value),
-      placeholder: text
+      placeholder
     }))

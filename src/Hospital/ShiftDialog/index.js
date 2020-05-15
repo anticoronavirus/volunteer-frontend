@@ -25,7 +25,7 @@ export const HospitalShift = ({
   const fullScreen = useIsDesktop()
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
-  const [professionId, setProfessionId] = useState(get(values, 'profession.uid', ''))
+  const [profession, setProfession] = useState(values.profession)
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
   const [requirements, setRequirements] = useState(values.requirements)
@@ -33,6 +33,7 @@ export const HospitalShift = ({
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
   const [repeatingDays, setRepeatingDays] = useState(['пн', 'ср']) // TODO: use data from server
+  const [descriptionPlaceholder, setDescriptionPlaceholder] = useState(get(values, 'profession.description', ''))
 
   return $(Dialog, {
     open,
@@ -46,18 +47,19 @@ export const HospitalShift = ({
     $(DialogContent, { dividers: true },
       $('div', null,
         $(Professions, {
-          selected: professionId,
+          selected: profession,
           onChange: profession => {
-            setProfessionId(profession.uid)
-            setNotabene(profession.description)
+            setProfession(profession)
+            setDescriptionPlaceholder(profession.description)
           }
         })),
-        professionId && $(Fragment, null,
+        profession && $(Fragment, null,
           $(Description, {
             value: notabene,
+            placeholder: descriptionPlaceholder,
             onChange: setNotabene }),
           $(Requirements, {
-            professionId,
+            professionId: profession.id,
             hospitalId,
             value: requirements,
             onChange: setRequirements }),
@@ -84,7 +86,7 @@ export const HospitalShift = ({
       ),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
-      start && end && professionId &&
+      start && end && profession &&
         $(Button, { onClick: () => {
           console.log(
             {
@@ -92,7 +94,7 @@ export const HospitalShift = ({
               end: `${end}:00+0300`,
               demand,
               notabene,
-              profession_id: professionId,
+              profession_id: profession.id,
               repeatingDays
             }
           )

@@ -60,6 +60,7 @@ query hospitalPeriods($hospitalId: uuid!) {
       profession {
         uid
         name
+        description
       }
     }
   }
