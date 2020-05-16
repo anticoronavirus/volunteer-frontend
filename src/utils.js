@@ -8,7 +8,9 @@ import { useMediaQuery, useTheme } from '@material-ui/core'
 export const formatDate = date => format(new Date(date), 'd MMMM', { locale: ru })
 
 export const formatLabel = (type, count) =>
-  count + ' ' +
+  count + ' ' + formatJustLabel(type, count)
+
+export const formatJustLabel = (type, count) =>
   labels[type].get(
     count < 21 && count > 5
       ? 5
@@ -34,6 +36,21 @@ const labels = {
     [4, 'волонтёра'],
     [5, 'волонтёров'],
   ]),
+  day: new Map([
+    [1, 'день'],
+    [4, 'дня'],
+    [5, 'дней'],
+  ]),
+  week: new Map([
+    [1, 'неделю'],
+    [4, 'недели'],
+    [5, 'недель'],
+  ]),
+  each: new Map([
+    [1, 'каждый'],
+    [4, 'каждые'],
+    [5, 'каждые'],
+  ])
 }
 
 export const uncappedMap =  map.convert({ 'cap': false })

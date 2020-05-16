@@ -1,13 +1,14 @@
-import { createElement as $, Fragment, useContext, useState, useRef, useEffect } from 'react'
-import { useIsDesktop } from 'utils'
+import { createElement as $, Fragment, useContext, useState, useEffect } from 'react'
+import { useIsDesktop, formatJustLabel } from 'utils'
 import Professions from './Professions'
 import Description from './Description'
 import Requirements from './Requirements'
 import SelectTime from './SelectTime'
-import get from 'lodash/get'
 import HospitalContext from '../HospitalContext'
 import RepeatingDays from './RepeatingDays'
+import Counter from './Counter'
 import SelectInterval from './SelectInterval'
+import noop from 'lodash/fp/noop'
 
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
@@ -15,7 +16,6 @@ import DialogTitle from '@material-ui/core/DialogTitle'
 import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import { styled } from '@material-ui/core/styles'
-// import Box from '@material-ui/core/Box'
 
 const currentDay = 2**((new Date().getDay() || 7) - 1)
 
@@ -29,7 +29,7 @@ export const HospitalShift = ({
   const fullScreen = useIsDesktop()
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
-  const [profession, setProfession] = useState(values.profession || 'test')
+  const [profession, setProfession] = useState(values.profession)
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
   const [requirements, setRequirements] = useState(values.requirements)
@@ -37,7 +37,7 @@ export const HospitalShift = ({
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
   const [repeats, setRepeats] = useState(null)
-  const [repeatOn, setRepeatOn] = useState(values.repeatOn || currentDay)
+  const [repeatOn, setRepeatOn] = useState(values.repeatOn)
 
   return $(Dialog, {
     open,
@@ -79,11 +79,24 @@ export const HospitalShift = ({
               dependsOn: start
             }),
             end &&
-              $(SelectInterval, { value: repeats, onChange: setRepeats }),
+              $(SelectInterval, {
+                value: repeats,
+                onChange: value => {
+                  setRepeats(value)
+                  setRepeatOn(value === 'daily'
+                    ? 1
+                    : currentDay
+                  )
+                }
+              }),
             repeats === null
               ? null
               : repeats === 'daily'
-                ? 'test'
+                ? $(Counter, {
+                    label: `Повторять ${formatJustLabel('each', repeatOn)}`,
+                    format: 'day',
+                    value: repeatOn,
+                    onChange: setRepeatOn })
                 : $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }))))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
