@@ -64,6 +64,11 @@ export const HospitalShift = ({
             hospitalId,
             value: requirements,
             onChange: setRequirements }),
+          $(Counter, {
+            label: 'Количество волонтёров',
+            value: demand,
+            onChange: setDemand
+          }),
           $(SelectTime, {
             placeholder: 'Начало смены',
             timeRange: startRange,
@@ -123,13 +128,3 @@ const Container = styled('div')({
     marginTop: 24
   }
 })
-
-/*
-onSubmit({
-  start: `${start}:00+0300`,
-  end: `${end}:00+0300`,
-  demand,
-  notabene,
-  profession_id: professionId
-})
-*/
