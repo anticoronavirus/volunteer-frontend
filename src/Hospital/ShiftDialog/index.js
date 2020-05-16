@@ -1,19 +1,21 @@
 import { createElement as $, Fragment, useContext, useState, useRef, useEffect } from 'react'
 import { useIsDesktop } from 'utils'
-import Dialog from '@material-ui/core/Dialog'
-import DialogContent from '@material-ui/core/DialogContent'
-import DialogTitle from '@material-ui/core/DialogTitle'
-import DialogActions from '@material-ui/core/DialogActions'
-import Button from '@material-ui/core/Button'
 import Professions from './Professions'
 import Description from './Description'
 import Requirements from './Requirements'
 import SelectTime from './SelectTime'
 import get from 'lodash/get'
 import HospitalContext from '../HospitalContext'
-import Box from '@material-ui/core/Box'
 import RepeatingDays from './RepeatingDays'
 import SelectInterval from './SelectInterval'
+
+import Dialog from '@material-ui/core/Dialog'
+import DialogContent from '@material-ui/core/DialogContent'
+import DialogTitle from '@material-ui/core/DialogTitle'
+import DialogActions from '@material-ui/core/DialogActions'
+import Button from '@material-ui/core/Button'
+import { styled } from '@material-ui/core/styles'
+// import Box from '@material-ui/core/Box'
 
 const currentDay = 2**((new Date().getDay() || 7) - 1)
 
@@ -46,43 +48,36 @@ export const HospitalShift = ({
       ? 'Редактирование смены'
       : 'Добавление смены'),
     $(DialogContent, { dividers: true },
-      $('div', null,
+      $(Container, null,
         $(Professions, {
           selected: profession,
           onChange: setProfession
-        }),
+      }),
         profession && $(Fragment, null,
-          $(Box, { marginTop: 3 },
-            $(Description, {
-              value: notabene,
-              placeholder: profession.description,
-              onChange: setNotabene })),
+          $(Description, {
+            value: notabene,
+            placeholder: profession.description,
+            onChange: setNotabene }),
           $(Requirements, {
             professionId: profession.id,
             hospitalId,
             value: requirements,
             onChange: setRequirements }),
-          $(Box, { marginTop: 3 },
-            $(SelectTime, {
-              placeholder: 'Начало смены',
-              timeRange: startRange,
-              value: start,
-              onChange: setStart,
-            })),
-          $(Box, { marginTop: 3 },
-            $(SelectTime, {
-              placeholder: 'Конец смены',
-              timeRange: endRange,
-              value: end,
-              onChange: setEnd,
-              dependsOn: start
-            })),
-          $(Box, { marginTop: 3 },
-            $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn })),
-          $(Box, { marginTop: 3 },
-            $(SelectInterval))
-        )
-      ),
+          $(SelectTime, {
+            placeholder: 'Начало смены',
+            timeRange: startRange,
+            value: start,
+            onChange: setStart,
+          }),
+          $(SelectTime, {
+            placeholder: 'Конец смены',
+            timeRange: endRange,
+            value: end,
+            onChange: setEnd,
+            dependsOn: start
+          }),
+          $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }),
+          $(SelectInterval)))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && profession &&
@@ -100,8 +95,14 @@ export const HospitalShift = ({
         } }, isEditing
           ? 'Сохранить'
           : 'Добавить')
-        )))
+        ))
 }
+
+const Container = styled('div')({
+  '& > *': {
+    marginTop: 24
+  }
+})
 
 /*
 onSubmit({

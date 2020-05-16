@@ -1,6 +1,8 @@
 import { createElement as $, memo } from 'react'
 import fpMap from 'lodash/fp/map'
+
 import Box from '@material-ui/core/Box'
+import Typography from '@material-ui/core/Typography'
 import ButtonBase from '@material-ui/core/ButtonBase'
 import { styled } from '@material-ui/core/styles'
 
@@ -9,18 +11,20 @@ const map = fpMap.convert({ cap: false })
 const RepeatingDays = ({
   value = 0,
   onChange
-}) => $(Box, { display: 'flex' },
-  map((children, index) => {
-    const powerOfTwo = 2 ** index
-    const selected = (value & powerOfTwo) !== 0
-    return $(Weekday, {
-      selected,
-      children,
-      onClick: () => onChange(selected
-        ? value - powerOfTwo
-        : value + powerOfTwo)
-    })
-  }, days))
+}) => $(Box, null,
+  $(Typography, { variant: 'caption' }, 'Повторять по'),
+  $(Box, { display: 'flex', marginTop: 1 },
+    map((children, index) => {
+      const powerOfTwo = 2 ** index
+      const selected = (value & powerOfTwo) !== 0
+      return $(Weekday, {
+        selected,
+        children,
+        onClick: () => onChange(selected
+          ? value - powerOfTwo
+          : value + powerOfTwo)
+      })
+    }, days)))
 
 const Weekday = styled(ButtonBase)(({ theme, selected }) => ({
   ...theme.typography.caption,
