@@ -1,4 +1,4 @@
-import { createElement as $, useState } from 'react'
+import { createElement as $, memo } from 'react'
 import fpMap from 'lodash/fp/map'
 import Box from '@material-ui/core/Box'
 import ButtonBase from '@material-ui/core/ButtonBase'
@@ -17,7 +17,7 @@ const RepeatingDays = ({
       selected,
       children,
       onClick: () => onChange(selected
-        ? value - powerOfTwo === 0 ? value : value - powerOfTwo
+        ? value - powerOfTwo
         : value + powerOfTwo)
     })
   }, days))
@@ -39,4 +39,4 @@ const Weekday = styled(ButtonBase)(({ theme, selected }) => ({
 
 const days = ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс']
 
-export default RepeatingDays
+export default memo(RepeatingDays)

@@ -52,10 +52,11 @@ export const HospitalShift = ({
           onChange: setProfession
         }),
         profession && $(Fragment, null,
-          $(Description, {
-            value: notabene,
-            placeholder: profession.description,
-            onChange: setNotabene }),
+          $(Box, { marginTop: 3 },
+            $(Description, {
+              value: notabene,
+              placeholder: profession.description,
+              onChange: setNotabene })),
           $(Requirements, {
             professionId: profession.id,
             hospitalId,
