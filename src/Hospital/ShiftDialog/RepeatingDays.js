@@ -28,7 +28,7 @@ const Weekday = styled(ButtonBase)(({ theme, selected }) => ({
   height: 32,
   width: 32,
   borderRadius: '50%',
-  tranisition: `background ${theme.transitions.duration.short} ${theme.transitions.easing.easeIn}`,
+  transition: `background ${theme.transitions.duration.short}ms ${theme.transitions.easing.easeOut}`,
   backgroundColor: selected
     ? theme.palette.primary.main
     : theme.palette.grey[theme.palette.type === 'dark' ? 700 : 300],
