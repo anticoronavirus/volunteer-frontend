@@ -1,4 +1,4 @@
-import { createElement as $, useRef, useLayoutEffect, useEffect, memo } from 'react'
+import { createElement as $, useRef, useLayoutEffect, memo } from 'react'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'

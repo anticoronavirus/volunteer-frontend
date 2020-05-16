@@ -1,6 +1,5 @@
 import { createElement as $, memo } from 'react'
 import { formatLabel } from 'utils'
-import map from 'lodash/fp/map'
 
 import Box from '@material-ui/core/Box'
 import Typography from '@material-ui/core/Typography'

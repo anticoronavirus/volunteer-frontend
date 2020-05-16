@@ -1,4 +1,4 @@
-import { createElement as $, Fragment, useContext, useState, useEffect } from 'react'
+import { createElement as $, Fragment, useContext, useState } from 'react'
 import { useIsDesktop, formatJustLabel } from 'utils'
 import Professions from './Professions'
 import Description from './Description'
@@ -8,7 +8,6 @@ import HospitalContext from '../HospitalContext'
 import RepeatingDays from './RepeatingDays'
 import Counter from './Counter'
 import SelectInterval from './SelectInterval'
-import noop from 'lodash/fp/noop'
 
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
