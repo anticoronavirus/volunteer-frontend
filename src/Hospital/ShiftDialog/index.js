@@ -29,13 +29,14 @@ export const HospitalShift = ({
   const fullScreen = useIsDesktop()
   const [start, setStart] = useState(values.start ? parseInt(values.start.slice(0, 2)) : undefined)
   const [end, setEnd] = useState(values.end ? parseInt(values.end.slice(0, 2)) : undefined)
-  const [profession, setProfession] = useState(values.profession)
+  const [profession, setProfession] = useState(values.profession || 'test')
   const [demand, setDemand] = useState(values.demand || 1)
   const [notabene, setNotabene] = useState(values.notabene || '')
   const [requirements, setRequirements] = useState(values.requirements)
   const { hospitalId } = useContext(HospitalContext)
   const startRange = [0, 23]
   const endRange = [start + 4, start + 4 + 24]
+  const [repeats, setRepeats] = useState(null)
   const [repeatOn, setRepeatOn] = useState(values.repeatOn || currentDay)
 
   return $(Dialog, {
@@ -69,15 +70,21 @@ export const HospitalShift = ({
             value: start,
             onChange: setStart,
           }),
-          $(SelectTime, {
-            placeholder: 'Конец смены',
-            timeRange: endRange,
-            value: end,
-            onChange: setEnd,
-            dependsOn: start
-          }),
-          $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }),
-          $(SelectInterval)))),
+          start && $(Fragment, null, 
+            $(SelectTime, {
+              placeholder: 'Конец смены',
+              timeRange: endRange,
+              value: end,
+              onChange: setEnd,
+              dependsOn: start
+            }),
+            end &&
+              $(SelectInterval, { value: repeats, onChange: setRepeats }),
+            repeats === null
+              ? null
+              : repeats === 'daily'
+                ? 'test'
+                : $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }))))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && profession &&
