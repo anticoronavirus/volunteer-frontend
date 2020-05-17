@@ -69,33 +69,24 @@ export const HospitalShift = ({
             onChange: setDemand
           }),
           $(SelectTime, {
-            placeholder: 'Начало смены',
+            start,
+            end,
             timeRange: startRange,
             value: start,
-            onChange: setStart,
+            onChange: () => {},
           }),
-          start && $(Fragment, null, 
-            $(SelectTime, {
-              placeholder: 'Конец смены',
-              timeRange: endRange,
-              value: end,
-              onChange: setEnd,
-              dependsOn: start
+            $(SelectInterval, {
+              value: repeats,
+              onChange: value => {
+                setRepeats(value)
+                setRepeatOn(value === 'daily'
+                  ? 1
+                  : currentDay
+                )
+              }
             }),
-            end &&
-              $(SelectInterval, {
-                value: repeats,
-                onChange: value => {
-                  setRepeats(value)
-                  setRepeatOn(value === 'daily'
-                    ? 1
-                    : currentDay
-                  )
-                }
-              }),
-            repeats === null
-              ? null
-              : repeats === 'daily'
+            repeats && (
+              repeats === 'daily'
                 ? $(Counter, {
                     label: `Повторять ${formatJustLabel('each', repeatOn)}`,
                     format: 'day',
@@ -112,7 +103,9 @@ export const HospitalShift = ({
               end: `${end}:00+0300`,
               demand,
               notabene,
-              profession_id: profession.id,
+              requirements,
+              profession_id: profession.uid,
+              repeats,
               repeatOn
             }
           )
