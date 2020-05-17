@@ -40,11 +40,14 @@ const SelectDateAndTime = ({
       $(SelectTime, {
         value: startTime,
         options: startOptions,
+        label: 'Начало',
         onChange: setStartTime
       }),
       $(SelectTime, {
         value: endTime,
         options: endOptions,
+        label: 'Окончание',
+        disabled: !startTime,
         onChange: setEndTime
       })))
 }
@@ -57,14 +60,19 @@ const Wrapper = styled(Box)({
 const SelectTime = ({
   value,
   options,
-  onChange
+  onChange,
+  label,
+  disabled
 }) => {
   return $(TextField, {
     select: true,
     value,
     onChange: event => onChange(event.target.value),
-    variant: 'outlined',
+    label,
+    disabled,
+    style: { width: '50%' },
     SelectProps: {
+      IconComponent: () => '',
       renderValue: () => format(value, 'HH:mm')
     }
   }, map(Time, options))
