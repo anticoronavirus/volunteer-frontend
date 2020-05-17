@@ -1,16 +1,10 @@
-import { createElement as $, useRef, useState,  useLayoutEffect, memo } from 'react'
+import { createElement as $, useState, memo } from 'react'
 import map from 'lodash/fp/map'
-import range from 'lodash/fp/range'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import ToggleButton from '@material-ui/lab/ToggleButton'
 import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
 import TextField from '@material-ui/core/TextField'
 import DateFnsUtils from '@date-io/date-fns';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
   MuiPickersUtilsProvider,
-  KeyboardTimePicker,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
 import ruLocale from "date-fns/locale/ru"

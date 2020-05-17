@@ -8,7 +8,7 @@ import HospitalContext from '../HospitalContext'
 import RepeatingDays from './RepeatingDays'
 import Counter from './Counter'
 import SelectInterval from './SelectInterval'
-
+// import TextField from '@material-ui/core/TextField'
 import Dialog from '@material-ui/core/Dialog'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
@@ -33,8 +33,6 @@ export const HospitalShift = ({
   const [notabene, setNotabene] = useState(values.notabene || '')
   const [requirements, setRequirements] = useState(values.requirements)
   const { hospitalId } = useContext(HospitalContext)
-  const startRange = [0, 23]
-  const endRange = [start + 4, start + 4 + 24]
   const [repeats, setRepeats] = useState(null)
   const [repeatOn, setRepeatOn] = useState(values.repeatOn)
 
@@ -69,10 +67,6 @@ export const HospitalShift = ({
             onChange: setDemand
           }),
           $(SelectTime, {
-            start,
-            end,
-            timeRange: startRange,
-            value: start,
             onChange: () => {},
           }),
             $(SelectInterval, {

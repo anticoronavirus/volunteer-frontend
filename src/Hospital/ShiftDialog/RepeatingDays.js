@@ -20,7 +20,7 @@ const RepeatingDays = ({
       return $(Weekday, {
         selected,
         children,
-        key: value & powerOfTwo,
+        key: powerOfTwo,
         onClick: () => onChange(selected
           ? value - powerOfTwo
           : value + powerOfTwo)
