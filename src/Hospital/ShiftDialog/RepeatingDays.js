@@ -13,7 +13,7 @@ const RepeatingDays = ({
   onChange
 }) => $(Box, null,
   $(Typography, { variant: 'caption' }, 'Повторять по'),
-  $(Box, { display: 'flex', marginTop: 1 },
+  $(Box, { display: 'flex', marginTop: 1, paddingBottom: '4px' },
     map((children, index) => {
       const powerOfTwo = 2 ** index
       const selected = (value & powerOfTwo) !== 0
