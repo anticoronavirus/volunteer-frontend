@@ -5,7 +5,7 @@ import {
   requirements as requirementsQuery
 } from 'queries'
 import map from 'lodash/fp/map'
-
+import reduce from 'lodash/fp/reduce'
 import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import CircularProgress from '@material-ui/core/CircularProgress'
@@ -18,7 +18,6 @@ const Requirements = ({
   value,
   onChange = console.log
 }) => {
-
   const { data, loading } = useQuery(requirementsQuery, {
     variables: {
       where: {
@@ -28,9 +27,12 @@ const Requirements = ({
     }})
 
   return $(TextField, {
-    onChange,
+    onChange: event => {
+      const requirements = getRequirementsObject(data.requirements)
+      onChange(event.target.value.map(uid => requirements[uid]))
+    },
     size: value && value.length && 'small',
-    value: map('requirement.uid', value),
+    value: map('uid', value),
     select: true,
     label: 'Обязательные условия',
     variant: 'outlined',
@@ -46,14 +48,22 @@ const Requirements = ({
       map(Requirement, data.requirements))
 }
 
-const IconComponent = () => $(Box, { paddingRight: 1.5, paddingTop: 1, }, $(CircularProgress, { size: 16 }))
+const IconComponent = () =>
+  $(Box, { paddingRight: 1.5, paddingTop: 1, },
+    $(CircularProgress, { size: 16 }))
 
-const SelectedRequirement = ({ uid, requirement }) =>
-  $(StyledChip, { key: uid, label: requirement.name })
+const SelectedRequirement = ({ uid, name }) =>
+  $(StyledChip, { key: uid, label: name })
 
 const Requirement = ({ name, uid }) =>
   $(MenuItem, { key: uid, value: uid }, name)
 
 const StyledChip = styled(Chip)({ margin: 1 })
+
+const getRequirementsObject = requirements =>
+  reduce((result, value) => {
+    result[value.uid] = value
+    return result
+  }, {}, requirements)
 
 export default memo(Requirements)
