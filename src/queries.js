@@ -618,6 +618,7 @@ export const filteredHospitalProfessions = gql`
       description
       profession_requests(where: {
         volunteer_id: { _eq: $userId }
+        hospital_id: { _eq: $hospitalId }
       }) {
         uid
       }
