@@ -1,4 +1,4 @@
-import { createElement as $, useState, memo } from 'react'
+import { createElement as $, useState, useRef, memo } from 'react'
 import map from 'lodash/fp/map'
 import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
@@ -30,7 +30,7 @@ const SelectDateAndTime = ({
 
   return $(Wrapper, null,
     $(SelectDate, { value: selectedDate, onChange: setSelectedDate }),
-    $(Box, { style: { display: 'flex ', flex: 1 }},
+    $(Box, { style: { display: 'flex ', flex: 1 } },
       $(SelectTime, {
         value: startTime,
         options: startOptions,
@@ -79,7 +79,11 @@ const SelectDate = ({
   value,
   onChange
 }) => {
+  const [open, setOpen] = useState(false)
+  const textInput = useRef(null)
+
   const handleDateChange = (date) => {
+    setOpen(false)
     console.log(date)
     onChange(date)
   }
@@ -91,14 +95,30 @@ const SelectDate = ({
       variant: 'inline',
       format: 'MM/dd/yyyy',
       label: 'Выберите день',
+      open,
       value,
       onChange: handleDateChange,
+      PopoverProps: {
+        anchorEl: () => textInput.current,
+      },
       KeyboardButtonProps: {
         'aria-label': 'Изменить дату',
       },
-      TextFieldComponent: props => $(TextField, {...props, disabled: true, style: { width: 180 }})
+      TextFieldComponent: props => $(StyledTextField, {
+        ...props,
+        disabled: true,
+        ref: textInput,
+        onClick: () => setOpen(true)
+      })
     }))
 }
+
+const StyledTextField = styled(TextField)({
+  '& .MuiInput-input': {
+    width: 180,
+    cursor: 'pointer'
+  }
+})
 
 const getStartOptions = (selectedDate) => {
   const options = []
@@ -120,7 +140,7 @@ const getEndOptions = (selectedDate, startTime) => {
 
   for (let i = start; isBefore(i, end) || isEqual(i, end); i = addMinutes(i, 30)) {
     options.push({
-      label: `${format(i, 'HH:mm')} (${differenceInMinutes(i, startTime)/60} ч.)`,
+      label: `${format(i, 'HH:mm')} (${differenceInMinutes(i, startTime) / 60} ч.)`,
       value: i.valueOf()
     })
   }
