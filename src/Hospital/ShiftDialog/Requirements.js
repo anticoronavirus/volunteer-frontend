@@ -21,12 +21,13 @@ const Requirements = ({
   const { data, loading } = useQuery(requirementsQuery, {
     variables: {
       where: {
-        hospital_id: { _eq: hospitalId  },
+        hospital_id: { _eq: hospitalId },
         profession_id: { _eq: professionId }
       }
-    }})
+    }
+  })
 
-  return $(TextField, {
+  return $(Select, {
     onChange: event => {
       const requirements = getRequirementsObject(data.requirements)
       onChange(event.target.value.map(uid => requirements[uid]))
@@ -45,8 +46,15 @@ const Requirements = ({
     },
   },
     data &&
-      map(Requirement, data.requirements))
+    map(Requirement, data.requirements))
 }
+
+const Select = styled(TextField)({
+  '& .MuiSelect-selectMenu': {
+    overflow: 'visible',
+    whiteSpace: 'normal',
+  }
+})
 
 const IconComponent = () =>
   $(Box, { paddingRight: 1.5, paddingTop: 1, },
