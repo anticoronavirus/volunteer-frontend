@@ -16,7 +16,7 @@ import DialogActions from '@material-ui/core/DialogActions'
 import Button from '@material-ui/core/Button'
 import { styled } from '@material-ui/core/styles'
 
-const currentDay = 2**((new Date().getDay() || 7) - 1)
+const currentDay = 2 ** ((new Date().getDay() || 7) - 1)
 
 export const HospitalShift = ({
   isEditing,
@@ -50,47 +50,51 @@ export const HospitalShift = ({
         $(Professions, {
           selected: profession,
           onChange: setProfession
-      }),
+        }),
         profession && $(Fragment, null,
           $(Description, {
             value: notabene,
             placeholder: profession.description,
-            onChange: setNotabene }),
+            onChange: setNotabene
+          }),
           $(Requirements, {
             professionId: profession.id,
             hospitalId,
             value: requirements,
-            onChange: setRequirements }),
+            onChange: setRequirements
+          }),
           $(Counter, {
             label: 'Количество волонтёров',
             value: demand,
             onChange: setDemand
           }),
           $(SelectTime, {
-            onChange: () => {},
+            onChange: () => { },
           }),
-            $(SelectInterval, {
-              value: repeats,
-              onChange: value => {
-                setRepeats(value)
-                setRepeatOn(value === 'daily'
-                  ? 1
-                  : currentDay
-                )
-              }
-            }),
-            repeats && (
-              repeats === 'daily'
-                ? $(Counter, {
-                    label: `Повторять ${formatJustLabel('each', repeatOn)}`,
-                    format: 'day',
-                    value: repeatOn,
-                    onChange: setRepeatOn })
-                : $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }))))),
+          $(SelectInterval, {
+            value: repeats,
+            onChange: value => {
+              setRepeats(value)
+              setRepeatOn(value === 'daily'
+                ? 1
+                : currentDay
+              )
+            }
+          }),
+          repeats && (
+            repeats === 'daily'
+              ? $(Counter, {
+                label: `Повторять ${formatJustLabel('each', repeatOn)}`,
+                format: 'day',
+                value: repeatOn,
+                onChange: setRepeatOn
+              })
+              : $(RepeatingDays, { value: repeatOn, onChange: setRepeatOn }))))),
     $(DialogActions, null,
       $(Button, { onClick: onClose }, 'Отмена'),
       start && end && profession &&
-        $(Button, { onClick: () => {
+      $(Button, {
+        onClick: () => {
           console.log(
             {
               start: `${start}:00+0300`,
@@ -103,10 +107,11 @@ export const HospitalShift = ({
               repeatOn
             }
           )
-        } }, isEditing
-          ? 'Сохранить'
-          : 'Добавить')
-        ))
+        }
+      }, isEditing
+        ? 'Сохранить'
+        : 'Добавить')
+    ))
 }
 
 const Container = styled('div')({
