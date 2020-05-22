@@ -39,6 +39,7 @@ export const HospitalShift = ({
   return $(Dialog, {
     open,
     onClose,
+    fullWidth: true,
     scroll: 'paper',
     fullScreen: !fullScreen
   },
