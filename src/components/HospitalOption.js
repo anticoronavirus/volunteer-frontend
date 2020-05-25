@@ -16,6 +16,6 @@ const HospitalOption = ({ onClick, selected, ...hospital }) =>
   },
     $(ListItemText, {
       primary: hospital.shortname,
-      secondary: hospital.address && hospital.address.split(', ').slice(2).join(', ') }))
+      secondary: hospital.address && hospital.address.split(', ').slice(1).join(', ') }))
 
 export default HospitalOption
