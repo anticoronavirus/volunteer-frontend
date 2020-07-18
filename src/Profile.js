@@ -104,7 +104,7 @@ const ProfileForm = data => {
 
   return $(Box, { padding: 2 },
     $(Formik, {
-      initialValues: omit(['managedHospital', '__typename'], data),
+      initialValues: omit(['managedHospitals', '__typename'], data),
       // validateOnBlur: false,
       validateOnMount: true,
       onSubmit: data =>

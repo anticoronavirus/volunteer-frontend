@@ -67,7 +67,7 @@ const HospitalShift = ({
       primary: `${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       secondary: `${profession.name}: ${demand}`}))
 
-const HospitalShiftManaged = data => 
+const HospitalShiftManaged = data =>
   $(HospitalShiftManagedWithState, { key: data.uid, ...data})
 
 const HospitalShiftManagedWithState = ({
@@ -76,7 +76,8 @@ const HospitalShiftManagedWithState = ({
   end,
   demand,
   notabene,
-  profession
+  profession,
+  requirements
 }) => {
   const [open, setOpen] = useState(false)
   return $(Fragment, { key: uid },
@@ -88,6 +89,7 @@ const HospitalShiftManagedWithState = ({
       profession,
       open,
       notabene,
+      requirements,
       onClose: () => setOpen(false) }),
     $(Mutation, { key: uid, mutation: removeShift }, mutate =>
       $(ListItem, { button: true, onClick: () => setOpen(true) },
