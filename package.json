@@ -2,7 +2,7 @@
   "name": "volunteer-frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "https://dev.memedic.ru",
+  "proxy": "https://memedic.ru",
   "dependencies": {
     "@apollo/client": "3.0.0-beta.44",
     "@apollo/link-ws": "2.0.0-beta.3",
@@ -27,7 +27,7 @@
     "react-input-mask": "2.0.4",
     "react-markdown": "4.3.1",
     "react-router-dom": "5.1.2",
-    "react-scripts": "3.4.1",
+    "react-scripts": "3.4.2",
     "subscriptions-transport-ws": "0.9.16",
     "use-query-params": "1.1.3",
     "zipcelx": "1.6.2"
