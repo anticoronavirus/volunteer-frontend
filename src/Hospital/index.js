@@ -1,28 +1,29 @@
-import { createElement as $, useEffect } from 'react'
 import { useQuery } from '@apollo/react-hooks'
+import Box from '@material-ui/core/Box'
+import Paper from '@material-ui/core/Paper'
+import { styled } from '@material-ui/core/styles'
+import Tab from '@material-ui/core/Tab'
+import Tabs from '@material-ui/core/Tabs'
+import Typography from '@material-ui/core/Typography'
+import Skeleton from '@material-ui/lab/Skeleton'
+import entries from 'lodash/fp/entries'
 import find from 'lodash/fp/find'
 import get from 'lodash/fp/get'
 import map from 'lodash/fp/map'
 import noop from 'lodash/fp/noop'
-import entries from 'lodash/fp/entries'
-import { Redirect, Switch, Route } from 'react-router-dom'
-import { useIsDesktop } from 'utils'
-import Requests from './Requests'
-import ShiftsList from './ShiftsList'
-import HospitalContext from './HospitalContext'
-import Schedule from './Schedule'
-import Directions from './Directions'
-import Actions from './Actions'
-import { hospital } from 'queries'
-import Back from 'components/Back'
+import { createElement as $, useEffect } from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom'
 
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import Box from '@material-ui/core/Box'
-import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
-import Skeleton from '@material-ui/lab/Skeleton'
-import { styled } from '@material-ui/core/styles'
+import Back from 'components/Back'
+import { hospital } from 'queries'
+import { useIsDesktop } from 'utils'
+
+import Actions from './Actions'
+import Directions from './Directions'
+import HospitalContext from './HospitalContext'
+import Requests from './Requests'
+// import Schedule from './Schedule'
+import ShiftsList from './ShiftsList'
 
 const Hospital = ({
   match,
@@ -84,10 +85,10 @@ const tabs = {
     label: 'Смены',
     component: ShiftsList
   },
-  schedule: {
-    label: 'Расписание',
-    component: Schedule
-  },
+  // schedule: {
+  //   label: 'Расписание',
+  //   component: Schedule
+  // },
   requests: {
     label: 'Заявки',
     component: Requests
