@@ -1,42 +1,37 @@
-import { createElement as $, useEffect } from 'react'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import { Subscription, Mutation, Query } from '@apollo/react-components'
-import MaskedInput from 'react-input-mask'
-import { Redirect, useHistory, useParams, Switch, Route } from 'react-router-dom'
-import { me as meQuery, 
-  profileProfessionRequests,
-  updateVolunteer,
-  myShifts,
-  removeVolunteerFromShift
-} from 'queries'
-import Back from 'components/Back'
-import ShiftRequest from 'components/ShiftRequest'
-import { Formik, Form, Field } from 'formik'
-import { TextField } from 'formik-material-ui'
-import { logoff } from 'Apollo'
-import { formatDate } from 'utils'
-import map from 'lodash/fp/map'
-import omit from 'lodash/fp/omit'
-import entries from 'lodash/fp/entries'
-
+import { Mutation, Query, Subscription } from '@apollo/react-components'
+import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMediaQuery, useTheme } from '@material-ui/core'
+import Avatar from '@material-ui/core/Avatar'
+import Box from '@material-ui/core/Box'
+import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import Divider from '@material-ui/core/Divider'
-import Tabs from '@material-ui/core/Tabs'
-import Tab from '@material-ui/core/Tab'
-import Box from '@material-ui/core/Box'
+import IconButton from '@material-ui/core/IconButton'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import Avatar from '@material-ui/core/Avatar'
-import IconButton from '@material-ui/core/IconButton'
-import Button from '@material-ui/core/Button'
+import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
-import Typography from '@material-ui/core/Typography'
+import Tab from '@material-ui/core/Tab'
+import Tabs from '@material-ui/core/Tabs'
 import Tooltip from '@material-ui/core/Tooltip'
-import ExitToApp from '@material-ui/icons/ExitToApp'
+import Typography from '@material-ui/core/Typography'
 import Delete from '@material-ui/icons/Delete'
-import { useMediaQuery, useTheme } from '@material-ui/core'
+import ExitToApp from '@material-ui/icons/ExitToApp'
+import { Field, Form, Formik } from 'formik'
+import { TextField } from 'formik-material-ui'
+import entries from 'lodash/fp/entries'
+import map from 'lodash/fp/map'
+import omit from 'lodash/fp/omit'
+import { createElement as $, useEffect } from 'react'
+import MaskedInput from 'react-input-mask'
+import { Redirect, Route, Switch, useHistory, useParams } from 'react-router-dom'
+
+import { logoff } from 'Apollo'
+import Back from 'components/Back'
+import ShiftRequest from 'components/ShiftRequest'
+import { me as meQuery, myShifts, profileProfessionRequests, removeVolunteerFromShift, updateVolunteer } from 'queries'
+import { formatDate } from 'utils'
 
 const Profile = () => {
   
@@ -201,7 +196,7 @@ const tabs = {
   },
   shifts: {
     label: 'Смены',
-    component: () => $(Subscription, { subscription: myShifts }, ({ data }) =>
+    component: ({ uid }) => $(Subscription, { subscription: myShifts, variables: { uid } }, ({ data }) =>
       !data ? $(CircularProgress) :
         $(List, null,
           map(Shifts, data.volunteer_shift)))
