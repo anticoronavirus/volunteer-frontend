@@ -46,10 +46,10 @@ const Main = ({ history }) => {
           data && data.me.length
             ? $(ButtonGroup, { size: 'small' },
                 $(Button, { onClick: () => history.push(
-                  data.me[0].managedHospital
-                    ? `/hospitals/${data.me[0].managedHospital.uid}`
+                  data.me[0].managedHospitals[0]
+                    ? `/hospitals/${data.me[0].managedHospitals[0].hospital.uid}`
                     : '/profile') },
-                  `${data.me[0].fname}${data.me[0].managedHospital ? ' @ ' + data.me[0].managedHospital.shortname : ''}`),
+                  `${data.me[0].fname}${data.me[0].managedHospitals[0] ? ' @ ' + data.me[0].managedHospitals[0].hospital.shortname : ''}`),
                 $(Tooltip, { title: 'Выход' },
                   $(Button, { onClick: () => logoff() && history.push('/')},
                   $(ExitToApp, { fontSize: 'small' }))))
