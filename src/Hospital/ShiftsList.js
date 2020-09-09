@@ -18,9 +18,14 @@ import Hint from 'components/Hint'
 import gql from 'graphql-tag'
 import HospitalContext from './HospitalContext'
 
+import {
+  Button,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+} from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import Menu from '@material-ui/core/Menu'
-import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
@@ -40,7 +45,7 @@ import MoreVert from '@material-ui/icons/MoreVert'
 import NoteAdd from '@material-ui/icons/NoteAdd'
 import CheckCircle from '@material-ui/icons/CheckCircle'
 import Help from '@material-ui/icons/Help'
-import Delete from '@material-ui/icons/Delete'
+import ExpandMore from '@material-ui/icons/ExpandMore'
 import RemoveCircle from '@material-ui/icons/RemoveCircle'
 import green from '@material-ui/core/colors/green'
 import { styled } from '@material-ui/styles'
@@ -74,11 +79,11 @@ const Shifts = () => {
     name: 'Инструктаж',
     description: 'В больнице, после прохождения анализов'
   }]
-  return $(Paper, null,
+  return $(Box, { maxWidth: 480 }, 
     $(Box, { padding: '16px 16px 0 16px' },
-      $(Typography, { variant: 'body2 ' }, 
+      $(Typography, { variant: 'body2' }, 
         'Чтобы начать помогать в этой больнице вам необходимо пройти следующие этапы')),
-    $(List, { dense: true }, 
+    $(List, null, 
       map(Requirement, requirements)),
     $(Box, { padding: '0 16px 16px 16px' },
       $(Typography, { variant: 'body2', paragraph: true }, 
@@ -90,14 +95,21 @@ const Requirement = ({
   name,
   description
 }) =>
-  $(ListItem, null,
-    $(ListItemText, {
-      primary: name,
-      secondary: description
-    }),
-    $(ListItemSecondaryAction, null,
-      // $(IconButton, { edge: 'end' },
-        $(Help)))
-        // )
+  $(Accordion, { key: name },
+    $(AccordionSummary, { expandIcon: $(ExpandMore)},
+      $(Typography, null, name)),
+    $(AccordionDetails, null,
+      $(Typography, null, description)))
+  // $(ListItem, {
+  //   key: name,
+  //   button: true,
+  //   divider: true },
+  //   $(ListItemText, {
+  //     primary: name,
+  //     // secondary: description
+  //   }),
+  //   $(ListItemSecondaryAction, null,
+  //     $(Box, { display: 'flex', alignItems: 'center' },
+  //       $(Help, { fontSize: 'small' }))))
 
 export default Shifts
