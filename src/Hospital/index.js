@@ -23,7 +23,7 @@ import Directions from './Directions'
 import HospitalContext from './HospitalContext'
 import Requests from './Requests'
 // import Schedule from './Schedule'
-import ShiftsList from './ShiftsList'
+import Shifts from './Shifts'
 
 const Hospital = ({
   match,
@@ -84,7 +84,7 @@ const Hospital = ({
 const tabs = {
   '': {
     label: 'Смены',
-    component: ShiftsList
+    component: Shifts
   },
   // schedule: {
   //   label: 'Расписание',

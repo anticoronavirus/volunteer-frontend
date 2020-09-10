@@ -1,19 +1,16 @@
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, List, Paper, styled, Typography } from '@material-ui/core'
 import { ExpandMore } from '@material-ui/icons'
 import map from 'lodash/fp/map'
-import { createElement as $, useContext } from 'react'
-
-import HospitalContext from './HospitalContext'
+import { createElement as $ } from 'react'
 
 const Onboarding = ({
   hospital_profession_requirement
 }) => {
 
-  const { hospitalId } = useContext(HospitalContext)
-  const checksDone = false // FIXME should check all but instruzionne
+  const checksDone = true // FIXME should check all but instruzionne
 
   return checksDone
-    ? $(AwaitingInstructions, { hospitalId })
+    ? $(AwaitingInstructions)
     : $(WelcomeScreen, { hospital_profession_requirement })
 }
 
@@ -37,6 +34,7 @@ const AwaitingInstructions = () => {
       $(CustomImage, { src: 'https://image.freepik.com/free-vector/doctors-team-medical-staff-doctor-nurse-group-medics-illustration-flat-style_213307-3.jpg' }),
       $(Box, { padding: 2 },
         $(Typography, { variant: 'body2' }, 
+          // FIXME add phone
           'Координатор свяжется с вами по телефону +79652661058 чтобы провести инструктаж'))))
 }
 
@@ -56,8 +54,8 @@ const Requirement = ({
 }) =>
   $(Accordion, { key: name },
     $(AccordionSummary, { expandIcon: $(ExpandMore)},
-      $(Typography, null, name)),
+      $(Typography, { variant: 'body2' }, name)),
     $(AccordionDetails, null,
-      $(Typography, null, description)))
+      $(Typography, { variant: 'body2' }, description)))
 
 export default Onboarding
