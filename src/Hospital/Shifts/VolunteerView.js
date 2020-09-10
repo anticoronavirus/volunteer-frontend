@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/react-hooks'
 import DateFnsUtils from '@date-io/date-fns'
 import { Paper } from '@material-ui/core'
-import { Box, Button, List, ListItem, ListItemText, TextField, Typography } from '@material-ui/core'
+import { Box, Button, ListSubheader, List, ListItem, ListItemText, TextField, Typography } from '@material-ui/core'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
 import ruLocale from 'date-fns/locale/ru'
@@ -30,9 +30,10 @@ const VolunteerView = ({
   return requirementsSatisfied
     ? $(Fragment, null,
         $(RequestShift),
-        $(Box, { padding: 2 }),
-        $(Paper, null, 
+        $(Box, { padding: 1 }),
+        $(Paper, null,
           $(List, null,
+            $(ListSubheader, null, 'Предстоящие смены'),
             $(ListItem, null,
               $(ListItemText, {
                 primary: 'ОРИТ',
@@ -92,6 +93,7 @@ const RequestShift = () =>
           $(Box, { marginTop: 1 },
             $(Button, {
               disabled: true,
+              color: 'primary',
               onChange: console.log,
               variant: 'contained' },
             'Отправить заявку')))))
