@@ -31,8 +31,8 @@ const WelcomeScreen = ({
         'После сдачи анализов вы можете оставить заявку на инструктаж'),
       $(Button, { variant: 'contained', onClick: () => setChecksDone(true) }, 'Я сдал\\а анализы')))
 
-const AwaitingInstructions = ({ setRequirementsSatisfied }) => {
-  return $(Box, { maxWidth: 480 },
+const AwaitingInstructions = ({ setRequirementsSatisfied }) =>
+  $(Box, { maxWidth: 480 },
     $(Paper, null,
       $(CustomImage, { src: 'https://image.freepik.com/free-vector/doctors-team-medical-staff-doctor-nurse-group-medics-illustration-flat-style_213307-3.jpg' }),
       $(Box, { padding: 2 },
@@ -41,7 +41,6 @@ const AwaitingInstructions = ({ setRequirementsSatisfied }) => {
           'Координатор свяжется с вами по телефону +79652661058 чтобы провести инструктаж'),
         $(Box, { padding: 1 }),
         $(Button, { variant: 'contained', onClick: () => setRequirementsSatisfied(true) }, 'Подтвердить'))))
-}
 
 const CustomImage = styled('img')(({
   theme
