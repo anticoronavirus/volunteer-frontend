@@ -1,7 +1,8 @@
-import { setContext } from 'apollo-link-context'
-import { split, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client'
+import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client'
+import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { WebSocketLink } from '@apollo/link-ws'
+import { setContext } from 'apollo-link-context'
+
 import { refreshToken as query } from 'queries'
 
 const httpLink = new HttpLink({
