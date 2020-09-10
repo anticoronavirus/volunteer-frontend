@@ -38,55 +38,12 @@ import { addToBlackList, confirm, documentsProvisioned, hospitalShiftsQuery, hos
 import { formatDate, uncappedMap } from 'utils'
 
 import HospitalContext from './HospitalContext'
+import Onboarding from './Onboarding'
 
-const Shifts = () => {
-
+const ShiftList = () => {
   const { hospitalId, isManagedByMe } = useContext(HospitalContext)
-  const options = { variables: { hospitalId }}
-  const { data } = useQuery(hospitalShiftsQuery, options)
-  useSubscription(hospitalShiftsSubscription, options)
-  const requirements = [{
-    name: 'Анализ на ВИЧ', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Флюрография',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на ADC (Дифтерия)', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на Гепатит ',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на Корь', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на COVID-19 (антитела)',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Инструктаж',
-    description: 'В больнице, после прохождения анализов'
-  }]
-  return $(Box, { maxWidth: 480 }, 
-    $(Box, { padding: '16px 16px 0 16px' },
-      $(Typography, { variant: 'body2' }, 
-        'Чтобы начать помогать в этой больнице вам необходимо пройти следующие этапы')),
-    $(List, null, 
-      map(Requirement, requirements)),
-    $(Box, { padding: '0 16px 16px 16px' },
-      $(Typography, { variant: 'body2', paragraph: true }, 
-        'После сдачи анализов вы можете оставить заявку на инструктаж'),
-      $(Button, { variant: 'contained' }, 'Я сдал\\а анализы')))
+  console.log(isManagedByMe)
+  return $(Onboarding)
 }
 
-const Requirement = ({
-  name,
-  description
-}) =>
-  $(Accordion, { key: name },
-    $(AccordionSummary, { expandIcon: $(ExpandMore)},
-      $(Typography, null, name)),
-    $(AccordionDetails, null,
-      $(Typography, null, description)))
-
-export default Shifts
+export default ShiftList
