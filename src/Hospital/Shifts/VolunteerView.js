@@ -7,7 +7,7 @@ import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pi
 import ruLocale from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import { createElement as $, Fragment } from 'react'
+import { createElement as $, Fragment, useState } from 'react'
 
 import { hospitalRequirements } from 'queries'
 
@@ -21,11 +21,12 @@ const VolunteerView = ({
     hospitalId,
     userId: hospitalId // FIXME test purposes
   }})
+  const [requirementsSatisfied, setRequirementsSatisfied] = useState(false)
 
   if (loading)
     return null
   
-  const requirementsSatisfied = true // some(checkIfSatified, data.hospital_profession_requirement)
+  // const requirementsSatisfied = some(checkIfSatified, data.hospital_profession_requirement)
   
   return requirementsSatisfied
     ? $(Fragment, null,
@@ -44,7 +45,7 @@ const VolunteerView = ({
                 primary: 'Реанимация',
                 secondary: '25 сентября в 10:00'
               })))))
-    : $(Onboarding, data)
+    : $(Onboarding, { setRequirementsSatisfied, ...data })
 }
 
 const RequestShift = () =>
