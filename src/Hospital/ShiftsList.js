@@ -1,55 +1,43 @@
-import { createElement as $, useState, useContext, Fragment } from 'react'
-import map from 'lodash/fp/map'
-import range from 'lodash/fp/range'
-import filter from 'lodash/fp/filter'
+import { Mutation, Query } from '@apollo/react-components'
 import { useQuery, useSubscription } from '@apollo/react-hooks'
-import { Query, Mutation } from '@apollo/react-components'
-import { formatDate, uncappedMap } from 'utils'
-import {
-  documentsProvisioned,
-  volunteerShiftCount,
-  hospitalShiftsSubscription,
-  hospitalShiftsQuery,
-  confirm,
-  removeVolunteerShift,
-  addToBlackList,
-} from 'queries'
-import Hint from 'components/Hint'
-import gql from 'graphql-tag'
-import HospitalContext from './HospitalContext'
-
-import {
-  Button,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-} from '@material-ui/core'
-import Paper from '@material-ui/core/Paper'
-import Menu from '@material-ui/core/Menu'
-import MenuItem from '@material-ui/core/MenuItem'
-import List from '@material-ui/core/List'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemAvatar from '@material-ui/core/ListItemAvatar'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import ListSubheader from '@material-ui/core/ListSubheader'
-import Divider from '@material-ui/core/Divider'
+import { Accordion, AccordionDetails, AccordionSummary, Button } from '@material-ui/core'
 import Avatar from '@material-ui/core/Avatar'
 import Badge from '@material-ui/core/Badge'
-import IconButton from '@material-ui/core/IconButton'
-import ButtonBase from '@material-ui/core/ButtonBase'
 import Box from '@material-ui/core/Box'
+import ButtonBase from '@material-ui/core/ButtonBase'
+import green from '@material-ui/core/colors/green'
+import Divider from '@material-ui/core/Divider'
+import IconButton from '@material-ui/core/IconButton'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListSubheader from '@material-ui/core/ListSubheader'
+import Menu from '@material-ui/core/Menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import Paper from '@material-ui/core/Paper'
 import Typography from '@material-ui/core/Typography'
+import CheckCircle from '@material-ui/icons/CheckCircle'
+import ExpandMore from '@material-ui/icons/ExpandMore'
+import Help from '@material-ui/icons/Help'
 import MoreVert from '@material-ui/icons/MoreVert'
 import NoteAdd from '@material-ui/icons/NoteAdd'
-import CheckCircle from '@material-ui/icons/CheckCircle'
-import Help from '@material-ui/icons/Help'
-import ExpandMore from '@material-ui/icons/ExpandMore'
 import RemoveCircle from '@material-ui/icons/RemoveCircle'
-import green from '@material-ui/core/colors/green'
-import { styled } from '@material-ui/styles'
 import Skeleton from '@material-ui/lab/Skeleton'
+import { styled } from '@material-ui/styles'
+import gql from 'graphql-tag'
+import filter from 'lodash/fp/filter'
+import map from 'lodash/fp/map'
+import range from 'lodash/fp/range'
+import { createElement as $, Fragment, useContext, useState } from 'react'
+
+import Hint from 'components/Hint'
+import { addToBlackList, confirm, documentsProvisioned, hospitalShiftsQuery, hospitalShiftsSubscription, removeVolunteerShift, volunteerShiftCount } from 'queries'
+import { formatDate, uncappedMap } from 'utils'
+
+import HospitalContext from './HospitalContext'
 
 const Shifts = () => {
 
@@ -100,16 +88,5 @@ const Requirement = ({
       $(Typography, null, name)),
     $(AccordionDetails, null,
       $(Typography, null, description)))
-  // $(ListItem, {
-  //   key: name,
-  //   button: true,
-  //   divider: true },
-  //   $(ListItemText, {
-  //     primary: name,
-  //     // secondary: description
-  //   }),
-  //   $(ListItemSecondaryAction, null,
-  //     $(Box, { display: 'flex', alignItems: 'center' },
-  //       $(Help, { fontSize: 'small' }))))
 
 export default Shifts

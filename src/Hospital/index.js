@@ -65,7 +65,7 @@ const Hospital = ({
             tabsArray)))),
     $(Box, isDesktop ? { display: 'flex', justifyContent: 'center', marginTop: 2 } : { marginTop: 2 },
       $(Box, isDesktop && { minWidth: 480, maxWidth: 640 },
-        $(Paper, null, 
+        // $(Paper, null, 
           $(HospitalContext.Provider, {
             value: {
               hospitalId: match.params.uid,
@@ -77,7 +77,8 @@ const Hospital = ({
                 $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
                   $(component)),
                 tabsArray),
-              $(Redirect, { to: `/hospitals/${match.params.uid}` })))))))
+              $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
+              // )
 }
 
 const tabs = {
