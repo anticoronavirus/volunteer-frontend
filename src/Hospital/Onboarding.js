@@ -5,50 +5,31 @@ import { createElement as $, useContext } from 'react'
 
 import HospitalContext from './HospitalContext'
 
-const Onboarding = () => {
+const Onboarding = ({
+  hospital_profession_requirement
+}) => {
 
   const { hospitalId } = useContext(HospitalContext)
-  const checksDone = true
+  const checksDone = false // FIXME should check all but instruzionne
 
   return checksDone
     ? $(AwaitingInstructions, { hospitalId })
-    : $(WelcomeScreen)
+    : $(WelcomeScreen, { hospital_profession_requirement })
 }
 
-const WelcomeScreen = () => {
-  const requirements = [{
-    name: 'Анализ на ВИЧ', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Флюрография',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на ADC (Дифтерия)', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на Гепатит ',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на Корь', 
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Анализ на COVID-19 (антитела)',
-    description: 'В местной поликлинике'
-  }, {
-    name: 'Инструктаж',
-    description: 'В больнице, после прохождения анализов'
-  }]
-  return $(Box, { maxWidth: 480 }, 
+const WelcomeScreen = ({
+  hospital_profession_requirement
+}) =>
+  $(Box, { maxWidth: 480 }, 
     $(Box, { padding: '16px 16px 0 16px' },
       $(Typography, { variant: 'body2' }, 
         'Чтобы начать помогать в этой больнице вам необходимо пройти следующие этапы')),
     $(List, null, 
-      map(Requirement, requirements)),
+      map(Requirement, hospital_profession_requirement)),
     $(Box, { padding: '0 16px 16px 16px' },
       $(Typography, { variant: 'body2', paragraph: true }, 
         'После сдачи анализов вы можете оставить заявку на инструктаж'),
       $(Button, { variant: 'contained' }, 'Я сдал\\а анализы')))
-}
 
 const AwaitingInstructions = () => {
   return $(Box, { maxWidth: 480 },
@@ -68,8 +49,10 @@ const CustomImage = styled('img')(({
 }))
 
 const Requirement = ({
-  name,
-  description
+  requirement: {
+    name,
+    description
+  }
 }) =>
   $(Accordion, { key: name },
     $(AccordionSummary, { expandIcon: $(ExpandMore)},

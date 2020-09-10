@@ -31,10 +31,11 @@ import gql from 'graphql-tag'
 import filter from 'lodash/fp/filter'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
+import some from 'lodash/fp/some'
 import { createElement as $, Fragment, useContext, useState } from 'react'
 
 import Hint from 'components/Hint'
-import { addToBlackList, confirm, documentsProvisioned, hospitalShiftsQuery, hospitalShiftsSubscription, removeVolunteerShift, volunteerShiftCount } from 'queries'
+import { hospitalRequirements } from 'queries'
 import { formatDate, uncappedMap } from 'utils'
 
 import HospitalContext from './HospitalContext'
@@ -42,8 +43,31 @@ import Onboarding from './Onboarding'
 
 const ShiftList = () => {
   const { hospitalId, isManagedByMe } = useContext(HospitalContext)
-  console.log(isManagedByMe)
-  return $(Onboarding)
+
+  return isManagedByMe
+    ? $('div', null, 'shifts')
+    : $(VolunteerView, { hospitalId }) // $(Onboarding)
 }
+
+const VolunteerView = ({
+  hospitalId
+}) => {
+
+  const { data, loading } = useQuery(hospitalRequirements, { variables: {
+    hospitalId,
+    userId: hospitalId // FIXME test purposes
+  }})
+
+  if (loading)
+    return null
+  
+  const requirementsSatisfied = some(checkIfSatified, data.hospital_profession_requirement)
+  
+  return requirementsSatisfied
+    ? $('div', null, 'test')
+    : $(Onboarding, data)
+}
+
+const checkIfSatified = ({ satisfied }) => satisfied.length > 0
 
 export default ShiftList

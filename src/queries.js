@@ -653,6 +653,27 @@ export const filteredHospitalProfessions = gql`
   }
 `
 
+export const hospitalRequirements = gql`
+query hospitalRequirements($hospitalId: uuid! $userId: uuid!) {
+  hospital_profession_requirement(
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+    }
+    distinct_on: [requirement_id]
+  ) {
+    uid
+    satisfied(where: { volunteer_id: { _eq: $userId }}) {
+      uid
+    }
+    requirement {
+      name
+      description
+    }
+  }
+}`
+
 export const periodDemandsByHospital = gql`
 query periodDemandsByHospital(
   $start: timetz!
