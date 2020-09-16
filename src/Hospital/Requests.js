@@ -12,6 +12,7 @@ import ListItem from '@material-ui/core/ListItem'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
 import ListItemText from '@material-ui/core/ListItemText'
+import Paper from '@material-ui/core/Paper'
 import Switch from '@material-ui/core/Switch'
 import Delete from '@material-ui/icons/Delete'
 import RestoreFromTrash from '@material-ui/icons/RestoreFromTrash'
@@ -35,7 +36,7 @@ const Requests = () => {
     rejected: { _eq: showDeleted },
   }}})
   
-  return $(Fragment, null,
+  return $(Paper, null,
     isManagedByMe &&
       $(Box, { padding: 2, display: 'flex', flexDirection: 'column'},
         $(FormControlLabel, {

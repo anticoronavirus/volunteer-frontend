@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from '@apollo/client'
-import { Avatar, Badge, Box, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, ListSubheader, Paper, styled } from '@material-ui/core'
+import { Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, ListSubheader, Paper, styled } from '@material-ui/core'
 import { Delete, Restore } from '@material-ui/icons'
 import { Skeleton } from '@material-ui/lab'
 import groupBy from 'lodash/fp/groupBy'
