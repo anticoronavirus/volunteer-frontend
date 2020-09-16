@@ -34,7 +34,7 @@ const App = () => {
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
-    !loading &&
+    loading && !data ? null :
     $(SnackbarProvider, { maxSnack: 3 },
       $(WithFooter, null,
         $(Switch, null,

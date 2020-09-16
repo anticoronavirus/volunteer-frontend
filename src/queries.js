@@ -442,6 +442,33 @@ query shifts($hospitalId: uuid) {
 }
 ${hospitalShiftFragment}`
 
+export const orderedHospitalShifts = gql`
+query orderedHospitalShifts(
+  $hospitalId: uuid
+  $dateInput: date_comparison_exp
+) {
+  volunteer_shift (
+    limit: 10,
+    order_by: {
+      date: asc
+    }
+    where: {
+      hospital_id: { _eq: $hospitalId }
+      date: $dateInput
+  }) {
+    uid
+    date,
+    start,
+    volunteer {
+      uid
+      lname,
+      fname,
+      phone
+    }
+  }
+}
+`
+
 export const documentsProvisioned = gql`
 mutation documentsProvisioned(
   $hospitalId: uuid
