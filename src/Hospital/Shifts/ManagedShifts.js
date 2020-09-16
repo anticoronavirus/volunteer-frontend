@@ -6,31 +6,34 @@ import fill from 'lodash/fp/fill'
 import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import { createElement as $ } from 'react'
+import { createElement as $, useState } from 'react'
 
 import { orderedHospitalShifts } from 'queries'
+import { formatDate } from 'utils'
 
 const ManagedShifts = ({
-  hospitalId
+  hospitalId,
+
 }) => {
 
   const { data, loading } = useSubscription(orderedHospitalShifts, {
     variables: {
       hospitalId,
-      dateInput: { _lte: 'TODAY' }
+      dateInput: { _lte: 'TODAY' },
+      orderBy: { date: 'asc' }
     }
   })
 
   return $(Paper, null,
     $(List, null,
-      loading
+      loading && !data
         ? LoadingDayShifts
         : map(DayShifts,
             groupBy('date', data.volunteer_shift))))
 }
 
 const DayShifts = (shifts) =>
-  [$(SubheaderWithBackground, null, shifts[0].date),
+  [$(SubheaderWithBackground, { key: 0 }, formatDate(shifts[0].date)),
     ...map(VolunteerShift, shifts)]
 
 const SubheaderWithBackground = styled(ListSubheader)(({ theme }) => ({
@@ -45,17 +48,16 @@ const VolunteerShift = ({
   loading
 }) => 
   $(ListItem, { key: uid },
-    console.log(loading),
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
         : $(Avatar)),
     $(ListItemText, {
       primary: loading
-        ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 })
+        ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
         : `${volunteer.lname} ${volunteer.fname}`,
       secondary: loading
-        ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 })
+        ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
         :volunteer.phone,
     }))
 
@@ -150,11 +152,11 @@ const VolunteerShift = ({
 //                   $(Delete, { fontSize: 'small' })))
 //         })))
 
-const LoadingDayShifts = map(
-  (index) => [
-    $(SubheaderWithBackground, null, $(Skeleton, { variant: 'text', width: '25ex', height: 32 })),
-    map(VolunteerShift, new Array(5).fill({ loading: true }))
-  ],
-  range(5))
+const LoadingDayShifts = [
+  $(SubheaderWithBackground, { key: 0 },
+    $(Box, { padding: '10px 0' },
+      $(Skeleton, { variant: 'text', width: '10ex', height: 24 }))),
+  ...map((uid) => VolunteerShift({ uid, loading: true }), range(1, 5))
+]
 
 export default ManagedShifts

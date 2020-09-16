@@ -446,12 +446,11 @@ export const orderedHospitalShifts = gql`
 query orderedHospitalShifts(
   $hospitalId: uuid
   $dateInput: date_comparison_exp
+  $orderBy: [volunteer_shift_order_by!]
 ) {
   volunteer_shift (
     limit: 10,
-    order_by: {
-      date: asc
-    }
+    order_by: $orderBy
     where: {
       hospital_id: { _eq: $hospitalId }
       date: $dateInput
