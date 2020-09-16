@@ -692,9 +692,7 @@ query hospitalRequirements($hospitalId: uuid! $userId: uuid!) {
     distinct_on: [requirement_id]
   ) {
     uid
-    satisfied(where: { volunteer_id: { _eq: $userId }}) {
-      uid
-    }
+    is_satisfied
     requirement {
       name
       description

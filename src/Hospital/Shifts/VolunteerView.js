@@ -6,6 +6,7 @@ import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
 import ruLocale from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
+import some from 'lodash/fp/some'
 import range from 'lodash/fp/range'
 import { createElement as $, Fragment, useState } from 'react'
 
@@ -18,15 +19,14 @@ const VolunteerView = ({
 }) => {
 
   const { data, loading } = useQuery(hospitalRequirements, { variables: {
-    hospitalId,
-    userId: hospitalId // FIXME test purposes
+    hospitalId
   }})
-  const [requirementsSatisfied, setRequirementsSatisfied] = useState(false)
 
   if (loading)
     return null
   
-  // const requirementsSatisfied = some(checkIfSatified, data.hospital_profession_requirement)
+  const requirementsSatisfied = data.hospital_profession_requirement.length === 0
+    || some('is_satisfied', data.hospital_profession_requirement)
   
   return requirementsSatisfied
     ? $(Fragment, null,
@@ -45,7 +45,7 @@ const VolunteerView = ({
                 primary: 'Реанимация',
                 secondary: '25 сентября в 10:00'
               })))))
-    : $(Onboarding, { setRequirementsSatisfied, ...data })
+    : $(Onboarding, data)
 }
 
 const RequestShift = () =>

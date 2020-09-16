@@ -4,7 +4,7 @@ import map from 'lodash/fp/map'
 import { createElement as $, useState } from 'react'
 
 const Onboarding = ({
-  setRequirementsSatisfied,
+  setRequirementsSatisfied = console.log,
   hospital_profession_requirement
 }) => {
 
