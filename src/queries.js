@@ -190,7 +190,7 @@ query exportShifts($hospitalId: uuid) {
       hospital_id: {
         _eq: $hospitalId
       }
-    },
+    }
     order_by: {
       date: desc
       start: desc
@@ -256,7 +256,7 @@ query exportCars($hospitalId: uuid) {
           _neq: ""
         }
       }
-    },
+    }
     order_by: {
       date: desc
       start: desc
@@ -363,7 +363,7 @@ query directions($hospitalId: uuid!) {
 
 export const shifts = gql`
 query shifts($hospitalId: uuid $userId: uuid $taskId: _uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId professions: $taskId }) {
     ...shift
   }
 }
@@ -371,7 +371,7 @@ ${shiftFragment}`
 
 export const shiftsSubscription = gql`
 subscription shiftsSubscription($hospitalId: uuid $userId: uuid $taskId: _uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId professions: $taskId }) {
     ...shift
   }
 }
@@ -449,19 +449,21 @@ query orderedHospitalShifts(
   $orderBy: [volunteer_shift_order_by!]
 ) {
   volunteer_shift (
-    limit: 10,
+    limit: 10
     order_by: $orderBy
     where: {
       hospital_id: { _eq: $hospitalId }
       date: $dateInput
   }) {
     uid
-    date,
-    start,
+    date
+    start
+    end
+    is_cancelled
     volunteer {
       uid
-      lname,
-      fname,
+      lname
+      fname
       phone
     }
   }
@@ -887,3 +889,22 @@ export const refreshToken = `
      expires
    }
  }` 
+
+export const setCancelShift = gql`
+mutation setCancelShift(
+  $uid: uuid!
+  $is_cancelled: Boolean!
+) {
+  setCancelShift: update_volunteer_shift_by_pk(
+    pk_columns: {
+      uid: $uid
+    }
+    _set: {
+      is_cancelled: $is_cancelled
+    }
+  ) {
+    uid
+    is_cancelled
+  }
+}
+`

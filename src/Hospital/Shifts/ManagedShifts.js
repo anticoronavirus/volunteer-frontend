@@ -1,14 +1,14 @@
-import { useSubscription } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { Avatar, Badge, Box, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, ListSubheader, Paper, styled } from '@material-ui/core'
-import { Delete } from '@material-ui/icons'
+import { Delete, Restore } from '@material-ui/icons'
 import { Skeleton } from '@material-ui/lab'
-import fill from 'lodash/fp/fill'
 import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import { createElement as $, useState } from 'react'
+import sortBy from 'lodash/fp/sortBy'
+import { createElement as $ } from 'react'
 
-import { orderedHospitalShifts } from 'queries'
+import { orderedHospitalShifts, setCancelShift } from 'queries'
 import { formatDate } from 'utils'
 
 const ManagedShifts = ({
@@ -16,7 +16,7 @@ const ManagedShifts = ({
 
 }) => {
 
-  const { data, loading } = useSubscription(orderedHospitalShifts, {
+  const { data, loading } = useQuery(orderedHospitalShifts, {
     variables: {
       hospitalId,
       dateInput: { _lte: 'TODAY' },
@@ -34,7 +34,7 @@ const ManagedShifts = ({
 
 const DayShifts = (shifts) =>
   [$(SubheaderWithBackground, { key: 0 }, formatDate(shifts[0].date)),
-    ...map(VolunteerShift, shifts)]
+    ...map(VolunteerShift, sortBy(['start', 'volunteer.phone'], shifts))]
 
 const SubheaderWithBackground = styled(ListSubheader)(({ theme }) => ({
   backgroundColor: theme.palette.background.paper
@@ -42,12 +42,13 @@ const SubheaderWithBackground = styled(ListSubheader)(({ theme }) => ({
 
 const VolunteerShift = ({
   uid,
-  confirmed,
+  is_cancelled,
   start,
+  end,
   volunteer,
   loading
 }) => 
-  $(ListItem, { key: uid },
+  $(ListItemWithCancelled, { key: uid, is_cancelled },
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
@@ -58,8 +59,35 @@ const VolunteerShift = ({
         : `${volunteer.lname} ${volunteer.fname}`,
       secondary: loading
         ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
-        :volunteer.phone,
-    }))
+        : `${start.slice(0, -6)}—${end.slice(0, -6)} · ${volunteer.phone}` }),
+    $(ListItemSecondaryAction, null,
+      $(ToggleCancelShift, { uid, is_cancelled })))
+
+const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
+  opacity: is_cancelled ? 0.5 : 1
+}))
+
+const ToggleCancelShift = ({ uid, is_cancelled }) => {
+  const [mutate] = useMutation(setCancelShift, {
+    ignoreResults: true,
+    variables: {
+      uid,
+      is_cancelled: !is_cancelled
+    },
+    optimisticResponse: {
+      __typename: 'Mutation',
+      setCancelShift: {
+        __typename: 'volunteer_shift',
+        uid,
+        is_cancelled: !is_cancelled
+      }
+    }
+  })
+  return $(IconButton, { onClick: mutate },
+    is_cancelled
+      ? $(Restore)
+      : $(Delete))
+}
 
 // const VolunteerShift = ({
 //   uid,

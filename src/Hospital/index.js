@@ -94,6 +94,10 @@ const tabs = {
     label: 'Заявки',
     component: Requests
   },
+  archive: {
+    label: 'Архив',
+    component: Shifts
+  },
   directions: {
     label: 'Как добраться',
     component: Directions
