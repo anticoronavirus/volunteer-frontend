@@ -682,7 +682,7 @@ export const filteredHospitalProfessions = gql`
 `
 
 export const hospitalRequirements = gql`
-query hospitalRequirements($hospitalId: uuid! $userId: uuid!) {
+query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
   hospital_profession_requirement(
     where: {
       hospital_id: {
