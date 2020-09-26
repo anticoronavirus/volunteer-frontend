@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/client'
 import DateFnsUtils from '@date-io/date-fns'
 import { Paper } from '@material-ui/core'
 import { Box, Button, List, ListItem, ListItemText, ListSubheader, MenuItem, TextField, Typography } from '@material-ui/core'
@@ -13,7 +13,7 @@ import some from 'lodash/fp/some'
 import { createElement as $, Fragment, useState } from 'react'
 
 import TaskOption from 'components/TaskOption'
-import { hospitalRequirements, professions } from 'queries'
+import { addOwnShift, hospitalRequirements, professions } from 'queries'
 
 import Onboarding from './Onboarding'
 
@@ -45,12 +45,16 @@ const VolunteerView = ({
 }
 
 const Shift = ({
-  profession
+  uid,
+  profession,
+  date,
+  start,
+  end
 }) =>
-  $(ListItem, null,
+  $(ListItem, { key: uid },
     $(ListItemText, {
       primary: profession.name,
-      secondary: '20 сентября в 10:00'
+      secondary: `${date} ${start.slice(0, -6)}—${end.slice(0, -6)}`
     }))
 
 const RequestShift = ({
@@ -59,6 +63,7 @@ const RequestShift = ({
 
   const [data, setData] = useState({})
   const professionQuery = useQuery(professions, { hospitalId })
+  const [mutate, { loading }] = useMutation(addOwnShift)
 
   return $(Paper, null,
     $(Box, { padding: 2 },
@@ -107,9 +112,17 @@ const RequestShift = ({
           }, map(ProfesionItem, professionQuery?.data?.professions)),
           $(Box, { marginTop: 1 },
             $(Button, {
-              disabled: !data.profession_id || !data.date || !data.start || !data.duration,
+              disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,
               color: 'primary',
-              onChange: console.log,
+              onClick: () => mutate({ variables: {
+                data: {
+                  date: data.date,
+                  start: data.start, // FIXME should be time with timezone
+                  end: addHours(data.duration, data.start), // FIXME should be time with timezone
+                  profession_id: data.profession_id,
+                  hospital_id: hospitalId
+                }
+              }}),
               variant: 'contained' },
             'Отправить заявку')))))
 }

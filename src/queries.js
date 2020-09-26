@@ -681,6 +681,18 @@ export const filteredHospitalProfessions = gql`
   }
 `
 
+const volunteerOwnShiftFragment = gql`
+fragment volunteerOwnShiftFragment on volunteer_shift {
+  uid
+  date
+  start
+  end
+  profession {
+    uid
+    name
+  }
+}`
+
 export const hospitalRequirements = gql`
 query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
   hospital_profession_requirement(
@@ -708,13 +720,20 @@ query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
       }
     }
   ) {
-    uid
-    profession {
-      uid
-      name
-    }
+    ...volunteerOwnShiftFragment
   }
-}`
+}
+${volunteerOwnShiftFragment}`
+
+export const addOwnShift = gql`
+mutation addOwnShift($data: volunteer_shift_insert_input!) {
+  insert_volunteer_shift_one (
+    object: $data
+  ) {
+    ...volunteerOwnShiftFragment
+  }
+}
+${volunteerOwnShiftFragment}`
 
 export const periodDemandsByHospital = gql`
 query periodDemandsByHospital(
