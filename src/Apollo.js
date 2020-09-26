@@ -22,7 +22,7 @@ const link = new WebSocketLink({
         setTimeout(() => {
           authPromise = refreshToken()
           link.subscriptionClient.client.close()
-        }, (result.expires * 1000) - new Date().valueOf())
+        }, (result.expires * 1000) - new Date().valueOf() - 20000)
         return {
           headers: {
             Authorization: `Bearer ${result.accessToken}`
@@ -35,16 +35,6 @@ const link = new WebSocketLink({
     } 
   }
 })
-
-const refreshToken = () =>
-  fetch(uri, {
-    method: 'POST',
-    body: JSON.stringify({ query })
-  }).then(response => response.json())
-    .then(response => response.errors
-        ? null
-        : response.data.refreshToken)
-    .catch(console.log)
 
 export const client = new ApolloClient({
   queryDeduplication: true,
@@ -64,6 +54,16 @@ export const client = new ApolloClient({
   }),
   link: link
 })
+
+const refreshToken = () =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({ query })
+  }).then(response => response.json())
+    .then(response => response.errors
+        ? (client.resetStore() && null)
+        : response.data.refreshToken)
+    .catch(console.log)
 
 export const handleAuth = ({ data }) => {
   authPromise = data.getToken
