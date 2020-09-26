@@ -1,87 +1,50 @@
-import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
-import { getMainDefinition } from '@apollo/client/utilities'
-import { setContext } from 'apollo-link-context'
 
 import { refreshToken as query } from 'queries'
 
-const httpLink = new HttpLink({
-  uri: '/v1/graphql'
-})
+const uri = '/v1/graphql'
+const devUrl = 'dev.memedic.ru'
 
-let refreshTokenPromise
+let authPromise = null // Important to be falsey by default
 
-const handleAuth = (operation, { headers }) => {
-
-  let authorization = localStorage.getItem('authorization')
-  let expires = parseInt(localStorage.getItem('expires'))
-
-  if (!expires || !authorization)
-    return { headers }
-  else if (expires - new Date().valueOf() < 0)
-    return refreshTokenPromise ||
-      (refreshTokenPromise = fetch('/v1/graphql', {
-        method: 'POST',
-        body: JSON.stringify({ query })}))
-      .then(response => response.json())
-      .then(response => response.errors
-        ? handleError(headers)
-        : response.data)
-      .then(data => {
-        refreshTokenPromise = null
-        localStorage.setItem('authorization', `Bearer ${data.refreshToken.accessToken}`)
-        localStorage.setItem('expires', data.refreshToken.expires * 1000)
-        return {
-          headers: {
-            ...headers,
-            Authorization: `Bearer ${data.refreshToken.accessToken}`,
-          }
-        }
-      })
-      .catch(handleError(headers))
-  else
-    return {
-      headers: {
-        ...headers,
-        authorization
-      }
-    }
-}
-
-const authLink = setContext(handleAuth)
-
-const handleError = headers => () => {
-  refreshTokenPromise = null
-  localStorage.removeItem('authorization')
-  localStorage.removeItem('expires')
-  return headers
-}
-
-export const wsLink = new WebSocketLink({
-  uri: `wss://${process.env.NODE_ENV === 'development' ? 'dev.memedic.ru' : window.location.hostname}/v1/graphql`,
+const link = new WebSocketLink({
+  uri: `wss://${process.env.NODE_ENV === 'development' ? devUrl : window.location.hostname}${uri}`,
   options: {
     reconnect: true,
-    connectionParams: async () => handleAuth(null, { })
+    connectionParams: async () => {
+      if (!authPromise)
+        authPromise = refreshToken()
+      const { expires, accessToken: token } = await authPromise
+
+      if (token && expires) {
+        setTimeout(() => {
+          authPromise = refreshToken()
+          link.subscriptionClient.client.close()
+        }, (expires * 1000) - new Date().valueOf())
+        return {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      } else {
+        return {
+          headers: {}
+        }
+      }
+    } 
   }
-  //   () => localStorage.getItem('authorization') && {// FIXME should be dynamic
-  //     headers: {
-  //       Authorization: localStorage.getItem('authorization')
-  //     }
-  //   }
-  // }
 })
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query)
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    )
-  },
-  authLink.concat(wsLink),
-  authLink.concat(httpLink),
-)
+const refreshToken = () =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({ query })
+  }).then(response => response.json())
+    .then(response => response.errors
+        ? console.log(response.errors)
+        : response.data)
+    .then(({ refreshToken }) => refreshToken)
 
 export const client = new ApolloClient({
   queryDeduplication: true,
@@ -92,17 +55,25 @@ export const client = new ApolloClient({
     }
   },
   cache: new InMemoryCache({
-    dataIdFromObject: ({ uid, __typename, ...rest }) => __typename === 'vshift'
-      ? `${rest.date}-${rest.start}-${rest.end}`
-      : uid
+    dataIdFromObject: ({ uid }) => uid,
+    typePolicies: {
+      vshift: {
+        keyFields: ['date', 'start', 'end']
+      }
+    }
   }),
-  link: splitLink
+  link: link
 })
 
-export const logoff =() => {
-  localStorage.removeItem('authorization')
-  localStorage.removeItem('expires')
-  wsLink.subscriptionClient.client.close()
+export const handleAuth = ({ data }) => {
+  authPromise = data.getToken
+  link.subscriptionClient.client.close()
+  client.resetStore()
+}
+
+export const logoff = () => {
+  authPromise = {}
+  link.subscriptionClient.client.close()
   client.resetStore()
   return true // Important
 }
