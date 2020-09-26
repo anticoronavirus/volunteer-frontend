@@ -13,23 +13,23 @@ const link = new WebSocketLink({
   options: {
     reconnect: true,
     connectionParams: async () => {
+
       if (!authPromise)
         authPromise = refreshToken()
-      const { expires, accessToken: token } = await authPromise
+      const result = await authPromise
 
-      if (token && expires) {
+      if (result) {
         setTimeout(() => {
           authPromise = refreshToken()
           link.subscriptionClient.client.close()
-        }, (expires * 1000) - new Date().valueOf())
+        }, (result.expires * 1000) - new Date().valueOf())
         return {
           headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${result.accessToken}`
           }
         }
       } else {
         return {
-          headers: {}
         }
       }
     } 
@@ -42,9 +42,9 @@ const refreshToken = () =>
     body: JSON.stringify({ query })
   }).then(response => response.json())
     .then(response => response.errors
-        ? console.log(response.errors)
-        : response.data)
-    .then(({ refreshToken }) => refreshToken)
+        ? null
+        : response.data.refreshToken)
+    .catch(console.log)
 
 export const client = new ApolloClient({
   queryDeduplication: true,

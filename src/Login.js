@@ -21,7 +21,6 @@ const Login = ({ history }) => {
 
   const [submitPhone] = useMutation(submitPhoneMutation)
   const [login] = useMutation(loginMutation, { variables: { phone, password } })
-  const client = useApolloClient()
 
   const handlePhone = event => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
