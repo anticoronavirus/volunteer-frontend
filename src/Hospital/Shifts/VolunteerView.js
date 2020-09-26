@@ -35,21 +35,23 @@ const VolunteerView = ({
     ? $(Fragment, null,
         $(RequestShift, { hospitalId }),
         $(Box, { padding: 1 }),
-        $(Paper, null,
-          $(List, null,
-            $(ListSubheader, null, 'Предстоящие смены'),
-            $(ListItem, null,
-              $(ListItemText, {
-                primary: 'ОРИТ',
-                secondary: '20 сентября в 10:00'
-              })),
-            $(ListItem, null,
-              $(ListItemText, {
-                primary: 'Реанимация',
-                secondary: '25 сентября в 10:00'
-              })))))
+        data.volunteer_shift.length > 0 &&
+          $(Box, { paddingTop: 2 },
+            $(Paper, null,
+              $(List, null,
+                $(ListSubheader, null, 'Предстоящие смены'),
+                map(Shift, data.volunteer_shift)))))
     : $(Onboarding, data)
 }
+
+const Shift = ({
+  profession
+}) =>
+  $(ListItem, null,
+    $(ListItemText, {
+      primary: profession.name,
+      secondary: '20 сентября в 10:00'
+    }))
 
 const RequestShift = ({
   hospitalId

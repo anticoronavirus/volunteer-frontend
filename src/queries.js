@@ -698,6 +698,22 @@ query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
       description
     }
   }
+  volunteer_shift (
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      date: { 
+        _gte: "TODAY()"
+      }
+    }
+  ) {
+    uid
+    profession {
+      uid
+      name
+    }
+  }
 }`
 
 export const periodDemandsByHospital = gql`

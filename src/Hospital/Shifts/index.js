@@ -7,9 +7,9 @@ import VolunteerView from './VolunteerView'
 const ShiftList = () => {
   const { hospitalId, isManagedByMe } = useContext(HospitalContext)
   
-  return isManagedByMe
-    ? $(ManagedShifts, { hospitalId })
-    : $(VolunteerView, { hospitalId })
+  return $(isManagedByMe
+    ? ManagedShifts
+    : VolunteerView, { hospitalId })
 }
 
 export default ShiftList
