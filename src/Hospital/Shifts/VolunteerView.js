@@ -5,14 +5,12 @@ import { Box, Button, List, ListItem, ListItemText, ListSubheader, MenuItem, Tex
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
 import addHours from 'date-fns/fp/addHours'
-import differenceInHours from 'date-fns/fp/differenceInHours'
 import ruLocale from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import some from 'lodash/fp/some'
 import { createElement as $, Fragment, useState } from 'react'
 
-import TaskOption from 'components/TaskOption'
 import { addOwnShift, hospitalRequirements, professions } from 'queries'
 
 import Onboarding from './Onboarding'
@@ -114,15 +112,15 @@ const RequestShift = ({
             $(Button, {
               disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,
               color: 'primary',
-              onClick: () => mutate({ variables: {
-                data: {
-                  date: data.date,
-                  start: data.start, // FIXME should be time with timezone
-                  end: addHours(data.duration, data.start), // FIXME should be time with timezone
-                  profession_id: data.profession_id,
-                  hospital_id: hospitalId
-                }
-              }}),
+              onClick: () => mutate({
+                variables: {
+                  data: {
+                    date: data.date,
+                    start: data.start, // FIXME should be time with timezone
+                    end: addHours(data.duration, data.start), // FIXME should be time with timezone
+                    profession_id: data.profession_id,
+                    hospital_id: hospitalId
+                  }}}),
               variant: 'contained' },
             'Отправить заявку')))))
 }
