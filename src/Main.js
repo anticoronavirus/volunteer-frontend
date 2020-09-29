@@ -51,7 +51,7 @@ const Main = ({ history }) => {
                     : '/profile') },
                   `${data.me[0].fname}${data.me[0].managedHospitals[0] ? ' @ ' + data.me[0].managedHospitals[0].hospital.shortname : ''}`),
                 $(Tooltip, { title: 'Выход' },
-                  $(Button, { onClick: () => logoff() && history.push('/')},
+                  $(Button, { onClick: () => logoff().then(() => history.push('/'))},
                   $(ExitToApp, { fontSize: 'small' }))))
             : $(Button, { size: 'small', variant: 'outlined', onClick: () => history.push('/login') }, 'Войти'))),
     $(Box, { 

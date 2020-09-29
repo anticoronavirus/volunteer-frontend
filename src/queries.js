@@ -769,7 +769,7 @@ export const submitPhone = gql`
   }
 `
 
-export const login = gql`
+export const login = `
   mutation login($phone: String $password: String) {
     getToken(phone: $phone password: $password) {
       authenticated
@@ -777,6 +777,12 @@ export const login = gql`
       expires
     }
   }
+`
+
+export const logoff = `
+mutation {
+  logoff
+}
 `
 
 export const addShift = gql`

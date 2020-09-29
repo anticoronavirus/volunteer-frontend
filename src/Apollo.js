@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
 
-import { refreshToken as query } from 'queries'
+import { refreshToken as refreshTokenQuery, login as loginMutation, logoff as logoffQuery } from 'queries'
 
 const uri = '/v1/graphql'
 const devUrl = 'dev.memedic.ru'
@@ -55,25 +55,42 @@ export const client = new ApolloClient({
   link: link
 })
 
+export const login = (variables) =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: loginMutation,
+      variables
+    })
+  }).then(response => response.json())
+    .then(response => response.data.getToken)
+    .then(handleAuth)
+
 const refreshToken = () =>
   fetch(uri, {
     method: 'POST',
-    body: JSON.stringify({ query })
+    body: JSON.stringify({ query: refreshTokenQuery })
   }).then(response => response.json())
     .then(response => response.errors
         ? (client.resetStore() && null)
         : response.data.refreshToken)
     .catch(console.log)
 
-export const handleAuth = ({ data }) => {
-  authPromise = data.getToken
+const handleAuth = tokenData => {
+  authPromise = tokenData
   link.subscriptionClient.client.close()
   client.resetStore()
 }
 
-export const logoff = () => {
-  authPromise = {}
-  link.subscriptionClient.client.close()
-  client.resetStore()
-  return true // Important
-}
+export const logoff = () =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({ query: logoffQuery })
+  }).then(response => response.json())
+    .then(response => response.data.logoff)
+    .catch(() => {
+      authPromise = {}
+      link.subscriptionClient.client.close()
+      client.resetStore()
+      return true
+    })

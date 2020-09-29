@@ -9,8 +9,8 @@ import Typography from '@material-ui/core/Typography'
 import { createElement as $, useState } from 'react'
 import MaskedInput from 'react-input-mask'
 
-import { handleAuth } from 'Apollo'
-import { login as loginMutation, submitPhone as submitPhoneMutation } from 'queries'
+import { login } from 'Apollo'
+import { submitPhone as submitPhoneMutation } from 'queries'
 
 const Login = ({ history }) => {
 
@@ -20,7 +20,6 @@ const Login = ({ history }) => {
   const [loginStatus, setLoginStatus] = useState(null)
 
   const [submitPhone] = useMutation(submitPhoneMutation)
-  const [login] = useMutation(loginMutation, { variables: { phone, password } })
 
   const handlePhone = event => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
@@ -44,8 +43,7 @@ const Login = ({ history }) => {
 
   const handleSubmit = () => {
     setLoginStatus('loading')
-    login()
-      .then(handleAuth)
+    login({ phone, password })
       .then(() => history.push('/'))
       .catch(({ message, graphQLErrors }) => // FIXME check for network errors
         setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
