@@ -1,20 +1,21 @@
 import { useMutation, useQuery } from '@apollo/client'
 import DateFnsUtils from '@date-io/date-fns'
 import { Paper } from '@material-ui/core'
-import { Box, Button, List, ListItem, ListItemText, ListSubheader, MenuItem, TextField, Typography } from '@material-ui/core'
+import { Box, Button, List, ListItem, ListItemSecondaryAction, ListItemText, ListSubheader, MenuItem, styled, TextField, Typography } from '@material-ui/core'
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
 import addHours from 'date-fns/fp/addHours'
 import format from 'date-fns/fp/format'
 import ruLocale from 'date-fns/locale/ru'
-import map from 'lodash/fp/map'
 import concat from 'lodash/fp/concat'
 import find from 'lodash/fp/find'
+import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import update from 'lodash/fp/update'
 import some from 'lodash/fp/some'
+import update from 'lodash/fp/update'
 import { createElement as $, Fragment, useState } from 'react'
 
+import ToggleCancelShift from 'components/ToggleCancelShift'
 import { addOwnShift, hospitalRequirements, professions } from 'queries'
 
 import Onboarding from './Onboarding'
@@ -51,13 +52,21 @@ const Shift = ({
   profession,
   date,
   start,
-  end
+  end,
+  is_cancelled
 }) =>
-  $(ListItem, { key: uid },
+  $(ListItemWithCancelled, { key: uid, is_cancelled },
     $(ListItemText, {
       primary: profession.name,
       secondary: `${date} ${start.slice(0, -6)}—${end.slice(0, -6)}`
-    }))
+    }),
+    $(ListItemSecondaryAction, null, 
+      $(ToggleCancelShift, { uid, is_cancelled })))
+
+const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
+  opacity: is_cancelled ? 0.5 : 1,
+  textDecoration: is_cancelled && 'line-through'
+}))
 
 const RequestShift = ({
   hospitalId

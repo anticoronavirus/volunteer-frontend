@@ -687,6 +687,7 @@ fragment volunteerOwnShiftFragment on volunteer_shift {
   date
   start
   end
+  is_cancelled
   profession {
     uid
     name

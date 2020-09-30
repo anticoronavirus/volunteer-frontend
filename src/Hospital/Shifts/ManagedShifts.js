@@ -1,6 +1,5 @@
-import { useMutation, useQuery } from '@apollo/client'
-import { Avatar, Box, IconButton, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, ListSubheader, Paper, styled } from '@material-ui/core'
-import { Delete, Restore } from '@material-ui/icons'
+import { useQuery } from '@apollo/client'
+import { Avatar, Box, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, ListSubheader, Paper, styled } from '@material-ui/core'
 import { Skeleton } from '@material-ui/lab'
 import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
@@ -8,8 +7,9 @@ import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
 import { createElement as $ } from 'react'
 
-import { orderedHospitalShifts, setCancelShift } from 'queries'
+import { orderedHospitalShifts } from 'queries'
 import { formatDate } from 'utils'
+import ToggleCancelShift from 'components/ToggleCancelShift'
 
 const ManagedShifts = ({
   hospitalId,
@@ -64,121 +64,9 @@ const VolunteerShift = ({
       $(ToggleCancelShift, { uid, is_cancelled })))
 
 const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
-  opacity: is_cancelled ? 0.5 : 1
+  opacity: is_cancelled ? 0.5 : 1,
+  textDecoration: is_cancelled && 'line-through'
 }))
-
-const ToggleCancelShift = ({ uid, is_cancelled }) => {
-  const [mutate] = useMutation(setCancelShift, {
-    ignoreResults: true,
-    variables: {
-      uid,
-      is_cancelled: !is_cancelled
-    },
-    optimisticResponse: {
-      __typename: 'Mutation',
-      setCancelShift: {
-        __typename: 'volunteer_shift',
-        uid,
-        is_cancelled: !is_cancelled
-      }
-    }
-  })
-  return $(IconButton, { onClick: mutate },
-    is_cancelled
-      ? $(Restore)
-      : $(Delete))
-}
-
-// const VolunteerShift = ({
-//   uid,
-//   confirmed,
-//   volunteer: { 
-//     uid: volunteer_id,
-//     fullName,
-//     lname,
-//     fname,
-//     phone,
-//     profession,
-//     provisioned_documents_aggregate
-//   },
-//   loading
-//  }) =>
-//   $(ListItem, { key: uid, alignItems: 'flex-start'},
-//     $(ListItemAvatar, null,
-//       loading
-//         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
-//         : $(Mutation, {
-//             mutation: confirm,
-//             variables: { uid, confirmed: !confirmed },
-//             optimisticResponse: {
-//               update_volunteer_shift: {
-//                 affected_rows: 1,
-//                 __typename: 'volunteer_shift_mutation_response'
-//               },
-//             },
-//             update: cache =>
-//               cache.writeFragment({
-//                 id: uid,
-//                 fragment: confirmedFragment,
-//                 data: { confirmed: !confirmed }
-//               })
-//           }, mutate =>
-//             $(CustomButtonBase, { onClick: mutate }, 
-//               $(Badge, {
-//                 overlap: 'circle',
-//                 badgeContent: confirmed &&
-//                   $(CheckHolder, null, $(CheckCircle, { fontSize: 'small', htmlColor: green[500] })),
-//                 anchorOrigin: {
-//                   vertical: 'bottom',
-//                   horizontal: 'right' }},
-//                 $(Avatar))))),
-//       $(ListItemText, { 
-//       primary:
-//         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 32 }) :
-//         fullName || `${lname} ${fname}`,
-//       secondary:
-//         loading ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 }) :
-//         $(Box, { display: 'flex' },
-//           !provisioned_documents_aggregate.aggregate.count && 'документы не предоставлены · ', phone, ' · ', profession),
-//     }),
-//     $(ListItemSecondaryAction, null,
-//       loading
-//         ? $(Skeleton, { variant: 'text', width: 16, height: 48 })
-//         : $(HospitalContext.Consumer, null, ({ isManagedByMe, hospitalId }) => {
-//           const removeVolunteerShiftMutation = {
-//             mutation: removeVolunteerShift,
-//             variables: { uid },
-//             update: store =>
-//               store.writeQuery({
-//                 query: hospitalShiftsQuery,
-//                 variables: { hospitalId },
-//                 data: {
-//                   shifts: map(shift => ({
-//                       ...shift,
-//                       shiftRequests: filter(request => request.uid !== uid, shift.shiftRequests),
-//                     }),
-//                     store.readQuery({
-//                       query: hospitalShiftsQuery,
-//                       variables: { hospitalId }}).shifts)}}),
-//             optimisticResponse: {
-//               delete_volunteer_shift: {
-//                 affected_rows: 1,
-//                 __typename: "volunteer_shift_mutation_response"
-//               }
-//             }
-//           }
-//           return isManagedByMe
-//             ? $(AdditionalControls, {
-//               uid,
-//               phone,
-//               volunteer_id,
-//               hospitalId,
-//               removeVolunteerShiftMutation,
-//               hasDocumentsProvisioned: provisioned_documents_aggregate.aggregate.count  })
-//             : $(Mutation, removeVolunteerShiftMutation, mutate =>
-//                 $(IconButton, { onClick: mutate },
-//                   $(Delete, { fontSize: 'small' })))
-//         })))
 
 const LoadingDayShifts = [
   $(SubheaderWithBackground, { key: 0 },

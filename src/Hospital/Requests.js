@@ -35,7 +35,7 @@ const Requests = () => {
     hospital_id: { _eq: hospitalId },
     rejected: { _eq: showDeleted },
   }}})
-  
+
   return $(Paper, null,
     isManagedByMe &&
       $(Box, { padding: 2, display: 'flex', flexDirection: 'column'},
@@ -117,7 +117,10 @@ const ManagedRequest = ({
                           returning: [{ uid: Math.random(), requirement_id: requirement.uid }]
                         }
                       },
-                      variables: { requirement_id: requirement.uid }})
+                      variables: {
+                        volunteer_id: volunteer.uid,
+                        hospital_id: hospitalId,
+                        requirement_id: requirement.uid }})
                   : remove({
                       optimisticResponse: {
                         delete_volunteer_hospital_requirement: {
