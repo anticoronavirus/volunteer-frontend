@@ -120,6 +120,7 @@ const RequestShift = ({
             label: 'Время',
             fullWidth: true,
             disablePast: true,
+            minutesStep: 30,
             size: 'small',
             value: data.start || null,
             onChange: (start) => setData({ ...data, start }),

@@ -774,7 +774,7 @@ export const login = `
     getToken(phone: $phone password: $password) {
       authenticated
       accessToken
-      expires
+      expiresAt
     }
   }
 `
@@ -925,7 +925,7 @@ export const refreshToken = `
  mutation {
    refreshToken {
      accessToken
-     expires
+     expiresAt
    }
  }` 
 

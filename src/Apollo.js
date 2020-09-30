@@ -1,7 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
 
-import { refreshToken as refreshTokenQuery, login as loginMutation, logoff as logoffQuery } from 'queries'
+import { login as loginMutation, logoff as logoffQuery, refreshToken as refreshTokenQuery } from 'queries'
 
 const uri = '/v1/graphql'
 const devUrl = 'dev.memedic.ru'
@@ -22,7 +22,7 @@ const link = new WebSocketLink({
         setTimeout(() => {
           authPromise = refreshToken()
           link.subscriptionClient.client.close()
-        }, (result.expires * 1000) - new Date().valueOf() - 20000)
+        }, result.expiresAt - new Date().valueOf() - 20000)
         return {
           headers: {
             Authorization: `Bearer ${result.accessToken}`
