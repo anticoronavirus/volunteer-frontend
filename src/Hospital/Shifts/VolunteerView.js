@@ -5,9 +5,13 @@ import { Box, Button, List, ListItem, ListItemText, ListSubheader, MenuItem, Tex
 import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
 import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
 import addHours from 'date-fns/fp/addHours'
+import format from 'date-fns/fp/format'
 import ruLocale from 'date-fns/locale/ru'
 import map from 'lodash/fp/map'
+import concat from 'lodash/fp/concat'
+import find from 'lodash/fp/find'
 import range from 'lodash/fp/range'
+import update from 'lodash/fp/update'
 import some from 'lodash/fp/some'
 import { createElement as $, Fragment, useState } from 'react'
 
@@ -62,6 +66,37 @@ const RequestShift = ({
   const [data, setData] = useState({})
   const professionQuery = useQuery(professions, { hospitalId })
   const [mutate, { loading }] = useMutation(addOwnShift)
+  const handleSubmit = () => {
+    const mutationData = {
+      date: data.date,
+      start: format('ppp', data.start),
+      end: format('ppp', addHours(data.duration, data.start)),
+      profession_id: data.profession_id,
+      hospital_id: hospitalId
+    }
+    const query = {
+      query: hospitalRequirements,
+      variables: { hospitalId }
+    }
+    mutate({
+      update: (cache, response) =>
+        cache.writeQuery({
+          ...query,
+          data: update(
+            'volunteer_shift',
+            concat(response.data.insert_volunteer_shift_one),
+            cache.readQuery(query))
+        }),
+      optimisticResponse: {
+        __typename: 'Mutation',
+        insert_volunteer_shift_one: {
+          __typename: 'volunteer_shift',
+          profession: find({ uid: data.profesison_id }, professionQuery.data),
+          ...mutationData
+        }
+      },
+      variables: { data: mutationData }})
+  }
 
   return $(Paper, null,
     $(Box, { padding: 2 },
@@ -112,15 +147,7 @@ const RequestShift = ({
             $(Button, {
               disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,
               color: 'primary',
-              onClick: () => mutate({
-                variables: {
-                  data: {
-                    date: data.date,
-                    start: data.start, // FIXME should be time with timezone
-                    end: addHours(data.duration, data.start), // FIXME should be time with timezone
-                    profession_id: data.profession_id,
-                    hospital_id: hospitalId
-                  }}}),
+              onClick: handleSubmit,
               variant: 'contained' },
             'Отправить заявку')))))
 }
