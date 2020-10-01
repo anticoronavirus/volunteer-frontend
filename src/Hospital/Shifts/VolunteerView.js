@@ -10,6 +10,7 @@ import ruLocale from 'date-fns/locale/ru'
 import concat from 'lodash/fp/concat'
 import find from 'lodash/fp/find'
 import map from 'lodash/fp/map'
+import sortBy from 'lodash/fp/sortBy'
 import range from 'lodash/fp/range'
 import some from 'lodash/fp/some'
 import update from 'lodash/fp/update'
@@ -24,13 +25,17 @@ const VolunteerView = ({
   hospitalId
 }) => {
 
-  const { data, loading } = useQuery(hospitalRequirements, { variables: {
-    hospitalId
-  }})
+  const { data, loading } = useQuery(hospitalRequirements, {
+    returnPartialData: true,
+    variables: {
+      hospitalId,
+    }})
 
-  if (loading)
+  if (!data || loading)
     return null
-  
+
+  console.log(data)
+
   const requirementsSatisfied = data.hospital_profession_requirement.length === 0
     || some('is_satisfied', data.hospital_profession_requirement)
   
@@ -73,8 +78,13 @@ const RequestShift = ({
 }) => {
 
   const [data, setData] = useState({})
+  const updateData = (nextData) => {
+    if (error) setError('')
+    setData({ ...data, ...nextData })
+  }
   const professionQuery = useQuery(professions, { hospitalId })
-  const [mutate, { loading }] = useMutation(addOwnShift)
+  const [error, setError] = useState('')
+  const [mutate, { loading }] = useMutation(addOwnShift, { ignoreResults: true })
   const handleSubmit = () => {
     const mutationData = {
       date: data.date,
@@ -93,18 +103,23 @@ const RequestShift = ({
           ...query,
           data: update(
             'volunteer_shift',
-            concat(response.data.insert_volunteer_shift_one),
+            data => sortBy('date',
+              concat(response.data.insert_volunteer_shift_one, data)),
             cache.readQuery(query))
         }),
       optimisticResponse: {
         __typename: 'Mutation',
         insert_volunteer_shift_one: {
+          ...mutationData,
           __typename: 'volunteer_shift',
-          profession: find({ uid: data.profesison_id }, professionQuery.data),
-          ...mutationData
+          date: format('ppp', data.date),
+          uid: Math.random(),
+          is_cancelled: false,
+          profession: find({ uid: data.profession_id }, professionQuery.data.professions),
         }
       },
       variables: { data: mutationData }})
+        .catch(({ message }) => setError(message))
   }
 
   return $(Paper, null,
@@ -122,7 +137,7 @@ const RequestShift = ({
             value: data.date || null,
             size: 'small',
             inputVariant: 'outlined',
-            onChange: (date) => setData({ ...data, date }),
+            onChange: (date) => updateData({ date }),
             disableToolbar: true }),
           $(Box, { padding: 1 }),
           $(TimePicker, {
@@ -132,7 +147,7 @@ const RequestShift = ({
             minutesStep: 30,
             size: 'small',
             value: data.start || null,
-            onChange: (start) => setData({ ...data, start }),
+            onChange: (start) => updateData({ start }),
             ampm: false,
             inputVariant: 'outlined',
           })),
@@ -140,7 +155,7 @@ const RequestShift = ({
             $(ToggleButtonGroup, {
               value: data.duration,
               size: 'small',
-              onChange: (event, duration) => setData({ ...data, duration }),
+              onChange: (event, duration) => updateData({ duration }),
               exclusive: true },
               toggleButtons)),
           $(TextField, {
@@ -151,8 +166,10 @@ const RequestShift = ({
             size: 'small',
             variant: 'outlined',
             value: data.profession_id || '',
-            onChange: event => setData({ ...data, profession_id: event.target.value })
+            onChange: event => updateData({ profession_id: event.target.value })
           }, map(ProfesionItem, professionQuery?.data?.professions)),
+          error &&
+            $(Typography, { variant: 'error' }, 'Похожая смена уже существует'),
           $(Box, { marginTop: 1 },
             $(Button, {
               disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,
