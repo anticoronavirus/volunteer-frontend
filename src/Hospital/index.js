@@ -19,8 +19,9 @@ import HospitalContext from './HospitalContext'
 import HospitalHeader from './HospitalHeader'
 import Register from './Register'
 import Requests from './Requests'
+import ManagedShifts from './Shifts/ManagedShifts'
 // import Schedule from './Schedule'
-import Shifts from './Shifts'
+import VolunteerView from './Shifts/VolunteerView'
 
 const Hospital = ({
   match,
@@ -42,7 +43,9 @@ const Hospital = ({
     ? []
     : data.me.length === 0
       ? anonymousTabsArray
-      : userTabsArray
+      : isManagedByMe
+        ? coordinatorTabsArray
+        : volunteerTabsArray
 
   return $(Box, null,
     $(HospitalHeader, { loading, ...data },
@@ -59,20 +62,23 @@ const Hospital = ({
           tabs))),
     $(Box, isDesktop ? { display: 'flex', justifyContent: 'center', marginTop: 2 } : { marginTop: 2 },
       $(Box, isDesktop && { minWidth: 480, maxWidth: 640 },
-        // $(Paper, null, 
-          $(HospitalContext.Provider, {
-            value: {
-              hospitalId: match.params.uid,
-              isManagedByMe,
-              hospital: data && data.hospital
-            }},
-            $(Switch, null,
-              map(([value, { component }]) =>
-                $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
-                  $(component)),
-                tabs),
-              $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
-              // )
+        $(HospitalContext.Provider, {
+          value: {
+            hospitalId: match.params.uid,
+            isManagedByMe,
+            hospital: data && data.hospital
+          }},
+          $(Switch, null,
+            map(([value, { component }]) =>
+              $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
+                $(component)),
+              tabs),
+            $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
+}
+
+const directions = {
+  label: 'Как добраться',
+  component: Directions
 }
 
 const anonymousTabs = {
@@ -80,36 +86,35 @@ const anonymousTabs = {
     label: 'Помощь больнице',
     component: Register
   },
-  directions: {
-    label: 'Как добраться',
-    component: Directions
-  }
+  directions
 }
 
-const userTabs = {
+const volunteerTabs = {
   '': {
     label: 'Смены',
-    component: Shifts
+    component: VolunteerView
   },
-  // schedule: {
-  //   label: 'Расписание',
-  //   component: Schedule
-  // },
+  directions
+}
+
+const coordinatorTabs = {
+  '': {
+    label: 'Смены',
+    component: ManagedShifts
+  },
   requests: {
     label: 'Заявки',
     component: Requests
   },
   archive: {
     label: 'Архив',
-    component: Shifts
+    component: ManagedShifts
   },
-  directions: {
-    label: 'Как добраться',
-    component: Directions
-  }
+  directions
 }
 
 const anonymousTabsArray = entries(anonymousTabs)
-const userTabsArray = entries(userTabs)
+const volunteerTabsArray = entries(volunteerTabs)
+const coordinatorTabsArray = entries(coordinatorTabs)
 
 export default Hospital

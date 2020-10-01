@@ -10,35 +10,34 @@ import ruLocale from 'date-fns/locale/ru'
 import concat from 'lodash/fp/concat'
 import find from 'lodash/fp/find'
 import map from 'lodash/fp/map'
-import sortBy from 'lodash/fp/sortBy'
 import range from 'lodash/fp/range'
 import some from 'lodash/fp/some'
+import sortBy from 'lodash/fp/sortBy'
 import update from 'lodash/fp/update'
-import { createElement as $, Fragment, useState } from 'react'
+import { createElement as $, Fragment, useContext, useState } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
 import { addOwnShift, hospitalRequirements, professions } from 'queries'
 
+import HospitalContext from '../HospitalContext'
 import Onboarding from './Onboarding'
 
-const VolunteerView = ({
-  hospitalId
-}) => {
+const VolunteerView = () => {
 
-  const { data, loading } = useQuery(hospitalRequirements, {
+  const { hospitalId } = useContext(HospitalContext)
+
+  const { data } = useQuery(hospitalRequirements, {
     returnPartialData: true,
     variables: {
       hospitalId,
     }})
 
-  if (!data || loading)
+  if (!data || !data.hospital_profession_requirement)
     return null
-
-  console.log(data)
 
   const requirementsSatisfied = data.hospital_profession_requirement.length === 0
     || some('is_satisfied', data.hospital_profession_requirement)
-  
+
   return requirementsSatisfied
     ? $(Fragment, null,
         $(RequestShift, { hospitalId }),
@@ -112,7 +111,7 @@ const RequestShift = ({
         insert_volunteer_shift_one: {
           ...mutationData,
           __typename: 'volunteer_shift',
-          date: format('ppp', data.date),
+          date: format('YYY-MM-dd', data.date),
           uid: Math.random(),
           is_cancelled: false,
           profession: find({ uid: data.profession_id }, professionQuery.data.professions),
@@ -123,8 +122,8 @@ const RequestShift = ({
   }
 
   return $(Paper, null,
-    $(Box, { padding: 2 },
-      $(MuiPickersUtilsProvider, { utils: DateFnsUtils, locale: ruLocale },
+    $(MuiPickersUtilsProvider, { utils: DateFnsUtils, locale: ruLocale },
+      $(Box, { padding: 2 },
         $(Typography, { variant: 'h5', paragraph: true },
           'Записаться на смену'),
         $(Box, { display: 'flex' }, 

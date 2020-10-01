@@ -5,16 +5,17 @@ import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
-import { createElement as $ } from 'react'
+import { createElement as $, useContext } from 'react'
 
+import ToggleCancelShift from 'components/ToggleCancelShift'
 import { orderedHospitalShifts } from 'queries'
 import { formatDate } from 'utils'
-import ToggleCancelShift from 'components/ToggleCancelShift'
 
-const ManagedShifts = ({
-  hospitalId,
+import HospitalContext from '../HospitalContext'
 
-}) => {
+const ManagedShifts = () => {
+
+  const { hospitalId } = useContext(HospitalContext)
 
   const { data, loading } = useQuery(orderedHospitalShifts, {
     variables: {
