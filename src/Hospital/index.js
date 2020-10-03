@@ -66,6 +66,7 @@ const Hospital = ({
           value: {
             hospitalId: match.params.uid,
             isManagedByMe,
+            me: data && data.me[0],
             hospital: data && data.hospital
           }},
           $(Switch, null,

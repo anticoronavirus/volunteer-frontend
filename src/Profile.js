@@ -94,7 +94,7 @@ const ProfilePure = data =>  {
 }
 
 const ProfileForm = data => {
-  const [mutate] = useMutation(updateVolunteer, { variables: { uid: data.uid }})
+  const [mutate] = useMutation(updateVolunteer)
   const history = useHistory()
 
   return $(Box, { padding: 2 },
@@ -103,7 +103,7 @@ const ProfileForm = data => {
       // validateOnBlur: false,
       validateOnMount: true,
       onSubmit: data =>
-        mutate({ variables: { data }})
+        mutate({ variables: { data, uid: data.uid }})
           .then(() => history.push('/'))
         },
       ({ submitForm, isValid, dirty }) =>

@@ -8,10 +8,10 @@ import addHours from 'date-fns/fp/addHours'
 import format from 'date-fns/fp/format'
 import ruLocale from 'date-fns/locale/ru'
 import concat from 'lodash/fp/concat'
+import every from 'lodash/fp/every'
 import find from 'lodash/fp/find'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
-import some from 'lodash/fp/some'
 import sortBy from 'lodash/fp/sortBy'
 import update from 'lodash/fp/update'
 import { createElement as $, Fragment, useContext, useState } from 'react'
@@ -36,7 +36,7 @@ const VolunteerView = () => {
     return null
 
   const requirementsSatisfied = data.hospital_profession_requirement.length === 0
-    || some('is_satisfied', data.hospital_profession_requirement)
+    || every('is_satisfied', data.hospital_profession_requirement)
 
   return requirementsSatisfied
     ? $(Fragment, null,
@@ -168,7 +168,7 @@ const RequestShift = ({
             onChange: event => updateData({ profession_id: event.target.value })
           }, map(ProfesionItem, professionQuery?.data?.professions)),
           error &&
-            $(Typography, { variant: 'error' }, 'Похожая смена уже существует'),
+            $(Typography, { variant: 'caption', color: 'error' }, 'Похожая смена уже существует'),
           $(Box, { marginTop: 1 },
             $(Button, {
               disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,

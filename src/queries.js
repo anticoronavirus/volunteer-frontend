@@ -681,6 +681,14 @@ export const filteredHospitalProfessions = gql`
   }
 `
 
+export const confirmRequirements = gql`
+mutation updateRequirements($requirements: [volunteer_hospital_requirement_insert_input!]!) {
+  insert_volunteer_hospital_requirement(objects: $requirements) {
+    affected_rows
+  }
+}
+`
+
 const volunteerOwnShiftFragment = gql`
 fragment volunteerOwnShiftFragment on volunteer_shift {
   uid
@@ -707,6 +715,7 @@ query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
     uid
     is_satisfied
     requirement {
+      uid
       name
       description
     }
