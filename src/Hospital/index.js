@@ -69,12 +69,13 @@ const Hospital = ({
             me: data && data.me[0],
             hospital: data && data.hospital
           }},
-          $(Switch, null,
-            map(([value, { component }]) =>
-              $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
-                $(component)),
-              tabs),
-            $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
+          data &&
+            $(Switch, null,
+              map(([value, { component }]) =>
+                $(Route, { key: value, exact: true, path: `/hospitals/${match.params.uid}/${value}` },
+                  $(component)),
+                tabs),
+              $(Redirect, { to: `/hospitals/${match.params.uid}` }))))))
 }
 
 const directions = {
