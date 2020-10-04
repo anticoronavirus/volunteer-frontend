@@ -7,7 +7,7 @@ import reject from 'lodash/fp/reject'
 import { createElement as $, useContext } from 'react'
 
 import RequirementIcon from 'components/RequirementIcon'
-import { confirmRequirements, hospitalRequirements } from 'queries'
+import { confirmRequirements } from 'queries'
 
 import HospitalContext from '../HospitalContext'
 
