@@ -156,12 +156,13 @@ const RequestShift = ({
             inputVariant: 'outlined',
           })),
           $(Box, { marginTop: 2 },
-            $(ToggleButtonGroup, {
-              value: data.duration,
-              size: 'small',
-              onChange: (event, duration) => updateData({ duration }),
-              exclusive: true },
-              toggleButtons)),
+            $(Scroller, null,
+              $(ToggleButtonGroup, {
+                value: data.duration,
+                size: 'small',
+                onChange: (event, duration) => updateData({ duration }),
+                exclusive: true },
+                toggleButtons))),
           $(TextField, {
             label: 'Отделение',
             margin: 'normal',
@@ -186,7 +187,15 @@ const RequestShift = ({
 const ProfesionItem = ({ uid, name }) => $(MenuItem, { key: uid, value: uid }, name)
 
 const renderToggleButton = (key) =>
-  $(ToggleButton, { key, value: (key * 2) + 4 }, (key * 2) + 4, ' часов')
+  $(ToggleButtonNoBreak, { key, value: (key * 2) + 4 }, (key * 2) + 4, (key * 2) + 4 === 4 ? ' часа' : ' часов')
+
+const Scroller = styled('div')({
+  overflowX: 'scroll'
+})
+
+const ToggleButtonNoBreak = styled(ToggleButton)({
+  whiteSpace: 'nowrap'
+})
 
 const toggleButtons = map(renderToggleButton, range(0, 5))
 

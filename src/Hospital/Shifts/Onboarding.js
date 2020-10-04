@@ -68,14 +68,17 @@ const WelcomeScreen = ({
         'Я сдал\\а анализы')))
 }
 
-const AwaitingInstructions = () =>
-  $(Box, { maxWidth: 480 },
+const AwaitingInstructions = () => {
+
+  const { me } = useContext(HospitalContext)
+
+  return $(Box, { maxWidth: 480 },
     $(Paper, null,
       $(CustomImage, { src: 'https://image.freepik.com/free-vector/doctors-team-medical-staff-doctor-nurse-group-medics-illustration-flat-style_213307-3.jpg' }),
       $(Box, { padding: 2 },
         $(Typography, { variant: 'body2' }, 
-          // FIXME add phone
-          'Координатор свяжется с вами по телефону +79652661058 чтобы провести инструктаж'))))
+          `Координатор свяжется с вами по телефону ${me.phone} чтобы провести инструктаж`))))
+}
 
 const CustomImage = styled('img')(({
   theme
