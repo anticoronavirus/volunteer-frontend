@@ -7,7 +7,7 @@ import reject from 'lodash/fp/reject'
 import { createElement as $, useContext } from 'react'
 
 import RequirementIcon from 'components/RequirementIcon'
-import { confirmRequirements } from 'queries'
+import { confirmRequirements, hospitalRequirements } from 'queries'
 
 import HospitalContext from '../HospitalContext'
 
@@ -30,17 +30,27 @@ const WelcomeScreen = ({
 
   const { me, hospitalId } = useContext(HospitalContext)
 
-  const [mutate] = useMutation(confirmRequirements, { variables: {
-    professionRequest: {
-      hospital_id: hospitalId,
-      // FIXME should make default profession
-      profession_id: 'e35f82bb-de1f-48c3-a688-a4c66e64686c'
-    },
-    requirements: map(({ requirement }) => ({
-      hospital_id: hospitalId,
-      volunteer_id: me.uid,
-      requirement_id: requirement.uid
-    }), reject({ is_satisfied: true }, hospital_profession_requirement))
+  const dissatisfied = reject({ is_satisfied: true }, hospital_profession_requirement)
+  const [mutate] = useMutation(confirmRequirements, {
+    update: (cache) => 
+      map(({ uid }) => cache.modify({
+        id: uid,
+        fields: {
+          is_satisfied: () => true
+        }
+      }),
+      dissatisfied),
+    variables: {
+      professionRequest: {
+        hospital_id: hospitalId,
+        // FIXME should make default profession
+        profession_id: 'e35f82bb-de1f-48c3-a688-a4c66e64686c'
+      },
+      requirements: map(({ requirement }) => ({
+        hospital_id: hospitalId,
+        volunteer_id: me.uid,
+        requirement_id: requirement.uid
+      }), dissatisfied)
   }})
 
   return $(Box, { maxWidth: 480 }, 
