@@ -47,7 +47,8 @@ const VolunteerShift = ({
   start,
   end,
   volunteer,
-  loading
+  loading,
+  profession
 }) => 
   $(ListItemWithCancelled, { key: uid, is_cancelled },
     $(ListItemAvatar, null,
@@ -60,7 +61,7 @@ const VolunteerShift = ({
         : `${volunteer.lname} ${volunteer.fname}`,
       secondary: loading
         ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
-        : `${start.slice(0, -6)}—${end.slice(0, -6)} · ${volunteer.phone}` }),
+        : `${start.slice(0, -6)}—${end.slice(0, -6)} · ${profession.name} · ${volunteer.phone}` }),
     $(ListItemSecondaryAction, null,
       $(ToggleCancelShift, { uid, is_cancelled })))
 

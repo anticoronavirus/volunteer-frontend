@@ -460,6 +460,10 @@ query orderedHospitalShifts(
     start
     end
     is_cancelled
+    profession {
+      uid
+      name
+    }
     volunteer {
       uid
       lname
