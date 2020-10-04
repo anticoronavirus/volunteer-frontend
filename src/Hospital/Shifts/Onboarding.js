@@ -1,9 +1,9 @@
 import { useMutation } from '@apollo/react-hooks'
 import { Accordion, AccordionDetails, AccordionSummary, Box, Button, List, Paper, styled, Typography } from '@material-ui/core'
 import { ExpandMore } from '@material-ui/icons'
+import every from 'lodash/fp/every'
 import map from 'lodash/fp/map'
 import reject from 'lodash/fp/reject'
-import some from 'lodash/fp/some'
 import { createElement as $, useContext } from 'react'
 
 import { confirmRequirements } from 'queries'
@@ -14,8 +14,9 @@ const Onboarding = ({
   hospital_profession_requirement
 }) => {
 
+  // FIXME should detect private requirements without UID
   const noInstructions = reject(['requirement.uid', '1b113f79-fc2e-4a04-81df-42e99bd02d46'], hospital_profession_requirement)
-  const checksDone = some('is_satisfied', noInstructions)
+  const checksDone = every('is_satisfied', noInstructions)
 
   return checksDone
     ? $(AwaitingInstructions)
@@ -29,11 +30,16 @@ const WelcomeScreen = ({
   const { me, hospitalId } = useContext(HospitalContext)
 
   const [mutate] = useMutation(confirmRequirements, { variables: {
+    professionRequest: {
+      hospital_id: hospitalId,
+      // FIXME should make default profession
+      profession_id: 'e35f82bb-de1f-48c3-a688-a4c66e64686c'
+    },
     requirements: map(({ requirement }) => ({
       hospital_id: hospitalId,
       volunteer_id: me.uid,
       requirement_id: requirement.uid
-    }), hospital_profession_requirement)
+    }), reject({ is_satisfied: true }, hospital_profession_requirement))
   }})
 
   return $(Box, { maxWidth: 480 }, 

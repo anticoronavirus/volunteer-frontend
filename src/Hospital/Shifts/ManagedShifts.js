@@ -20,7 +20,7 @@ const ManagedShifts = () => {
   const { data, loading } = useQuery(orderedHospitalShifts, {
     variables: {
       hospitalId,
-      dateInput: { _lte: 'TODAY' },
+      dateInput: { _gte: 'TODAY' },
       orderBy: { date: 'asc' }
     }
   })

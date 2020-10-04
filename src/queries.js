@@ -449,7 +449,7 @@ query orderedHospitalShifts(
   $orderBy: [volunteer_shift_order_by!]
 ) {
   volunteer_shift (
-    limit: 10
+    limit: 30
     order_by: $orderBy
     where: {
       hospital_id: { _eq: $hospitalId }
@@ -682,9 +682,23 @@ export const filteredHospitalProfessions = gql`
 `
 
 export const confirmRequirements = gql`
-mutation updateRequirements($requirements: [volunteer_hospital_requirement_insert_input!]!) {
-  insert_volunteer_hospital_requirement(objects: $requirements) {
+mutation updateRequirements(
+  $professionRequest: profession_request_insert_input!
+  $requirements: [volunteer_hospital_requirement_insert_input!]!
+  ) {
+  insert_volunteer_hospital_requirement(
+    objects: $requirements
+  ) {
     affected_rows
+  }
+  insert_profession_request_one(
+    object: $professionRequest
+    on_conflict: {
+      constraint: profession_request_profession_id_hospital_id_volunteer_id_key
+      update_columns: []
+    }
+  ) {
+    uid
   }
 }
 `
@@ -703,14 +717,20 @@ fragment volunteerOwnShiftFragment on volunteer_shift {
 }`
 
 export const hospitalRequirements = gql`
-query hospitalRequirements($hospitalId: uuid! $userId: uuid) {
+query hospitalRequirements(
+  $hospitalId: uuid!
+  $professionId: uuid!
+  $userId: uuid
+) {
   hospital_profession_requirement(
     where: {
       hospital_id: {
         _eq: $hospitalId
       }
+      profession_id: {
+        _eq: $professionId
+      }
     }
-    distinct_on: [requirement_id]
   ) {
     uid
     is_satisfied

@@ -29,6 +29,8 @@ const VolunteerView = () => {
   const { data } = useQuery(hospitalRequirements, {
     returnPartialData: true,
     variables: {
+      // FIXME
+      professionId: 'e35f82bb-de1f-48c3-a688-a4c66e64686c',
       hospitalId,
     }})
 
