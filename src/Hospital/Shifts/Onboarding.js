@@ -6,6 +6,7 @@ import map from 'lodash/fp/map'
 import reject from 'lodash/fp/reject'
 import { createElement as $, useContext } from 'react'
 
+import RequirementIcon from 'components/RequirementIcon'
 import { confirmRequirements } from 'queries'
 
 import HospitalContext from '../HospitalContext'
@@ -75,15 +76,13 @@ const CustomImage = styled('img')(({
 }))
 
 const Requirement = ({
-  requirement: {
-    name,
-    description
-  }
+  requirement,
+  is_satisfied
 }) =>
-  $(Accordion, { key: name },
+  $(Accordion, { key: requirement.name },
     $(AccordionSummary, { expandIcon: $(ExpandMore)},
-      $(Typography, { variant: 'body2' }, name)),
+      $(RequirementIcon, { requirement, satisfied: is_satisfied })),
     $(AccordionDetails, null,
-      $(Typography, { variant: 'body2' }, description)))
+      $(Typography, { variant: 'body2' }, requirement.description)))
 
 export default Onboarding
