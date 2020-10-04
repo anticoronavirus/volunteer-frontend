@@ -81,7 +81,7 @@ const Requirement = ({
 }) =>
   $(Accordion, { key: requirement.name },
     $(AccordionSummary, { expandIcon: $(ExpandMore)},
-      $(RequirementIcon, { requirement, satisfied: is_satisfied })),
+      $(RequirementIcon, { requirement, satisfied: is_satisfied ? [true] : [] })),
     $(AccordionDetails, null,
       $(Typography, { variant: 'body2' }, requirement.description)))
 
