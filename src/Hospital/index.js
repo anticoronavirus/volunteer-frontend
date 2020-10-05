@@ -19,6 +19,7 @@ import HospitalContext from './HospitalContext'
 import HospitalHeader from './HospitalHeader'
 import Register from './Register'
 import Requests from './Requests'
+import Settings from './Settings'
 import ManagedShifts from './Shifts/ManagedShifts'
 // import Schedule from './Schedule'
 import VolunteerView from './Shifts/VolunteerView'
@@ -107,6 +108,10 @@ const coordinatorTabs = {
   requests: {
     label: 'Заявки',
     component: Requests
+  },
+  settings: {
+    label: 'Настройки',
+    component: Settings
   },
   archive: {
     label: 'Архив',

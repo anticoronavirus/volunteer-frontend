@@ -77,7 +77,7 @@ const AwaitingInstructions = () => {
       $(CustomImage, { src: 'https://image.freepik.com/free-vector/doctors-team-medical-staff-doctor-nurse-group-medics-illustration-flat-style_213307-3.jpg' }),
       $(Box, { padding: 2 },
         $(Typography, { variant: 'body2' }, 
-          `Координатор свяжется с вами по телефону ${me.phone} чтобы провести инструктаж`))))
+          `Координатор свяжется с вами по телефону ${me.phone} чтобы договориться о времени прохождения инструктажа`))))
 }
 
 const CustomImage = styled('img')(({
