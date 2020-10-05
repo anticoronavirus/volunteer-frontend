@@ -1,9 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client'
-import DateFnsUtils from '@date-io/date-fns'
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
 import { Paper } from '@material-ui/core'
 import { Box, Button, List, ListItem, ListItemSecondaryAction, ListItemText, ListSubheader, MenuItem, styled, TextField, Typography } from '@material-ui/core'
-import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab'
-import { DatePicker, MuiPickersUtilsProvider, TimePicker } from '@material-ui/pickers'
+import { DatePicker, LocalizationProvider, TimePicker } from '@material-ui/pickers'
 import addHours from 'date-fns/fp/addHours'
 import format from 'date-fns/fp/format'
 import ruLocale from 'date-fns/locale/ru'
@@ -11,7 +10,6 @@ import concat from 'lodash/fp/concat'
 import every from 'lodash/fp/every'
 import find from 'lodash/fp/find'
 import map from 'lodash/fp/map'
-import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
 import update from 'lodash/fp/update'
 import { createElement as $, Fragment, useContext, useState } from 'react'
@@ -21,6 +19,9 @@ import { addOwnShift, hospitalRequirements, professions } from 'queries'
 
 import HospitalContext from '../HospitalContext'
 import Onboarding from './Onboarding'
+
+const startTime = new Date(0, 0, 0, 8)
+const endTime = new Date(0, 0, 0, 20)
 
 const VolunteerView = () => {
 
@@ -90,7 +91,7 @@ const RequestShift = ({
     const mutationData = {
       date: data.date,
       start: format('ppp', data.start),
-      end: format('ppp', addHours(data.duration, data.start)),
+      end: format('ppp',  data.end),
       profession_id: data.profession_id,
       hospital_id: hospitalId
     }
@@ -127,42 +128,45 @@ const RequestShift = ({
   }
 
   return $(Paper, null,
-    $(MuiPickersUtilsProvider, { utils: DateFnsUtils, locale: ruLocale },
+    $(LocalizationProvider, { dateAdapter: DateFnsUtils, locale: ruLocale },
       $(Box, { padding: 2 },
         $(Typography, { variant: 'h5', paragraph: true },
           'Записаться на смену'),
-        $(Box, { display: 'flex' }, 
-          $(DatePicker, {
-            label: 'Дата смены',
-            variant: 'inline',
-            disablePast: true,
-            fullWidth: true,
-            format: 'dd MMMM',
-            value: data.date || null,
-            size: 'small',
-            inputVariant: 'outlined',
-            onChange: (date) => updateData({ date }),
-            disableToolbar: true }),
-          $(Box, { padding: 1 }),
+        $(DatePicker, {
+          minDate: new Date(),
+          renderInput: DateTimeTextField('Дата'),
+          value: data.date || null,
+          mask: '__.__.____',
+          onChange: (date) => updateData({ date }),
+        }),
+        $(Box, { display: 'flex', paddingTop: 2 }, 
           $(TimePicker, {
-            label: 'Время',
-            fullWidth: true,
-            disablePast: true,
-            minutesStep: 30,
-            size: 'small',
+            // FIXME pickers tend to fuck up min-max limitation until first pick
+            minTime: startTime,
+            maxTime: addHours(-2, endTime),
+            renderInput: DateTimeTextField('Время начала'),
             value: data.start || null,
             onChange: (start) => updateData({ start }),
-            ampm: false,
-            inputVariant: 'outlined',
-          })),
-          $(Box, { marginTop: 2 },
-            $(Scroller, null,
-              $(ToggleButtonGroup, {
-                value: data.duration,
-                size: 'small',
-                onChange: (event, duration) => updateData({ duration }),
-                exclusive: true },
-                toggleButtons))),
+          }),
+          $(Box, { padding: 1 }),
+          $(TimePicker, {
+            minTime: addHours(2, data.start || startTime),
+            maxTime: endTime,
+            renderInput: DateTimeTextField('Окончание'),
+            value: data.end || null,
+            onChange: (end) => updateData({ end }),
+          }),
+          // $(TimePicker, {
+          //   label: 'Окончание',
+          //   fullWidth: true,
+          //   disablePast: true,
+          //   size: 'small',
+          //   value: data.end || null,
+          //   onChange: (end) => updateData({ end }),
+          //   ampm: false,
+          //   inputVariant: 'outlined',
+          // })
+          ),
           $(TextField, {
             label: 'Отделение',
             margin: 'normal',
@@ -177,7 +181,7 @@ const RequestShift = ({
             $(Typography, { variant: 'caption', color: 'error' }, 'Похожая смена уже существует'),
           $(Box, { marginTop: 1 },
             $(Button, {
-              disabled: !data.profession_id || !data.date || !data.start || !data.duration || loading,
+              disabled: !data.profession_id || !data.date || !data.start || loading,
               color: 'primary',
               onClick: handleSubmit,
               variant: 'contained' },
@@ -186,18 +190,14 @@ const RequestShift = ({
 
 const ProfesionItem = ({ uid, name }) => $(MenuItem, { key: uid, value: uid }, name)
 
-const renderToggleButton = (key) =>
-  $(ToggleButtonNoBreak, { key, value: (key * 2) + 4 }, (key * 2) + 4, (key * 2) + 4 === 4 ? ' часа' : ' часов')
-
-const Scroller = styled('div')({
-  overflowX: 'scroll'
-})
-
-const ToggleButtonNoBreak = styled(ToggleButton)({
-  whiteSpace: 'nowrap'
-})
-
-const toggleButtons = map(renderToggleButton, range(0, 5))
+const DateTimeTextField = (label) => props =>
+  $(TextField, {
+    fullWidth: true,
+    size: 'small',
+    variant: 'outlined',
+    ...props,
+    label
+  })
 
 // const checkIfSatified = ({ satisfied }) => satisfied.length > 0
 
