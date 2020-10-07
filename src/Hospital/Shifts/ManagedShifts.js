@@ -5,7 +5,7 @@ import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
-import { createElement as $, useContext } from 'react'
+import { createElement as $, useContext, forwardRef } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
 import { orderedHospitalShifts } from 'queries'
@@ -50,7 +50,13 @@ const VolunteerShift = ({
   loading,
   profession
 }) => 
-  $(ListItemWithCancelled, { key: uid, is_cancelled },
+  $(ListItemWithCancelled, {
+    key: uid,
+    is_cancelled, 
+    button: true,
+    // component: CustomLink,
+    onClick: () => window.open(`tel:${volunteer.phone}`, '_self')
+  },
     $(ListItemAvatar, null,
       loading
         ? $(Skeleton, { variant: 'circle', width: 40, height: 40 })
@@ -67,7 +73,7 @@ const VolunteerShift = ({
 
 const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
   opacity: is_cancelled ? 0.5 : 1,
-  textDecoration: is_cancelled && 'line-through'
+  textDecoration: is_cancelled && 'line-through',
 }))
 
 const LoadingDayShifts = [
