@@ -1,12 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client'
-import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
 import { Paper } from '@material-ui/core'
 import { Box, Button, List, ListItem, ListItemSecondaryAction, ListItemText, ListSubheader, MenuItem, styled, TextField, Typography } from '@material-ui/core'
 import { DatePicker, LocalizationProvider, TimePicker } from '@material-ui/pickers'
+import DateFnsUtils from '@material-ui/pickers/adapter/date-fns'
 import addHours from 'date-fns/fp/addHours'
 import format from 'date-fns/fp/format'
 import ruLocale from 'date-fns/locale/ru'
 import concat from 'lodash/fp/concat'
+import defaultsDeepAll from 'lodash/fp/defaultsDeepAll'
 import every from 'lodash/fp/every'
 import find from 'lodash/fp/find'
 import map from 'lodash/fp/map'
@@ -133,8 +134,13 @@ const RequestShift = ({
         $(Typography, { variant: 'h5', paragraph: true },
           'Записаться на смену'),
         $(DatePicker, {
-          minDate: new Date(),
-          renderInput: DateTimeTextField('Дата'),
+          disablePast: true,
+          renderInput: DateTimeTextField({
+            label: 'Дата',
+            inputProps: {
+              placeHolder: 'дд.мм.гггг'
+            }
+          }),
           value: data.date || null,
           mask: '__.__.____',
           onChange: (date) => updateData({ date }),
@@ -144,7 +150,12 @@ const RequestShift = ({
             // FIXME pickers tend to fuck up min-max limitation until first pick
             minTime: startTime,
             maxTime: addHours(-2, endTime),
-            renderInput: DateTimeTextField('Время начала'),
+            renderInput: DateTimeTextField({
+              label: 'Время начала',
+              inputProps: {
+                placeHolder: 'чч.мм'
+              }
+            }),
             value: data.start || null,
             onChange: (start) => updateData({ start }),
           }),
@@ -152,7 +163,12 @@ const RequestShift = ({
           $(TimePicker, {
             minTime: addHours(2, data.start || startTime),
             maxTime: endTime,
-            renderInput: DateTimeTextField('Окончание'),
+            renderInput: DateTimeTextField({
+              label: 'Окончание',
+              inputProps: {
+                placeHolder: 'чч.мм'
+              }
+            }),
             value: data.end || null,
             onChange: (end) => updateData({ end }),
           }),
@@ -190,14 +206,19 @@ const RequestShift = ({
 
 const ProfesionItem = ({ uid, name }) => $(MenuItem, { key: uid, value: uid }, name)
 
-const DateTimeTextField = (label) => props =>
-  $(TextField, {
-    fullWidth: true,
-    size: 'small',
-    variant: 'outlined',
-    ...props,
-    label
-  })
+const DateTimeTextField = (customProps) => props =>
+  $(TextField, defaultsDeepAll([
+    defaultProps,
+    props,
+    customProps
+  ]))
+
+const defaultProps = {
+  fullWidth: true,
+  size: 'small',
+  variant: 'outlined',
+  helperText: '',
+}
 
 // const checkIfSatified = ({ satisfied }) => satisfied.length > 0
 
