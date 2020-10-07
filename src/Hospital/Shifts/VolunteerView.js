@@ -16,7 +16,7 @@ import update from 'lodash/fp/update'
 import { createElement as $, Fragment, useContext, useState } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
-import { addOwnShift, hospitalRequirements, professions } from 'queries'
+import { addOwnShift, volunteerHospitalData, professions } from 'queries'
 
 import HospitalContext from '../HospitalContext'
 import Onboarding from './Onboarding'
@@ -28,18 +28,15 @@ const VolunteerView = () => {
 
   const { hospitalId } = useContext(HospitalContext)
 
-  const { data } = useQuery(hospitalRequirements, {
+  const { data } = useQuery(volunteerHospitalData, {
     returnPartialData: true,
-    variables: {
-      // FIXME
-      professionId: 'e35f82bb-de1f-48c3-a688-a4c66e64686c',
-      hospitalId,
-    }})
+    variables: { hospitalId }})
 
   if (!data || !data.hospital_profession_requirement)
     return null
 
   const requirementsSatisfied = data.hospital_profession_requirement.length === 0
+    || data.defaultProfession.length === 0
     || every('is_satisfied', data.hospital_profession_requirement)
 
   return requirementsSatisfied
@@ -105,11 +102,8 @@ const RequestShift = ({
       hospital_id: hospitalId
     }
     const query = {
-      query: hospitalRequirements,
-      variables: {
-        hospitalId,
-        professionId: 'e35f82bb-de1f-48c3-a688-a4c66e64686c'
-      }
+      query: volunteerHospitalData,
+      variables: { hospitalId }
     }
     mutate({
       update: (cache, response) =>

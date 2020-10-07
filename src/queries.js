@@ -720,19 +720,17 @@ fragment volunteerOwnShiftFragment on volunteer_shift {
   }
 }`
 
-export const hospitalRequirements = gql`
-query hospitalRequirements(
-  $hospitalId: uuid!
-  $professionId: uuid!
-  $userId: uuid
-) {
+export const volunteerHospitalData = gql`
+query volunteerHospitalData($hospitalId: uuid!) {
   hospital_profession_requirement(
     where: {
       hospital_id: {
         _eq: $hospitalId
       }
-      profession_id: {
-        _eq: $professionId
+      hospital_profession: {
+        default: {
+          _eq: true
+        }
       }
     }
   ) {
@@ -744,6 +742,18 @@ query hospitalRequirements(
       description
       protected
     }
+  }
+  defaultProfession: hospital_profession (
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      default: {
+        _eq: true
+      }
+    }
+  ) {
+    profession_id
   }
   volunteer_shift (
     where: {

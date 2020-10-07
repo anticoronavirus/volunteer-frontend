@@ -12,19 +12,23 @@ import { confirmRequirements } from 'queries'
 import HospitalContext from '../HospitalContext'
 
 const Onboarding = ({
+  defaultProfession,
   hospital_profession_requirement
 }) => {
 
-  // FIXME should detect private requirements without UID
   const noInstructions = reject(['requirement.protected', true], hospital_profession_requirement)
   const checksDone = every('is_satisfied', noInstructions)
 
   return checksDone
     ? $(AwaitingInstructions)
-    : $(WelcomeScreen, { hospital_profession_requirement: noInstructions })
+    : $(WelcomeScreen, {
+        defaultProfessionId: defaultProfession[0].profession_id,
+        hospital_profession_requirement: noInstructions
+      })
 }
 
 const WelcomeScreen = ({
+  defaultProfessionId,
   hospital_profession_requirement
 }) => {
 
@@ -43,8 +47,7 @@ const WelcomeScreen = ({
     variables: {
       professionRequest: {
         hospital_id: hospitalId,
-        // FIXME should make default profession
-        profession_id: 'e35f82bb-de1f-48c3-a688-a4c66e64686c'
+        profession_id: defaultProfessionId
       },
       requirements: map(({ requirement }) => ({
         hospital_id: hospitalId,
