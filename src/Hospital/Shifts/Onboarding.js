@@ -16,7 +16,7 @@ const Onboarding = ({
 }) => {
 
   // FIXME should detect private requirements without UID
-  const noInstructions = reject(['requirement.uid', '1b113f79-fc2e-4a04-81df-42e99bd02d46'], hospital_profession_requirement)
+  const noInstructions = reject(['requirement.protected', true], hospital_profession_requirement)
   const checksDone = every('is_satisfied', noInstructions)
 
   return checksDone

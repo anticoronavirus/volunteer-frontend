@@ -742,6 +742,7 @@ query hospitalRequirements(
       uid
       name
       description
+      protected
     }
   }
   volunteer_shift (
