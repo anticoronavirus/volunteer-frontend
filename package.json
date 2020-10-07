@@ -4,7 +4,7 @@
   "private": true,
   "proxy": "https://dev.memedic.ru",
   "dependencies": {
-    "@apollo/client": "3.1.5",
+    "@apollo/client": "3.2.2",
     "@apollo/react-components": "4.0.0",
     "@apollo/react-hoc": "4.0.0",
     "@apollo/react-hooks": "4.0.0",
@@ -16,11 +16,11 @@
     "apollo-link-context": "1.0.20",
     "copy-to-clipboard": "3.3.1",
     "date-fns": "2.16.1",
-    "formik": "2.1.5",
+    "formik": "2.1.7",
     "formik-material-ui": "3.0.0",
     "graphql": "15.3.0",
-    "notistack": "1.0.0",
-    "query-string": "6.13.1",
+    "notistack": "1.0.1",
+    "query-string": "6.13.5",
     "react": "16.13.1",
     "react-dom": "16.13.1",
     "react-input-mask": "2.0.4",
@@ -28,7 +28,7 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "3.4.3",
     "subscriptions-transport-ws": "0.9.18",
-    "use-query-params": "1.1.6",
+    "use-query-params": "1.1.8",
     "zipcelx": "1.6.2"
   },
   "scripts": {
