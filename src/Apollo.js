@@ -78,8 +78,8 @@ const refreshToken = () =>
 
 const handleAuth = tokenData => {
   authPromise = tokenData
-  link.subscriptionClient.client.close()
   client.resetStore()
+  link.subscriptionClient.client.close()
 }
 
 export const logoff = () =>
@@ -87,10 +87,10 @@ export const logoff = () =>
     method: 'POST',
     body: JSON.stringify({ query: logoffQuery })
   }).then(response => response.json())
-    .then(response => response.data.logoff)
-    .catch(() => {
+    .catch(console.log)
+    .finally(() => {
       authPromise = {}
+      client.clearStore()
       link.subscriptionClient.client.close()
-      client.resetStore()
       return true
     })

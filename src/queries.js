@@ -826,7 +826,9 @@ export const login = `
 
 export const logoff = `
 mutation {
-  logoff
+  logoff {
+    status
+  }
 }
 `
 
