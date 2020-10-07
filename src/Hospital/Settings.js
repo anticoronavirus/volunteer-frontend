@@ -13,7 +13,7 @@ const Settings = () => {
   const { data } = useQuery(professions, {
     variables: {
       where: {
-        hospital_profession: {
+        hospital_professions: {
           hospital_id: { _eq: hospitalId }
         }
       }

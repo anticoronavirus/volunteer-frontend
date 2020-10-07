@@ -85,7 +85,15 @@ const RequestShift = ({
     if (error) setError('')
     setData({ ...data, ...nextData })
   }
-  const professionQuery = useQuery(professions, { hospitalId })
+  const professionQuery = useQuery(professions, {
+    variables: {
+      where: {
+        hospital_professions: {
+          hospital_id: { _eq: hospitalId }
+        }
+      }
+    }
+  })
   const [error, setError] = useState('')
   const [mutate, { loading }] = useMutation(addOwnShift, { ignoreResults: true })
   const handleSubmit = () => {
