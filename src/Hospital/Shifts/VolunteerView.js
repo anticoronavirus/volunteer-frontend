@@ -86,7 +86,10 @@ const RequestShift = ({
     variables: {
       where: {
         hospital_professions: {
-          hospital_id: { _eq: hospitalId }
+          hospital_id: { _eq: hospitalId },
+          default: {
+            _neq: true 
+          }
         }
       }
     }
