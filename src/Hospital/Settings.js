@@ -24,7 +24,7 @@ const Settings = () => {
   })
   return $(Paper, null,
     $(List, null,
-      $(SubheaderWithBackground, null, 'Доступные профессии'),
+      $(SubheaderWithBackground, null, 'Отделения'),
       data &&
         map(Profession, data.professions)))
 }
