@@ -13,15 +13,15 @@ import { formatDate } from 'utils'
 
 import HospitalContext from '../HospitalContext'
 
-const ManagedShifts = () => {
+const ManagedShifts = ({ archive }) => {
 
   const { hospitalId } = useContext(HospitalContext)
 
   const { data, loading } = useQuery(orderedHospitalShifts, {
     variables: {
       hospitalId,
-      dateInput: { _gte: 'TODAY' },
-      orderBy: { date: 'asc' }
+      dateInput: archive ? { _lt: 'TODAY' } : { _gte: 'TODAY' },
+      orderBy: { date: archive ? 'desc' : 'asc' }
     }
   })
 

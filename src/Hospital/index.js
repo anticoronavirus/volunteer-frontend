@@ -115,7 +115,7 @@ const coordinatorTabs = {
   },
   archive: {
     label: 'Архив',
-    component: ManagedShifts
+    component: () => $(ManagedShifts, { archive: true })
   },
   directions
 }
