@@ -16,13 +16,15 @@ import update from 'lodash/fp/update'
 import { createElement as $, Fragment, useContext, useState } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
-import { addOwnShift, volunteerHospitalData, professions } from 'queries'
+import { addOwnShift, professions, volunteerHospitalData } from 'queries'
 
 import HospitalContext from '../HospitalContext'
 import Onboarding from './Onboarding'
 
-const startTime = new Date(0, 0, 0, 8)
-const endTime = new Date(0, 0, 0, 20)
+const startTime = new Date()
+startTime.setHours(8, 0, 0, 0)
+const endTime = new Date()
+endTime.setHours(20, 0, 0, 0)
 
 const VolunteerView = () => {
 
@@ -77,7 +79,11 @@ const RequestShift = ({
   hospitalId
 }) => {
 
-  const [data, setData] = useState({})
+  const [data, setData] = useState({
+    start: startTime,
+    end: endTime
+  })
+
   const updateData = (nextData) => {
     if (error) setError('')
     setData({ ...data, ...nextData })
@@ -152,7 +158,6 @@ const RequestShift = ({
         }),
         $(Box, { display: 'flex', paddingTop: 2 }, 
           $(TimePicker, {
-            // FIXME pickers tend to fuck up min-max limitation until first pick
             minTime: startTime,
             maxTime: addHours(-2, endTime),
             renderInput: DateTimeTextField({
@@ -161,7 +166,9 @@ const RequestShift = ({
                 placeHolder: 'чч.мм'
               }
             }),
-            value: data.start || null,
+            // FIXME pickers tend to fuck up min-max limitation until first pick
+            // That's why default is provided
+            value: data.start || startTime,
             onChange: (start) => updateData({ start }),
           }),
           $(Box, { padding: 1 }),
@@ -174,7 +181,7 @@ const RequestShift = ({
                 placeHolder: 'чч.мм'
               }
             }),
-            value: data.end || null,
+            value: data.end || endTime,
             onChange: (end) => updateData({ end }),
           }),
           // $(TimePicker, {
@@ -202,7 +209,11 @@ const RequestShift = ({
             $(Typography, { variant: 'caption', color: 'error' }, 'Похожая смена уже существует'),
           $(Box, { marginTop: 1 },
             $(Button, {
-              disabled: !data.profession_id || !data.date || !data.start || loading,
+              disabled: !data.profession_id
+                || !data.date
+                || data.start < startTime
+                || data.end > endTime
+                || loading,
               color: 'primary',
               onClick: handleSubmit,
               variant: 'contained' },

@@ -5,7 +5,7 @@ import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
-import { createElement as $, useContext, forwardRef } from 'react'
+import { createElement as $, useContext } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
 import { orderedHospitalShifts } from 'queries'
@@ -13,24 +13,27 @@ import { formatDate } from 'utils'
 
 import HospitalContext from '../HospitalContext'
 
-const ManagedShifts = () => {
+const ManagedShifts = ({ archive }) => {
 
   const { hospitalId } = useContext(HospitalContext)
 
   const { data, loading } = useQuery(orderedHospitalShifts, {
     variables: {
       hospitalId,
-      dateInput: { _gte: 'TODAY' },
-      orderBy: { date: 'asc' }
+      dateInput: archive ? { _lt: 'TODAY' } : { _gte: 'TODAY' },
+      orderBy: { date: archive ? 'desc' : 'asc' }
     }
   })
 
   return $(Paper, null,
-    $(List, null,
-      loading && !data
-        ? LoadingDayShifts
-        : map(DayShifts,
-            groupBy('date', data.volunteer_shift))))
+    data?.volunteer_shift.length === 0
+      ? $(Box, { padding: 2 },
+          'Здесь появятся смены волонтёров которые будут готовы помочь этой больнице. Разместите ссылку на эту страницу в соцсетях чтобы получить больше заявок')
+      : $(List, null,
+          loading && !data
+            ? LoadingDayShifts
+            : map(DayShifts,
+                groupBy('date', data.volunteer_shift))))
 }
 
 const DayShifts = (shifts) =>
@@ -68,8 +71,9 @@ const VolunteerShift = ({
       secondary: loading
         ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
         : `${start.slice(0, -6)}—${end.slice(0, -6)} · ${profession.name} · ${volunteer.phone}` }),
-    $(ListItemSecondaryAction, null,
-      $(ToggleCancelShift, { uid, is_cancelled })))
+    !loading &&
+      $(ListItemSecondaryAction, null,
+        $(ToggleCancelShift, { uid, is_cancelled })))
 
 const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
   opacity: is_cancelled ? 0.5 : 1,

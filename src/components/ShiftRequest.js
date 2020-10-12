@@ -14,7 +14,7 @@ const ShiftRequest = ({
 }) =>
   $(ListItem, { key: uid },
     $(ListItemText, {
-      primary: `${profession.name} в ${hospital.shortname}`,
+      primary: `${profession.name} в ${hospital?.shortname || 'неактивной больнице'}`,
       secondary: $(Box, null,
         map(Requirement, requirements))}))
 
