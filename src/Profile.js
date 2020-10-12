@@ -237,7 +237,7 @@ const Shifts = ({
   $(ListItem, { key: uid },
     $(ListItemText, {
       primary: `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
-      secondary: `${hospital?.shortname || 'Неактивная больница'} · ${confirmed ? 'подтверждено' : 'ожидает подтверждения'}` }),
+      secondary: hospital?.shortname || 'Неактивная больница' }),
     $(Mutation, { mutation: removeVolunteerFromShift, variables: { uid } }, mutate =>
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: mutate },
