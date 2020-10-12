@@ -1,106 +1,96 @@
-import { setContext } from 'apollo-link-context'
-import { split, HttpLink, ApolloClient, InMemoryCache } from '@apollo/client'
-import { getMainDefinition } from '@apollo/client/utilities'
-import { WebSocketLink } from '@apollo/link-ws'
-import { refreshToken as query } from 'queries'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { WebSocketLink } from '@apollo/client/link/ws'
 
-const httpLink = new HttpLink({
-  uri: '/v1/graphql'
-})
+import { login as loginMutation, logoff as logoffQuery, refreshToken as refreshTokenQuery } from 'queries'
 
-let refreshTokenPromise
+const uri = '/v1/graphql'
+const devUrl = 'dev.memedic.ru'
 
-const handleAuth = (operation, { headers }) => {
+let authPromise = null // Important to be falsey by default
 
-  let authorization = localStorage.getItem('authorization')
-  let expires = parseInt(localStorage.getItem('expires'))
-
-  if (!expires || !authorization)
-    return { headers }
-  else if (expires - new Date().valueOf() < 0)
-    return refreshTokenPromise ||
-      (refreshTokenPromise = fetch('/v1/graphql', {
-        method: 'POST',
-        body: JSON.stringify({ query })}))
-      .then(response => response.json())
-      .then(response => response.errors
-        ? handleError(headers)
-        : response.data)
-      .then(data => {
-        refreshTokenPromise = null
-        localStorage.setItem('authorization', `Bearer ${data.refreshToken.accessToken}`)
-        localStorage.setItem('expires', data.refreshToken.expires * 1000)
-        return {
-          headers: {
-            ...headers,
-            Authorization: `Bearer ${data.refreshToken.accessToken}`,
-          }
-        }
-      })
-      .catch(handleError(headers))
-  else
-    return {
-      headers: {
-        ...headers,
-        authorization
-      }
-    }
-}
-
-const authLink = setContext(handleAuth)
-
-const handleError = headers => () => {
-  refreshTokenPromise = null
-  localStorage.removeItem('authorization')
-  localStorage.removeItem('expires')
-  return headers
-}
-
-export const wsLink = new WebSocketLink({
-  uri: `wss://${process.env.NODE_ENV === 'development' ? 'dev.memedic.ru' : window.location.hostname}/v1/graphql`,
+const link = new WebSocketLink({
+  uri: `wss://${process.env.NODE_ENV === 'development' ? devUrl : window.location.hostname}${uri}`,
   options: {
     reconnect: true,
-    connectionParams: async () => handleAuth(null, { })
-  }
-  //   () => localStorage.getItem('authorization') && {// FIXME should be dynamic
-  //     headers: {
-  //       Authorization: localStorage.getItem('authorization')
-  //     }
-  //   }
-  // }
-})
+    connectionParams: async () => {
 
-const splitLink = split(
-  ({ query }) => {
-    const definition = getMainDefinition(query)
-    return (
-      definition.kind === 'OperationDefinition' &&
-      definition.operation === 'subscription'
-    )
-  },
-  authLink.concat(wsLink),
-  authLink.concat(httpLink),
-)
+      if (!authPromise)
+        authPromise = refreshToken()
+      const result = await authPromise
+
+      if (result) {
+        setTimeout(() => {
+          authPromise = refreshToken()
+          link.subscriptionClient.client.close()
+        }, result.expiresAt - new Date().valueOf() - 20000)
+        return {
+          headers: {
+            Authorization: `Bearer ${result.accessToken}`
+          }
+        }
+      } else {
+        return {
+        }
+      }
+    } 
+  }
+})
 
 export const client = new ApolloClient({
   queryDeduplication: true,
   defaultOptions: {
     watchQuery: { 
       fetchPolicy: 'cache-and-network',
+      nextFetchPolicy: 'cache-first'
     }
   },
   cache: new InMemoryCache({
-    dataIdFromObject: ({ uid, __typename, ...rest }) => __typename === 'vshift'
-      ? `${rest.date}-${rest.start}-${rest.end}`
-      : uid
+    dataIdFromObject: ({ uid }) => uid,
+    typePolicies: {
+      vshift: {
+        keyFields: ['date', 'start', 'end']
+      }
+    }
   }),
-  link: splitLink
+  link: link
 })
 
-export const logoff =() => {
-  localStorage.removeItem('authorization')
-  localStorage.removeItem('expires')
-  wsLink.subscriptionClient.client.close()
+export const login = (variables) =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({
+      query: loginMutation,
+      variables
+    })
+  }).then(response => response.json())
+    .then(response => response.data.getToken)
+    .then(handleAuth)
+
+const refreshToken = () =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({ query: refreshTokenQuery })
+  }).then(response => response.json())
+    .then(response => response.errors
+        ? (client.resetStore() && null)
+        : response.data.refreshToken)
+    .catch(console.log)
+
+const handleAuth = tokenData => {
+  authPromise = tokenData
   client.resetStore()
-  return true // Important
+  link.subscriptionClient.client.close()
 }
+
+export const logoff = () =>
+  fetch(uri, {
+    method: 'POST',
+    body: JSON.stringify({ query: logoffQuery })
+  }).then(response => response.json())
+    .catch(console.log)
+    .finally(() => {
+      authPromise = {}
+      client.clearStore()
+      link.subscriptionClient.client.close()
+      return true
+    })

@@ -1,22 +1,22 @@
-import { createElement as $, useMemo } from 'react'
-import WithFooter from 'components/Footer'
-import Main from 'Main'
-import Login from 'Login'
-import Hospital from 'Hospital'
-import Hospitals from 'Hospitals'
-import Pages from 'Pages'
-import Profile from 'Profile'
-import { Switch, Route, Redirect } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
-import { me } from 'queries'
-import some from 'lodash/fp/some'
-import values from 'lodash/fp/values'
-import { requiredProfileFields } from 'utils'
-import { SnackbarProvider } from 'notistack'
-
-import useMediaQuery from '@material-ui/core/useMediaQuery'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { createMuiTheme, ThemeProvider, withStyles } from '@material-ui/core/styles'
+import useMediaQuery from '@material-ui/core/useMediaQuery'
+import some from 'lodash/fp/some'
+import values from 'lodash/fp/values'
+import { SnackbarProvider } from 'notistack'
+import { createElement as $, useMemo } from 'react'
+import { Redirect, Route, Switch } from 'react-router-dom'
+
+import WithFooter from 'components/Footer'
+import Hospital from 'Hospital'
+import Hospitals from 'Hospitals'
+import Login from 'Login'
+import Main from 'Main'
+import Pages from 'Pages'
+import Profile from 'Profile'
+import { me } from 'queries'
+import { requiredProfileFields } from 'utils'
 
 const App = () => {
 
@@ -34,7 +34,7 @@ const App = () => {
 
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
-    !loading &&
+    loading && !data ? null :
     $(SnackbarProvider, { maxSnack: 3 },
       $(WithFooter, null,
         $(Switch, null,
@@ -46,7 +46,7 @@ const App = () => {
           $(Route, { path: '/login', component: Login }),
           $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
-          $(Route, { path: '/:hospitalId?', exact: true, component: Main }),
+          $(Route, { path: '/', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
 }
 

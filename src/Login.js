@@ -1,19 +1,16 @@
-import { createElement as $, useState } from 'react'
-import MaskedInput from 'react-input-mask'
-import { useMutation, useApolloClient } from '@apollo/react-hooks'
-import { wsLink } from 'Apollo'
-import {
-  submitPhone as submitPhoneMutation,
-  login as loginMutation
-} from 'queries'
-
-import Paper from '@material-ui/core/Paper'
-import TextField from '@material-ui/core/TextField'
+import { useMutation } from '@apollo/client'
 import Box from '@material-ui/core/Box'
-import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 import CircularProgress from '@material-ui/core/CircularProgress'
 import InputAdornment from '@material-ui/core/InputAdornment'
-import Button from '@material-ui/core/Button'
+import Paper from '@material-ui/core/Paper'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import { createElement as $, useState } from 'react'
+import MaskedInput from 'react-input-mask'
+
+import { login } from 'Apollo'
+import { submitPhone as submitPhoneMutation } from 'queries'
 
 const Login = ({ history }) => {
 
@@ -23,8 +20,6 @@ const Login = ({ history }) => {
   const [loginStatus, setLoginStatus] = useState(null)
 
   const [submitPhone] = useMutation(submitPhoneMutation)
-  const [login] = useMutation(loginMutation, { variables: { phone, password } })
-  const client = useApolloClient()
 
   const handlePhone = event => {
     const nextPhone = event.target.value.replace(/[^\d]/g, '')
@@ -48,16 +43,8 @@ const Login = ({ history }) => {
 
   const handleSubmit = () => {
     setLoginStatus('loading')
-    login()
-      .then(({ data }) => {
-        data.getToken.accessToken &&
-          localStorage.setItem('authorization', `Bearer ${data.getToken.accessToken}`)
-        data.getToken.expires &&
-          localStorage.setItem('expires', data.getToken.expires * 1000)
-        wsLink.subscriptionClient.client.close()
-        client.resetStore()
-        history.push('/')
-      })
+    login({ phone, password })
+      .then(() => history.push('/'))
       .catch(({ message, graphQLErrors }) => // FIXME check for network errors
         setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
   }

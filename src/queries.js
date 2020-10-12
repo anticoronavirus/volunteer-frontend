@@ -154,8 +154,11 @@ mutation UpsertVolunteer(
 `
 
 export const myShifts = gql`
-subscription {
-  volunteer_shift {
+subscription myShift($uid: uuid!) {
+  volunteer_shift(where: {
+    volunteer: {
+      uid: { _eq: $uid } }
+    }) {
     uid
     date
     start
@@ -187,7 +190,7 @@ query exportShifts($hospitalId: uuid) {
       hospital_id: {
         _eq: $hospitalId
       }
-    },
+    }
     order_by: {
       date: desc
       start: desc
@@ -253,7 +256,7 @@ query exportCars($hospitalId: uuid) {
           _neq: ""
         }
       }
-    },
+    }
     order_by: {
       date: desc
       start: desc
@@ -360,7 +363,7 @@ query directions($hospitalId: uuid!) {
 
 export const shifts = gql`
 query shifts($hospitalId: uuid $userId: uuid $taskId: _uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId professions: $taskId }) {
     ...shift
   }
 }
@@ -368,7 +371,7 @@ ${shiftFragment}`
 
 export const shiftsSubscription = gql`
 subscription shiftsSubscription($hospitalId: uuid $userId: uuid $taskId: _uuid) {
-  shifts: shift_selector(args: { _hospital_id: $hospitalId, professions: $taskId }) {
+  shifts: shift_selector(args: { _hospital_id: $hospitalId professions: $taskId }) {
     ...shift
   }
 }
@@ -438,6 +441,38 @@ query shifts($hospitalId: uuid) {
   }
 }
 ${hospitalShiftFragment}`
+
+export const orderedHospitalShifts = gql`
+query orderedHospitalShifts(
+  $hospitalId: uuid
+  $dateInput: date_comparison_exp
+  $orderBy: [volunteer_shift_order_by!]
+) {
+  volunteer_shift (
+    limit: 30
+    order_by: $orderBy
+    where: {
+      hospital_id: { _eq: $hospitalId }
+      date: $dateInput
+  }) {
+    uid
+    date
+    start
+    end
+    is_cancelled
+    profession {
+      uid
+      name
+    }
+    volunteer {
+      uid
+      lname
+      fname
+      phone
+    }
+  }
+}
+`
 
 export const documentsProvisioned = gql`
 mutation documentsProvisioned(
@@ -650,6 +685,101 @@ export const filteredHospitalProfessions = gql`
   }
 `
 
+export const confirmRequirements = gql`
+mutation updateRequirements(
+  $professionRequest: profession_request_insert_input!
+  $requirements: [volunteer_hospital_requirement_insert_input!]!
+  ) {
+  insert_volunteer_hospital_requirement(
+    objects: $requirements
+  ) {
+    affected_rows
+  }
+  insert_profession_request_one(
+    object: $professionRequest
+    on_conflict: {
+      constraint: profession_request_profession_id_hospital_id_volunteer_id_key
+      update_columns: []
+    }
+  ) {
+    uid
+  }
+}
+`
+
+const volunteerOwnShiftFragment = gql`
+fragment volunteerOwnShiftFragment on volunteer_shift {
+  uid
+  date
+  start
+  end
+  is_cancelled
+  profession {
+    uid
+    name
+  }
+}`
+
+export const volunteerHospitalData = gql`
+query volunteerHospitalData($hospitalId: uuid!) {
+  hospital_profession_requirement(
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      hospital_profession: {
+        default: {
+          _eq: true
+        }
+      }
+    }
+  ) {
+    uid
+    is_satisfied
+    requirement {
+      uid
+      name
+      description
+      protected
+    }
+  }
+  defaultProfession: hospital_profession (
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      default: {
+        _eq: true
+      }
+    }
+  ) {
+    profession_id
+  }
+  volunteer_shift (
+    where: {
+      hospital_id: {
+        _eq: $hospitalId
+      }
+      date: { 
+        _gte: "TODAY()"
+      }
+    }
+  ) {
+    ...volunteerOwnShiftFragment
+  }
+}
+${volunteerOwnShiftFragment}`
+
+export const addOwnShift = gql`
+mutation addOwnShift($data: volunteer_shift_insert_input!) {
+  insert_volunteer_shift_one (
+    object: $data
+  ) {
+    ...volunteerOwnShiftFragment
+  }
+}
+${volunteerOwnShiftFragment}`
+
 export const periodDemandsByHospital = gql`
 query periodDemandsByHospital(
   $start: timetz!
@@ -684,14 +814,22 @@ export const submitPhone = gql`
   }
 `
 
-export const login = gql`
+export const login = `
   mutation login($phone: String $password: String) {
     getToken(phone: $phone password: $password) {
       authenticated
       accessToken
-      expires
+      expiresAt
     }
   }
+`
+
+export const logoff = `
+mutation {
+  logoff {
+    status
+  }
+}
 `
 
 export const addShift = gql`
@@ -834,6 +972,25 @@ export const refreshToken = `
  mutation {
    refreshToken {
      accessToken
-     expires
+     expiresAt
    }
  }` 
+
+export const setCancelShift = gql`
+mutation setCancelShift(
+  $uid: uuid!
+  $is_cancelled: Boolean!
+) {
+  setCancelShift: update_volunteer_shift_by_pk(
+    pk_columns: {
+      uid: $uid
+    }
+    _set: {
+      is_cancelled: $is_cancelled
+    }
+  ) {
+    uid
+    is_cancelled
+  }
+}
+`

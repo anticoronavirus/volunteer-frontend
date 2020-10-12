@@ -1,35 +1,31 @@
-import { createElement as $, useContext, Fragment, useState } from 'react'
-import map from 'lodash/fp/map'
-import filter from 'lodash/fp/filter'
-import noop from 'lodash/fp/noop'
-import find from 'lodash/fp/find'
-import ShiftRequest from 'components/ShiftRequest'
-import HospitalContext from './HospitalContext'
-import { useMutation, useQuery, useApolloClient } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
-import {
-  toggleRejection,
-  professionRequests,
-  addConfirmation,
-  removeConfirmation,
-  requestFragment
-} from 'queries'
-
+import { useApolloClient, useMutation, useQuery } from '@apollo/react-hooks'
+import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
+import Checkbox from '@material-ui/core/Checkbox'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import FormGroup from '@material-ui/core/FormGroup'
+import FormLabel from '@material-ui/core/FormLabel'
 import IconButton from '@material-ui/core/IconButton'
-import Switch from '@material-ui/core/Switch'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
-import FormLabel from '@material-ui/core/FormLabel'
-import Checkbox from '@material-ui/core/Checkbox'
 import ListItemAvatar from '@material-ui/core/ListItemAvatar'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction'
+import ListItemText from '@material-ui/core/ListItemText'
+import Paper from '@material-ui/core/Paper'
+import Switch from '@material-ui/core/Switch'
 import Delete from '@material-ui/icons/Delete'
 import RestoreFromTrash from '@material-ui/icons/RestoreFromTrash'
-import Avatar from '@material-ui/core/Avatar'
+import filter from 'lodash/fp/filter'
+import find from 'lodash/fp/find'
+import map from 'lodash/fp/map'
+import noop from 'lodash/fp/noop'
+import { createElement as $, Fragment, useContext, useState } from 'react'
+
+import ShiftRequest from 'components/ShiftRequest'
+import { addConfirmation, professionRequests, removeConfirmation, requestFragment, toggleRejection } from 'queries'
+
+import HospitalContext from './HospitalContext'
 
 const Requests = () => {
 
@@ -37,15 +33,15 @@ const Requests = () => {
   const [showDeleted, setShowDeleted] = useState(false)
   const { data } = useQuery(professionRequests, { variables: { where: {
     hospital_id: { _eq: hospitalId },
-    rejected: { _eq: showDeleted }
+    rejected: { _eq: showDeleted },
   }}})
-  
-  return $(Fragment, null,
+
+  return $(Paper, null,
     isManagedByMe &&
-      $(Box, { padding: 2 },
+      $(Box, { padding: 2, display: 'flex', flexDirection: 'column'},
         $(FormControlLabel, {
           control: $(Switch, { checked: showDeleted, onClick: () => setShowDeleted(!showDeleted) }),
-          label: $(Box, { padding: 1 }, 'Показать удалённые')})),
+          label: $(Box, { padding: 1 }, 'Удалённые')})),
       data && hospital &&
         $(List, null, 
         data.requests.length === 0
@@ -121,7 +117,10 @@ const ManagedRequest = ({
                           returning: [{ uid: Math.random(), requirement_id: requirement.uid }]
                         }
                       },
-                      variables: { requirement_id: requirement.uid }})
+                      variables: {
+                        volunteer_id: volunteer.uid,
+                        hospital_id: hospitalId,
+                        requirement_id: requirement.uid }})
                   : remove({
                       optimisticResponse: {
                         delete_volunteer_hospital_requirement: {
