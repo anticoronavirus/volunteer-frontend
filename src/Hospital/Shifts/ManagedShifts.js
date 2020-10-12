@@ -5,7 +5,7 @@ import groupBy from 'lodash/fp/groupBy'
 import map from 'lodash/fp/map'
 import range from 'lodash/fp/range'
 import sortBy from 'lodash/fp/sortBy'
-import { createElement as $, useContext, forwardRef } from 'react'
+import { createElement as $, useContext } from 'react'
 
 import ToggleCancelShift from 'components/ToggleCancelShift'
 import { orderedHospitalShifts } from 'queries'
@@ -26,11 +26,14 @@ const ManagedShifts = () => {
   })
 
   return $(Paper, null,
-    $(List, null,
-      loading && !data
-        ? LoadingDayShifts
-        : map(DayShifts,
-            groupBy('date', data.volunteer_shift))))
+    data?.volunteer_shift.length === 0
+      ? $(Box, { padding: 2 },
+          'Здесь появятся смены волонтёров которые будут готовы помочь этой больнице. Разместите ссылку на эту страницу в соцсетях чтобы получить больше заявок')
+      : $(List, null,
+          loading && !data
+            ? LoadingDayShifts
+            : map(DayShifts,
+                groupBy('date', data.volunteer_shift))))
 }
 
 const DayShifts = (shifts) =>
