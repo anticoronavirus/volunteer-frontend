@@ -68,8 +68,9 @@ const VolunteerShift = ({
       secondary: loading
         ? $(Skeleton, { variant: 'text', width: '25ex', height: 24 })
         : `${start.slice(0, -6)}—${end.slice(0, -6)} · ${profession.name} · ${volunteer.phone}` }),
-    $(ListItemSecondaryAction, null,
-      $(ToggleCancelShift, { uid, is_cancelled })))
+    !loading &&
+      $(ListItemSecondaryAction, null,
+        $(ToggleCancelShift, { uid, is_cancelled })))
 
 const ListItemWithCancelled = styled(ListItem)(({ is_cancelled }) => ({
   opacity: is_cancelled ? 0.5 : 1,
