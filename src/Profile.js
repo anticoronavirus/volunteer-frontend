@@ -59,8 +59,8 @@ const ProfilePure = data =>  {
   })
 
   return $(Box, notMobile && { display: 'flex', padding: 2 },
-    $(Back),
-    $(Box, notMobile ? { marginRight: 2, maxWidth: 480 } : { marginBottom: 2 },
+    // $(Back),
+    $(Box, notMobile ? { margin: 'auto', maxWidth: 480 } : { marginBottom: 2 },
       $(Paper, null,
         $(Box, {
           display: 'flex',
@@ -83,7 +83,7 @@ const ProfilePure = data =>  {
         map(([value, { label }]) =>
           $(Tab, { id: value, key: value, value, label }),
           entries(tabs)))),
-        $(Box, { height: 16 }),
+        $(Box, { padding: 2 }),
         $(Paper, null,
           $(Switch, null,
             map(([value, { component }]) =>
