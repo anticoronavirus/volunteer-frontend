@@ -214,13 +214,14 @@ const tabs = {
                   },
                   'Выбрать больницу')))
           : $(Fragment, null,
-              $(Button, {
-                variant: 'outlined',
-                fullWidth: true,
-                component: Link,
-                to: '/hospitals'
-                },
-                'Добавить смену'),
+              $(MobileReadyButton, null, 
+                $(Button, {
+                  variant: 'outlined',
+                  fullWidth: true,
+                  component: Link,
+                  to: '/hospitals'
+                  },
+                  'Добавить смену')),
               $(Box, { height: '16px' }),
               $(Paper, null,
                 $(List, null,
@@ -235,6 +236,12 @@ const tabs = {
             map(ShiftRequest, data ? data.requests : []))))
   }
 }
+
+const MobileReadyButton = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('xs')]: {
+    padding: '0 16px'
+  }
+}))
 
 const LicensePlate = other =>
   $(MaskedInput, {
