@@ -25,10 +25,9 @@ import map from 'lodash/fp/map'
 import omit from 'lodash/fp/omit'
 import { createElement as $, useEffect } from 'react'
 import MaskedInput from 'react-input-mask'
-import { Redirect, Route, Switch, useHistory, useParams } from 'react-router-dom'
+import { Link, Redirect, Route, Switch, useHistory, useParams } from 'react-router-dom'
 
 import { logoff } from 'Apollo'
-import Back from 'components/Back'
 import ShiftRequest from 'components/ShiftRequest'
 import { me as meQuery, myShifts, profileProfessionRequests, removeVolunteerFromShift, updateVolunteer } from 'queries'
 import { formatDate } from 'utils'
@@ -197,9 +196,21 @@ const tabs = {
   shifts: {
     label: 'Смены',
     component: ({ uid }) => $(Subscription, { subscription: myShifts, variables: { uid } }, ({ data }) =>
-      !data ? $(CircularProgress) :
-        $(List, null,
-          map(Shifts, data.volunteer_shift)))
+      !data
+        ? $(CircularProgress)
+        : data.volunteer_shift.length === 0
+          ? $(Box, { padding: 2 },
+              $(Typography, { variant: 'body2', paragraph: true},
+                'У вас пока нет смен, выберите больницу, в которой вам будет удобно помочь'),
+              $(Button, {
+                variant: 'contained',
+                color: 'primary',
+                component: Link,
+                to: '/hospitals'
+                },
+                'Выбрать больницу'))
+          : $(List, null,
+              map(Shifts, data.volunteer_shift)))
   },
   requests: {
     label: 'Заявки',

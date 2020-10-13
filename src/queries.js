@@ -155,10 +155,15 @@ mutation UpsertVolunteer(
 
 export const myShifts = gql`
 subscription myShift($uid: uuid!) {
-  volunteer_shift(where: {
-    volunteer: {
-      uid: { _eq: $uid } }
-    }) {
+  volunteer_shift(
+    order_by: {
+      date: desc
+      start: desc
+    }
+    where: {
+      volunteer: {
+        uid: { _eq: $uid } }
+      }) {
     uid
     date
     start
