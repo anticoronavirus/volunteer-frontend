@@ -1,20 +1,33 @@
+import { Box, Button, Fade, Paper, styled, Typography } from '@material-ui/core'
 import { createElement as $, Fragment } from 'react'
+import { Link } from 'react-router-dom'
+
 import HospitalList from 'components/HospitalList'
+import logo from 'logo.svg'
 
-import { styled, Box, Paper, Typography, Fade } from '@material-ui/core'
-
-const Main = () => {
-  return $(Fragment, null,
+const Main = () =>
+  $(Fragment, null,
     $(Fade, { in: true },
       $(Hero, { square: true },
         $(Overlay, null,
-          $(Title, { variant: 'h1' }, 'MEMEDIC')))),
+          $(Box, { textAlign: 'center' },
+            $(Title, { variant: 'h3' }, 'MEMEDIC'),
+            $(LogoImage, { src: logo, height: 32 }),
+            $(Box, { paddingBottom: 1 },
+              // $(Typography, { variant: 'caption' },
+              //   ' Помоги больницам Москвы')
+                ),
+            $(Button, {
+              component: Link,
+              to: '/login', 
+              variant: 'contained'
+              },
+              'Вход / Регистрация'))))),
     $(Box, { margin: 'auto', flexGrow: 1, maxWidth: 480 },
       $(Fade, { in: true },
         $(Typography, { align: 'center', paragraph: true },
           'Больницы участвующие в проекте')),
       $(HospitalList)))
-}
 
 const Hero = styled(Paper)({
   width: '100vw',
@@ -28,11 +41,15 @@ const Hero = styled(Paper)({
 const Overlay = styled(Box)({
   width: '100%',
   height: '100%',
-  backgroundColor: 'rgba(5,40,80,.3)',
+  backgroundColor: 'rgba(5,40,80,.5)',
   backdropFilter: 'blur(6px)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center'
+})
+
+const LogoImage = styled('img')({
+  margin: 2
 })
 
 const Title = styled(Typography)({})
