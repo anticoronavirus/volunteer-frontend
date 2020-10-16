@@ -12,7 +12,7 @@ import WithFooter from 'components/Footer'
 import Hospital from 'Hospital'
 import Hospitals from 'Hospitals'
 import Login from 'Login'
-import Main from 'Main'
+import Main from 'MainNext'
 import Pages from 'Pages'
 import Profile from 'Profile'
 import { me } from 'queries'
@@ -40,12 +40,16 @@ const App = () => {
         $(Switch, null,
           $(Route, { path: '/pages/:page', component: Pages }),
           $(Route, { path: '/profile/:page?', component: Profile }),
-          // eslint-disable-next-line
-          !loading && data.me[0] && some(value => value == undefined, values(requiredProfileFields(data.me[0]))) &&
-            $(Redirect, { to: '/profile' }),
+          !loading
+            && data.me[0]
+            // eslint-disable-next-line
+            && some(value => value == undefined, values(requiredProfileFields(data.me[0])))
+            && $(Redirect, { to: '/profile' }),
           $(Route, { path: '/login', component: Login }),
           $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
+          !loading && data.me[0] &&
+            $(Redirect, { to: '/profile' }),
           $(Route, { path: '/', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
 }
