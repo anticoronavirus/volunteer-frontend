@@ -28,7 +28,7 @@ const Login = ({ history }) => {
       if (nextPhone.length === 11) {
         setPhoneStatus('loading')
         submitPhone({ variables: { phone: nextPhone } })
-          .then(({ data }) => setPhoneStatus(data.signUp.status))
+          .then(({ data }) => setPhoneStatus(data.requestPassword.status))
           .catch(() => setPhoneStatus('failed'))
       }
       else

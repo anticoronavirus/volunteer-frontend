@@ -813,7 +813,7 @@ query periodDemandsByHospital(
 
 export const submitPhone = gql`
   mutation submitPhone($phone: String) {
-    signUp(phone: $phone) {
+    requestPassword(phone: $phone) {
       status
     }
   }
