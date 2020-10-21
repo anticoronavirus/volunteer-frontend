@@ -49,7 +49,7 @@ const App = () => {
           $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
           !loading && data.me[0] &&
-            $(Redirect, { to: '/profile' }),
+            $(Redirect, { to: '/profile/shifts' }),
           $(Route, { path: '/', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
 }
