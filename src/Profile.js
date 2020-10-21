@@ -1,6 +1,7 @@
 import { Mutation, Query, Subscription } from '@apollo/react-components'
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { useMediaQuery, useTheme } from '@material-ui/core'
+import { styled } from '@material-ui/core'
 import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
@@ -14,7 +15,6 @@ import ListItemText from '@material-ui/core/ListItemText'
 import Paper from '@material-ui/core/Paper'
 import Tab from '@material-ui/core/Tab'
 import Tabs from '@material-ui/core/Tabs'
-import { styled } from '@material-ui/core'
 import Tooltip from '@material-ui/core/Tooltip'
 import Typography from '@material-ui/core/Typography'
 import Delete from '@material-ui/icons/Delete'
@@ -24,7 +24,7 @@ import { TextField } from 'formik-material-ui'
 import entries from 'lodash/fp/entries'
 import map from 'lodash/fp/map'
 import omit from 'lodash/fp/omit'
-import { createElement as $, useEffect, Fragment } from 'react'
+import { createElement as $, Fragment, useEffect } from 'react'
 import MaskedInput from 'react-input-mask'
 import { Link, Redirect, Route, Switch, useHistory, useParams } from 'react-router-dom'
 
@@ -62,6 +62,10 @@ const ProfilePure = data =>  {
     // $(Back),
     $(Box, notMobile ? { margin: 'auto', maxWidth: 480 } : { marginBottom: 2 },
       $(Paper, null,
+        $(Box, { justifyContent: 'flex-end', display: 'flex', marginBottom: -7, padding: 1 },
+          $(Tooltip, { title: 'Выход' },
+              $(IconButton, { onClick: () => logoff() && history.push('/')},
+                $(ExitToApp, { fontSize: 'small' })))),
         $(Box, {
           display: 'flex',
           alignItems: 'center',
@@ -69,10 +73,7 @@ const ProfilePure = data =>  {
           justifyContent: 'center'}, 
           $(Avatar, { style: { width: 84, height: 84 } })),
           $(Box, { display: 'flex', justifyContent: 'center', alignItems: 'center' },
-            $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone),
-            $(Tooltip, { title: 'Выход' },
-              $(Button, { onClick: () => logoff() && history.push('/')},
-              $(ExitToApp, { fontSize: 'small' })))),
+            $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone)),
       $(Box, { height: 16 }),
       $(Divider),
       $(Tabs, {
