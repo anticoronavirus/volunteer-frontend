@@ -44,7 +44,6 @@ const Login = ({ history }) => {
   const handleSubmit = () => {
     setLoginStatus('loading')
     login({ phone, password })
-      .then(() => history.push('/'))
       .catch(({ message, graphQLErrors }) => // FIXME check for network errors
         setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
   }
@@ -89,13 +88,12 @@ const Login = ({ history }) => {
               onChange: handlePassword,
               value: password,
               type: 'password',
-              autoComplete: 'one-time-code',
               margin: 'normal',
               onKeyPress: ({ charCode }) => password.length > 3 && charCode === 13 && handleSubmit(),
               error: loginStatus && loginStatus !== 'loading',
               helperText: loginStatus !== 'loading' && loginStatus,
               inputProps: {
-                autoComplete: 'current-password'
+                autoComplete: 'one-time-code',
               }
             }),
           password.length > 3 &&

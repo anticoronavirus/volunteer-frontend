@@ -32,8 +32,6 @@ const App = () => {
       }),
     [prefersDarkMode])
 
-  console.log(data)
-
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     loading && !data ? null :
@@ -41,19 +39,17 @@ const App = () => {
       $(WithFooter, null,
         $(Switch, null,
           $(Route, { path: '/pages/:page', component: Pages }),
-          $(Route, { path: '/profile/:page?', component: Profile }),
-          !loading
-            && data.me[0]
-            // eslint-disable-next-line
-            && some(value => value == undefined, values(requiredProfileFields(data.me[0])))
-            && $(Redirect, { to: '/profile' }),
-          $(Route, { path: '/login', component: Login }),
           $(Route, { path: '/hospitals/:uid/:page?', component: Hospital }),
           $(Route, { path: '/hospitals/', component: Hospitals }),
-          !loading && data.me[0] &&
-            $(Redirect, data.me[0]?.managedHospitals[0]?.hospital
-              ? { to: `/hospitals/${data.me[0].managedHospitals[0].hospital.uid}` }
-              : { to: '/profile/shifts' }),
+          ...!data?.me[0]
+            ? [$(Route, { path: '/login', component: Login })]
+            : [$(Route, { path: '/profile/:page?', component: Profile }),
+              // eslint-disable-next-line
+               $(Redirect, some(value => value == undefined, values(requiredProfileFields(data.me[0])))
+                  ? { to: '/profile' }
+                  : data.me[0]?.managedHospitals[0]?.hospital
+                    ? { to: `/hospitals/${data.me[0].managedHospitals[0].hospital.uid}` }
+                    : { to: '/profile/shifts' })],
           $(Route, { path: '/', exact: true, component: Main }),
           $(Redirect, { to: '/' })))))
 }
