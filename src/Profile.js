@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useSubscription } from '@apollo/client'
 import { useMediaQuery, useTheme } from '@material-ui/core'
-import { styled } from '@material-ui/core'
+import { Fade, styled } from '@material-ui/core'
 import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
 import Button from '@material-ui/core/Button'
@@ -58,36 +58,38 @@ const ProfilePure = data =>  {
   return $(Box, notMobile && { display: 'flex', padding: 2 },
     // $(Back),
     $(Box, notMobile ? { margin: 'auto', maxWidth: 480 } : { marginBottom: 2 },
-      $(Paper, null,
-        $(Box, { justifyContent: 'flex-end', display: 'flex', marginBottom: -7, padding: 1 },
-          $(Tooltip, { title: 'Выход' },
-              $(IconButton, { onClick: logoff },
-                $(ExitToApp, { fontSize: 'small' })))),
-        $(Box, {
-          display: 'flex',
-          alignItems: 'center',
-          padding: 3,
-          justifyContent: 'center'}, 
-          $(Avatar, { style: { width: 84, height: 84 } })),
-          $(Box, { display: 'flex', justifyContent: 'center', alignItems: 'center' },
-            $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone)),
-      $(Box, { height: 16 }),
-      $(Divider),
-      $(Tabs, {
-        variant: 'fullWidth',
-        value: page,
-        // action: () => updateIndicator(),
-        onChange: (event, value) => push(`/profile/${value}`) },
-        map(([value, { label }]) =>
-          $(Tab, { id: value, key: value, value, label }),
-          entries(tabs)))),
+      $(Fade, { in: true },
+        $(Paper, null,
+          $(Box, { justifyContent: 'flex-end', display: 'flex', marginBottom: -7, padding: 1 },
+            $(Tooltip, { title: 'Выход' },
+                $(IconButton, { onClick: logoff },
+                  $(ExitToApp, { fontSize: 'small' })))),
+          $(Box, {
+            display: 'flex',
+            alignItems: 'center',
+            padding: 3,
+            justifyContent: 'center'}, 
+            $(Avatar, { style: { width: 84, height: 84 } })),
+            $(Box, { display: 'flex', justifyContent: 'center', alignItems: 'center' },
+              $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone)),
+          $(Box, { height: 16 }),
+          $(Divider),
+          $(Tabs, {
+            variant: 'fullWidth',
+            value: page,
+            // action: () => updateIndicator(),
+            onChange: (event, value) => push(`/profile/${value}`) },
+            map(([value, { label }]) =>
+              $(Tab, { id: value, key: value, value, label }),
+              entries(tabs))))),
         $(Box, { padding: 1 }),
-        $(Switch, null,
-          map(([value, { component }]) =>
-            $(Route, { key: value, exact: true, path: `/profile/${value}` },
-              $(component, data)),
-            entries(tabs)),
-          $(Redirect, { to: '/profile/' }))))
+        $(Fade, { in: true, timeout: 300 },
+          $(Switch, null,
+            map(([value, { component }]) =>
+              $(Route, { key: value, exact: true, path: `/profile/${value}` },
+                $(component, data)),
+              entries(tabs)),
+            $(Redirect, { to: '/profile/' })))))
 }
 
 const ProfileForm = data => {
