@@ -48,7 +48,6 @@ const ProfilePure = data =>  {
   const { page = '' } = useParams()
   const { push } = useHistory()
   const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
-  const history = useHistory()
 
   // FIXME mui-org/material-ui#9337
   useEffect(() => {
@@ -62,7 +61,7 @@ const ProfilePure = data =>  {
       $(Paper, null,
         $(Box, { justifyContent: 'flex-end', display: 'flex', marginBottom: -7, padding: 1 },
           $(Tooltip, { title: 'Выход' },
-              $(IconButton, { onClick: () => logoff() && history.push('/')},
+              $(IconButton, { onClick: logoff },
                 $(ExitToApp, { fontSize: 'small' })))),
         $(Box, {
           display: 'flex',

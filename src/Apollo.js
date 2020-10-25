@@ -87,10 +87,10 @@ export const logoff = () =>
     method: 'POST',
     body: JSON.stringify({ query: logoffQuery })
   }).then(response => response.json())
-    .catch(console.log)
-    .finally(() => {
+    .then(() => {
       authPromise = {}
       client.clearStore()
       link.subscriptionClient.client.close()
       return true
     })
+    .catch(console.log)

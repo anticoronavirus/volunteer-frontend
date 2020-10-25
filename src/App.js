@@ -32,6 +32,8 @@ const App = () => {
       }),
     [prefersDarkMode])
 
+  console.log(data)
+
   return $(ThemeProvider, { theme },
     $(CustomCssBaseline),
     loading && !data ? null :

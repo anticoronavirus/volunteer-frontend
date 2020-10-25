@@ -89,6 +89,7 @@ const Login = ({ history }) => {
               onChange: handlePassword,
               value: password,
               type: 'password',
+              autoComplete: 'one-time-code',
               margin: 'normal',
               onKeyPress: ({ charCode }) => password.length > 3 && charCode === 13 && handleSubmit(),
               error: loginStatus && loginStatus !== 'loading',
