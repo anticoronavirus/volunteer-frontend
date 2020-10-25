@@ -1,5 +1,4 @@
-import { Mutation, Query, Subscription } from '@apollo/react-components'
-import { useMutation, useQuery } from '@apollo/react-hooks'
+import { useMutation, useQuery, useSubscription } from '@apollo/client'
 import { useMediaQuery, useTheme } from '@material-ui/core'
 import { styled } from '@material-ui/core'
 import Avatar from '@material-ui/core/Avatar'
@@ -34,7 +33,6 @@ import { me as meQuery, myShifts, profileProfessionRequests, removeVolunteerFrom
 import { formatDate } from 'utils'
 
 const Profile = () => {
-  
   const { data, loading } = useQuery(meQuery)
 
   return !loading && !data.me[0]
@@ -197,8 +195,9 @@ const tabs = {
   },
   shifts: {
     label: 'Смены',
-    component: ({ uid }) => $(Subscription, { subscription: myShifts, variables: { uid } }, ({ data }) =>
-      !data
+    component: function ShiftsPage({ uid }) {
+      const { data } = useSubscription(myShifts, { variables: { uid }})
+      return !data
         ? $(CircularProgress)
         : data.volunteer_shift.length === 0
           ? $(Paper, null,
@@ -224,15 +223,17 @@ const tabs = {
               $(Box, { height: '16px' }),
               $(Paper, null,
                 $(List, null,
-                  map(Shifts, data.volunteer_shift)))))
+                  map(Shifts, data.volunteer_shift))))
+    }
   },
   requests: {
     label: 'Заявки',
-    component: ({ uid }) =>
-      $(Paper, null, 
-        $(Query, { query: profileProfessionRequests, variables: { uid } }, ({ data }) =>
-          $(List, null,
-            map(ShiftRequest, data ? data.requests : []))))
+    component: function Requests({ uid }) {
+      const { data } = useQuery(profileProfessionRequests, { variables: { uid } })
+      return $(Paper, null, 
+        $(List, null,
+          map(ShiftRequest, data ? data.requests : [])))
+    }
   }
 }
 
@@ -258,22 +259,28 @@ const LicensePlate = other =>
     mask: 'A 999 AA 99?',
   })
 
-const Shifts = ({
+const Shifts = (props) =>
+  $(ShiftsWithHooks, { key: props.uid, ...props })
+
+const ShiftsWithHooks = ({
   uid,
   confirmed,
   hospital,
   date,
   start,
   end
-}) =>
-  $(ListItem, { key: uid },
+}) => {
+  
+  const [mutate] = useMutation(removeVolunteerFromShift, { variables: { uid } })
+
+  return $(ListItem, null,
     $(ListItemText, {
       primary: `${formatDate(date)}, c ${start.slice(0, 5)} до ${end.slice(0, 5)}`,
       secondary: hospital?.shortname || 'Неактивная больница' }),
-    $(Mutation, { mutation: removeVolunteerFromShift, variables: { uid } }, mutate =>
     $(ListItemSecondaryAction, null,
       $(IconButton, { onClick: mutate },
-        $(Delete, { fontSize: 'small' })))))
+        $(Delete, { fontSize: 'small' }))))
+}
 
 const required = value => (!value || value <= 4) && 'Обязательное поле'
 

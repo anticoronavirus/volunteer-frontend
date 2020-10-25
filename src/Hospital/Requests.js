@@ -1,4 +1,3 @@
-import { Mutation } from '@apollo/react-components'
 import { useApolloClient, useMutation, useQuery } from '@apollo/react-hooks'
 import Avatar from '@material-ui/core/Avatar'
 import Box from '@material-ui/core/Box'
@@ -146,42 +145,46 @@ const ManagedRequest = ({
 const ToggleRejection = ({
   uid,
   rejected
-}) =>
-  $(HospitalContext.Consumer, null, ({ hospitalId }) =>
-    $(Mutation, {
-      mutation: toggleRejection,
-      optimisticResponse: {
-        update_profession_request: {
-          returning: {
-            uid,
-            rejected: !rejected,
-            __typename: 'profession_request_mutation_response' 
-          }
+}) => {
+
+  const { hospitalId } = useContext(HospitalContext)
+  const [mutate] = useMutation({
+    mutation: toggleRejection,
+    optimisticResponse: {
+      update_profession_request: {
+        returning: {
+          uid,
+          rejected: !rejected,
+          __typename: 'profession_request_mutation_response' 
         }
-      },
-      update: cache => {
-        const data = cache.readQuery({
-          query: professionRequests,
-          variables: {
-            where: {
-              hospital_id: { _eq: hospitalId },
-              rejected: { _eq: rejected }}}})
-        cache.writeQuery({
-          query: professionRequests,
-          data: {
-            ...data,
-            requests: filter(request => request.uid !== uid, data.requests)
-          },
-          variables: {
-            where: {
-              hospital_id: { _eq: hospitalId },
-              rejected: { _eq: rejected }}}})
-      },
-      variables: { uid, rejected: !rejected } }, onClick =>
-      $(ListItemSecondaryAction, null,
-        $(IconButton, { onClick },
-          rejected
-            ? $(RestoreFromTrash)
-            : $(Delete)))))
+      }
+    },
+    update: cache => {
+      const data = cache.readQuery({
+        query: professionRequests,
+        variables: {
+          where: {
+            hospital_id: { _eq: hospitalId },
+            rejected: { _eq: rejected }}}})
+      cache.writeQuery({
+        query: professionRequests,
+        data: {
+          ...data,
+          requests: filter(request => request.uid !== uid, data.requests)
+        },
+        variables: {
+          where: {
+            hospital_id: { _eq: hospitalId },
+            rejected: { _eq: rejected }}}})
+    },
+    variables: { uid, rejected: !rejected }
+  })
+  
+  return $(ListItemSecondaryAction, null,
+    $(IconButton, { onClick: mutate },
+      rejected
+        ? $(RestoreFromTrash)
+        : $(Delete)))
+}
 
 export default Requests
