@@ -1,43 +1,35 @@
-import { createElement as $, Fragment, useContext, useState, useRef, useEffect } from 'react'
-import { useIsDesktop } from 'utils'
-import map from 'lodash/fp/map'
-import noop from 'lodash/fp/noop'
-import find from 'lodash/fp/find'
-import range from 'lodash/fp/range'
-import Biohazard from 'components/Biohazard'
-import { useMutation, useQuery } from '@apollo/react-hooks'
 import { Mutation } from '@apollo/react-components'
-import {
-  addShift,
-  editShift,
-  addProfessionRequirement,
-  removeProfessionRequirement,
-  professions as professionsQuery,
-  requirements as requirementsQuery,
-} from 'queries'
-
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import Box from '@material-ui/core/Box'
-import Skeleton from '@material-ui/lab/Skeleton'
-import ListItem from '@material-ui/core/ListItem'
-// import Select from '@material-ui/core/Select'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
+import Button from '@material-ui/core/Button'
+import ButtonGroup from '@material-ui/core/ButtonGroup'
+import Checkbox from '@material-ui/core/Checkbox'
 import Dialog from '@material-ui/core/Dialog'
+import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
-import TextField from '@material-ui/core/TextField'
-// import DialogContent from '@material-ui/core/DialogContent'
-import DialogActions from '@material-ui/core/DialogActions'
-import ButtonGroup from '@material-ui/core/ButtonGroup'
-import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
-import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
-import Checkbox from '@material-ui/core/Checkbox'
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
-import ToggleButton from '@material-ui/lab/ToggleButton'
-import Add from '@material-ui/icons/Add'
+import FormGroup from '@material-ui/core/FormGroup'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import { styled } from '@material-ui/core/styles'
+import TextField from '@material-ui/core/TextField'
+import Typography from '@material-ui/core/Typography'
+import Add from '@material-ui/icons/Add'
+import Skeleton from '@material-ui/lab/Skeleton'
+import ToggleButton from '@material-ui/lab/ToggleButton'
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup'
+import find from 'lodash/fp/find'
+import map from 'lodash/fp/map'
+import noop from 'lodash/fp/noop'
+import range from 'lodash/fp/range'
+import { createElement as $, Fragment, useContext, useEffect, useRef, useState } from 'react'
+
+import Biohazard from 'components/Biohazard'
+import { addProfessionRequirement, addShift, editShift, professions as professionsQuery, removeProfessionRequirement, requirements as requirementsQuery } from 'queries'
+import { useIsDesktop } from 'utils'
+
 import HospitalContext from './HospitalContext'
 
 export const AddHospitalShift = ({
