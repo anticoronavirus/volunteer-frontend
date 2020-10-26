@@ -36,11 +36,14 @@ const ProfilePure = (data) => {
       $(Paper, { square: true },
         $(Box, { padding: 2, display: 'flex', alignItems: 'center' },
           $(Avatar, { size: 64 }),
-          $(NonInputMaskedInput, { disabled: true, mask: '+7 (\\999) 999-9999', value: data.phone }),
+          $(NonInputMaskedInput, {
+            disabled: true,
+            mask: '+7 (\\999) 999-9999',
+            value: data.phone }),
           $(IconButton, { onClick: logoff },
             $(ExitToApp))),
         $(Divider),
-        $(Tabs, { value: page || '' },
+        $(Tabs, { variant: 'scrollable', value: page || '' },
           map(renderTab, volunteerTabs)))),
     $(Box, { marginTop: 2 },
       $(Switch, null,
@@ -80,6 +83,10 @@ const tabs = {
   },
   requests: {
     label: 'Заявки',
+    component: Requests
+  },
+  hospitals: {
+    label: 'Мои больницы',
     component: Requests
   }
 }
