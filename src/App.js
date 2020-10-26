@@ -20,7 +20,7 @@ import { requiredProfileFields } from 'utils'
 
 const App = () => {
 
-  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)')
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)', { noSsr: true })
   const { data, loading } = useQuery(me)
 
   const theme = useMemo(

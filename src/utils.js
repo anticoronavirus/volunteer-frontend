@@ -1,9 +1,9 @@
+import { useMediaQuery, useTheme } from '@material-ui/core'
 import format from 'date-fns/format'
 import ru from 'date-fns/locale/ru'
+import includes from 'lodash/fp/includes'
 import map from 'lodash/fp/map'
 import pickBy from 'lodash/fp/pickBy'
-import includes from 'lodash/fp/includes'
-import { useMediaQuery, useTheme } from '@material-ui/core'
 
 export const formatDate = date => format(new Date(date), 'd MMMM', { locale: ru })
 
@@ -57,6 +57,6 @@ const fields = [
 
 export const useIsDesktop = () => {
   const theme = useTheme()
-  const notMobile = useMediaQuery(theme.breakpoints.up('sm'))
+  const notMobile = useMediaQuery(theme.breakpoints.up('sm'), { noSsr: true })
   return notMobile
 }
