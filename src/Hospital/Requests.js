@@ -148,8 +148,7 @@ const ToggleRejection = ({
 }) => {
 
   const { hospitalId } = useContext(HospitalContext)
-  const [mutate] = useMutation({
-    mutation: toggleRejection,
+  const [mutate] = useMutation(toggleRejection, {
     optimisticResponse: {
       update_profession_request: {
         returning: {
