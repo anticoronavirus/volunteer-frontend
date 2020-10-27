@@ -52,6 +52,8 @@ const LogoImage = styled('img')({
   margin: 2
 })
 
-const Title = styled(Typography)({})
+const Title = styled(Typography)({
+  color: 'white'
+})
 
 export default Main

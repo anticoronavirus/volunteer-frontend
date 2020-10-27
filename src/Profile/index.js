@@ -1,14 +1,15 @@
 import { useQuery } from '@apollo/client'
-import { Box, CircularProgress, Fade, Paper, Tab, Tabs, Divider, styled, Avatar, IconButton } from '@material-ui/core'
+import { Avatar, Box, CircularProgress, Divider, Fade, IconButton, Paper, styled, Tab, Tabs } from '@material-ui/core'
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import entries from 'lodash/fp/entries'
 import map from 'lodash/fp/map'
 import { createElement as $, useEffect } from 'react'
-import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 import MaskedInput from 'react-input-mask'
+import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
 import { logoff } from 'Apollo'
 import { me as meQuery } from 'queries'
+import { useIsDesktop } from 'utils'
 
 import ProfileForm from './ProfileForm'
 import Requests from './Requests'
@@ -25,27 +26,30 @@ const Profile = () => {
 const ProfilePure = (data) => {
 
   const { page } = useParams()
+  const isDesktop = useIsDesktop()
 
   useEffect(() => {
     return () =>
       window.dispatchEvent(new CustomEvent('resize'))
   })
 
-  return $(Box, { margin: 'auto', maxWidth: 480 },
+  return $(Box, null,
     $(Fade, { in: true },
       $(Paper, { square: true },
-        $(Box, { padding: 2, display: 'flex', alignItems: 'center' },
-          $(Avatar, { size: 64 }),
-          $(NonInputMaskedInput, {
-            disabled: true,
-            mask: '+7 (\\999) 999-9999',
-            value: data.phone }),
-          $(IconButton, { onClick: logoff },
-            $(ExitToApp))),
-        $(Divider),
-        $(Tabs, { variant: 'scrollable', value: page || '' },
-          map(renderTab, volunteerTabs)))),
-    $(Box, { marginTop: 2 },
+        $(Box, isDesktop && { display: 'flex', alignItems: 'center', flexDirection: 'column' },
+          $(Box, { padding: 2, display: 'flex', alignItems: 'center' },
+            $(Avatar, { size: 64 }),
+            $(NonInputMaskedInput, {
+              disabled: true,
+              mask: '+7 (\\999) 999-9999',
+              value: data.phone }),
+            $(IconButton, { onClick: logoff },
+              $(ExitToApp))),
+          $(Tabs, {
+            variant: 'scrollable',
+            value: page || '' },
+            map(renderTab, volunteerTabs))))),
+    $(Box, { margin: 'auto', maxWidth: 480, marginTop: 2 },
       $(Switch, null,
         map(([key, { component }]) =>
           $(Route, { key, exact: true, path: `/profile/${key}` },
