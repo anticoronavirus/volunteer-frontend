@@ -3,13 +3,15 @@ import { Avatar, Box, CircularProgress, Divider, Fade, IconButton, Paper, styled
 import ExitToApp from '@material-ui/icons/ExitToApp'
 import entries from 'lodash/fp/entries'
 import map from 'lodash/fp/map'
+import pick from 'lodash/fp/pick'
 import { createElement as $, useEffect } from 'react'
 import MaskedInput from 'react-input-mask'
 import { Link, Redirect, Route, Switch, useParams } from 'react-router-dom'
 
 import { logoff } from 'Apollo'
+import { Hospital } from 'components/HospitalList'
 import { me as meQuery } from 'queries'
-import { useIsDesktop } from 'utils'
+import { uncappedMap, useIsDesktop } from 'utils'
 
 import ProfileForm from './ProfileForm'
 import Requests from './Requests'
@@ -28,10 +30,15 @@ const ProfilePure = (data) => {
   const { page } = useParams()
   const isDesktop = useIsDesktop()
 
+  // 
   useEffect(() => {
     return () =>
       window.dispatchEvent(new CustomEvent('resize'))
   })
+
+  const tabs = data.managedHospitals.length > 0
+    ? coordinatorTabs
+    : volunteerTabs
 
   return $(Box, null,
     $(Fade, { in: true },
@@ -48,13 +55,13 @@ const ProfilePure = (data) => {
           $(Tabs, {
             variant: 'scrollable',
             value: page || '' },
-            map(renderTab, volunteerTabs))))),
+            map(renderTab, tabs))))),
     $(Box, { margin: 'auto', maxWidth: 480, marginTop: 2 },
       $(Switch, null,
         map(([key, { component }]) =>
           $(Route, { key, exact: true, path: `/profile/${key}` },
             $(component, data)),
-            volunteerTabs),
+            tabs),
         $(Redirect, { to: `/profile/personal` }))))
 }
 
@@ -91,11 +98,27 @@ const tabs = {
   },
   hospitals: {
     label: 'Мои больницы',
-    component: Requests
+    component: function Hospitals({ managedHospitals }) {
+      return uncappedMap(Hospital, map('hospital', managedHospitals))
+    }
   }
 }
 
-const volunteerTabs = entries(tabs)
+const volunteerAllowed = [
+  'personal',
+  'shifts',
+  'requests'
+]
+
+const coordinatorAllowed = [
+  'personal',
+  'hospitals',
+  'shifts',
+  'requests'
+]
+
+const volunteerTabs = entries(pick(volunteerAllowed, tabs))
+const coordinatorTabs = entries(pick(coordinatorAllowed, tabs))
 
 // const ProfilePure2 = data =>  {
 

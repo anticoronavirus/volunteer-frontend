@@ -1,5 +1,13 @@
 import gql from 'graphql-tag'
 
+const hospitalLIFragment = gql`
+fragment hospitalLIFragment on hospital {
+  uid
+  shortname
+  address
+  periods { demand }
+}`
+
 export const me = gql`{
   me {
     uid
@@ -14,12 +22,12 @@ export const me = gql`{
     licenceplate
     managedHospitals {
       hospital {
-        uid
-        shortname
+        ...hospitalLIFragment
       }
     }
   }
-}`
+}
+${hospitalLIFragment}`
 
 export const hospital = gql`
 query hospital($uid: uuid!) {
@@ -529,12 +537,10 @@ mutation seenHint($userId: uuid! $hintId: uuid!) {
 
 export const hospitals = gql`{
   hospitals: hospital {
-    uid
-    shortname
-    address
-    periods { demand }
+    ...hospitalLIFragment
   }
-}`
+}
+${hospitalLIFragment}`
 
 export const filteredHospitals = gql`
 query filteredHospitals(

@@ -1,12 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { Card, CardActionArea, CardContent, Fade, styled, Typography } from '@material-ui/core'
-import map from 'lodash/fp/map'
 import { createElement as $ } from 'react'
 import { Link } from 'react-router-dom'
 
 import { hospitals } from 'queries'
-
-const indexedMap = map.convert({ cap: false })
+import { uncappedMap } from 'utils'
 
 const Hospitals = () => {
 
@@ -14,10 +12,10 @@ const Hospitals = () => {
 
   return !data
     ? null
-    : indexedMap(Hospital, data.hospitals)
+    : uncappedMap(Hospital, data.hospital)
 }
 
-const Hospital = ({
+export const Hospital = ({
   uid,
   shortname,
   address
