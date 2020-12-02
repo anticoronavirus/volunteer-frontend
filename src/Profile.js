@@ -71,8 +71,8 @@ const ProfilePure = data =>  {
           $(Box, { display: 'flex', justifyContent: 'center', alignItems: 'center' },
             $(Typography, { variant: 'subtitle1', align: 'center' }, data.phone),
             $(Tooltip, { title: 'Выход' },
-              $(Button, { onClick: () => logoff() && history.push('/')},
-              $(ExitToApp, { fontSize: 'small' })))),
+              $(Button, { onClick: () => logoff() },
+                $(ExitToApp, { fontSize: 'small' })))),
       $(Box, { height: 16 }),
       $(Divider),
       $(Tabs, {

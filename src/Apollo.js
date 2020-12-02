@@ -4,7 +4,7 @@ import { WebSocketLink } from '@apollo/client/link/ws'
 import { login as loginMutation, logoff as logoffQuery, refreshToken as refreshTokenQuery } from 'queries'
 
 const uri = '/v1/graphql'
-const devUrl = 'dev.memedic.ru'
+const devUrl = 'dev.smemedic.ru'
 
 let authPromise = null // Important to be falsey by default
 
@@ -82,8 +82,8 @@ const refreshToken = () =>
 
 const handleAuth = tokenData => {
   authPromise = tokenData
-  client.resetStore()
   link.subscriptionClient.client.close()
+  return client.resetStore()
 }
 
 export const logoff = () =>
@@ -94,7 +94,6 @@ export const logoff = () =>
     .catch(console.log)
     .finally(() => {
       authPromise = {}
-      client.clearStore()
       link.subscriptionClient.client.close()
-      return true
+      return client.clearStore()
     })
