@@ -62,9 +62,13 @@ export const login = (variables) =>
       query: loginMutation,
       variables
     })
-  }).then(response => response.json())
-    .then(response => response.data.getToken)
-    .then(handleAuth)
+  })
+    .then(response => response.json())
+    .then(response => {
+      if (response.data.getToken)
+        return handleAuth(response.data.getToken)
+      throw new Error(response.errors[0].message)
+    })
 
 const refreshToken = () =>
   fetch(uri, {

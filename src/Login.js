@@ -45,8 +45,7 @@ const Login = ({ history }) => {
     setLoginStatus('loading')
     login({ phone, password })
       .then(() => history.push('/'))
-      .catch(({ message, graphQLErrors }) => // FIXME check for network errors
-        setLoginStatus(graphQLErrors ? graphQLErrors[0].message : message))
+      .catch(({ message }) => setLoginStatus(message))
   }
 
   return $(Box, {
